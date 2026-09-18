@@ -1,125 +1,155 @@
 # bend2-play
 
-玩 [Bend 2](https://github.com/bendlang/bend) 的实验记录。
+Notes from playing with [Bend 2](https://github.com/bendlang/bend), as a book:
+**https://nohzafk.github.io/bend2-from-zero/**
 
-每个目录是一个主题，里面既有能跑的代码，也有**故意写错、用来把编译器逼出话**的探针 ——
-后者往往比读文档学到得多，所以它们被保留下来，并在 README 里注明"这是❌，报错是什么"。
+Each directory is one topic. It holds runnable code, and **probes that are
+deliberately wrong** — written to make the compiler talk. That second kind usually
+teaches more than reading the docs does, so they are kept, and every README says
+"this one is ❌, and here is the error it gives".
 
-- 环境：Bend 2.0.5，macOS，Apple M3 Max（10 性能核 + 4 能效核）
-- `bend/` 是上游仓库的 clone，**不是我们的代码**，只作参考（不要在它里面改东西）
+- Environment: Bend 2.0.5, macOS 27, Apple M3 Max (10 performance cores + 4 efficiency)
+- `bend/` is a clone of the upstream repo. **It is not our code** — reference only,
+  do not edit anything inside it.
 
-## 教程（mdBook）
+## The tutorial (mdBook)
 
-`src/` 是一本从零写的 Bend 2 教程，`book.toml` 是它的 mdBook 配置：
+`src/` is a from-zero Bend 2 tutorial; `book.toml` is its mdBook config.
 
 ```sh
 mdbook serve      # http://localhost:3000
-mdbook build      # 输出到 book/（已 gitignore）
+mdbook build      # writes to book/ (gitignored)
 ```
 
-书里出现的每个 ❌ / ⚠️ 都对应仓库里一个**真实可跑的探针文件** —— 报错原文是粘贴的
-运行结果，不是手写的，所以你能自己复现每一处。
+Every ❌ and ⚠️ in the book corresponds to a **probe file in this repo that really
+runs**. The error text is pasted output, not something written by hand, so you can
+reproduce each one yourself.
 
-`src/` 下有一组指向各主题目录的符号链接。这是必须的：mdBook 只复制 `src/` 内的
-非 md 文件，所以 `[hello_bad.bend](../basics/hello_bad.bend)` 在渲染出的 HTML 里
-**是死链**。有了链接，mdBook 会走进去把 `.bend` 带进 `book/` —— 链接活了，
-HTML 书也变成自包含的。
+`src/` contains symlinks into the topic directories. That is forced: mdBook only
+copies non-markdown files that are *inside* `src/`, so `[hello_bad.bend](../basics/hello_bad.bend)`
+would be a **dead link** in the rendered HTML. With the symlink, mdBook walks in and
+carries the `.bend` files into `book/` — the links work, and the HTML book becomes
+self-contained.
 
-## 环境
+## Setup
 
 ```sh
 curl -fsSL https://bend-lang.com/install.sh | sh
-bend --version                                       # 本仓库用 2.0.5 写的
+bend --version                                       # this repo was written against 2.0.5
 ```
 
-**装在哪**：`${BEND_HOME:-$HOME/.bend}` —— 本机没设 `BEND_HOME`，所以是 `~/.bend`：
+**Where it lands.** The installer writes to `${BEND_HOME:-$HOME/.bend}`; `BEND_HOME`
+is unset on this machine, so `~/.bend`:
 
-| 路径 | 是什么 |
+| Path | What it is |
 |---|---|
-| `~/.bend/bin/bend` | 一个 3.5 KB 的 **POSIX shell 启动器**（解析版本 → 自动更新 → 交给 bun 去跑） |
-| `~/.bend/current` | 软链，指向 `~/.bend/app/2.0.5/ZRx01G` |
-| `~/.bend/app/<版本>/<hash>/` | 真正被解释执行的 TS 源码 |
+| `~/.bend/bin/bend` | a 3.5 KB **POSIX shell launcher** (resolves the version → self-updates → hands off to bun) |
+| `~/.bend/current` | symlink to `~/.bend/app/2.0.5/ZRx01G` |
+| `~/.bend/app/<version>/<hash>/` | the TypeScript that is actually interpreted |
 
-仓库里那个 `bend/` **不是它** —— 那是上游源码 clone，同名但毫无关系。
+The `bend/` directory in this repo is **not** that. It is a clone of the upstream
+source — same name, no relation.
 
-那个启动器默认发匿名遥测（每次运行后台 POST `{id, ver, os, arch, cmd, exit, ms}` 到 `bend-lang.com/ping`），并会自动下载新版本。`BEND_NO_TELEMETRY=1` 关掉。
+The launcher sends anonymous telemetry by default (a background POST of
+`{id, ver, os, arch, cmd, exit, ms}` to `bend-lang.com/ping` on every run) and
+auto-downloads new versions. `BEND_NO_TELEMETRY=1` turns that off.
 
-## 怎么跑
+**The installer's PATH step does not know about fish.** It picks the rc file by
+`case ${SHELL:-} in *zsh) ...;; *bash) ...;; *) ~/.profile;; esac`, so a fish user
+falls into the `*)` branch and gets a line written to `~/.profile`, which fish never
+reads — while the script prints *"Your PATH now has ~/.bend/bin; open a new shell to
+use bend."* On a fish machine, add `~/.bend/bin` to PATH yourself.
+
+## Running things
 
 ```sh
-# 解释执行：JS 后端
+# Interpreter: the JS backend
 bend basics/hello.bend
 
-# 原生编译：才有真正的多核
+# Native: this is the only one with real multicore
 cd life && bend life_row.bend -o life_row && ./life_row --threads 8
 ```
 
-**两种后端差别很大，这是最容易踩的一个坑：**
+**The two backends differ enormously, and this is the easiest thing to get wrong:**
 
-| | 解释执行 | 原生编译 |
+| | Interpreter | Native |
 |---|---|---|
-| 并行 | **完全串行**，`a b = f(x) g(y)` 不会 fork | 真的多核 |
-| GPU (`f!(x)`) | 忽略 | 交给 Metal，旁边生成一个 `.gpu` MetalLib 文件 |
-| 速度 | 慢一个量级 | 快 |
-| 用途 | 看结果、看类型错误 | **量性能只能用它** |
+| Parallelism | **fully serial** — `a b = f(x) g(y)` does not fork | real multicore |
+| GPU (`f!(x)`) | ignored | handed to Metal, with a `.gpu` MetalLib emitted alongside |
+| Speed | an order of magnitude slower | fast |
+| Use it for | checking results and type errors | **measuring anything** |
 
-第一次量化时我就是在解释执行下量的并行，得到"并行没用"的错误结论。
+The first time we measured parallelism we measured it under the interpreter and got
+"parallelism doesn't help" — a wrong conclusion with a plausible-looking table.
 
-## 目录
+## Contents
 
-| 目录 | 讲什么 |
-|---|---|
-| `basics/` | 第一次接触：hello、字符串、取模、列表 |
-| `affinity/` | **仿射性** —— 理解 Bend 一切的第一把钥匙（含 199 行笔记 `notes.md`） |
-| `arrays/` | 数组读出来的是一个「对」，以及怎么把它拆开 |
-| `parallel/` | CPU 上的 fork-join：`a b = f(x) g(y)` |
-| `gpu/` | `f!(x)` 与 Metal；mandelbrot 与 queens 的胜负 |
-| `life/` | 生命游戏：三种写法（O(n²)串行 / O(n²)并行 / O(n)串行）+ 终端动画 + `LIFE_PAR_LAWS.bend`/`LIFE_PAR_PROOF.bend` 一条定律的完整证明 |
-| `GUIDE.txt` | 官方指南全文（**上游文件的未修改副本**，笔记里的 `GUIDE.txt:NNN` 指的就是它） |
+| Directory | What it covers | In the book |
+|---|---|---|
+| `basics/` | first contact: hello, strings, modulo, lists | ch. 4–7 |
+| `affinity/` | **affinity** — the first key to everything in Bend (plus a 199-line `notes.md`) | ch. 8–9 |
+| `arrays/` | reading an array gives you a *pair*; how to take it apart | ch. 10 |
+| `parallel/` | fork-join on the CPU: `a b = f(x) g(y)` | ch. 11 |
+| `gpu/` | `f!(x)` and Metal; mandelbrot vs queens | ch. 12–14 |
+| `life/` | Game of Life: four implementations, a terminal animation, and two complete laws with proofs | ch. 15–20 |
+| `GUIDE.txt` | the official guide in full (**an unmodified copy of an upstream file**; `GUIDE.txt:NNN` references in the notes point here) | — |
 
-这个仓库里有三个文件是上游 Bend 编译器的**未修改副本** —— `GUIDE.txt`、
-`gpu/mandelbrot/main.bend`、`gpu/queens/main.bend` —— 按 Apache-2.0 分发。
-出处、取自哪个版本、以及许可证副本在哪，见 [`THIRD-PARTY.md`](THIRD-PARTY.md)。
+Three files here are **unmodified copies** of files from the upstream Bend compiler —
+`GUIDE.txt`, `gpu/mandelbrot/main.bend`, `gpu/queens/main.bend` — redistributed under
+Apache-2.0. For provenance, the upstream revision, and the licence text, see
+[`THIRD-PARTY.md`](THIRD-PARTY.md).
 
-## 结论速查
+## Findings, in one place
 
-写代码前值得先知道、而且**报错不会直接告诉你**的那些：
+Worth knowing before you write code, and **the compiler will not tell you**:
 
-**仿射性**
+**Affinity**
 
-- 仿射 ≠ 线性：一个值**至多用一次**，一次都不用是合法的
-- `+x` 是逃生口，但类型必须是 `Data`（`expected : Data, observed : Type`）
-- `Type` = `Kind(&1)` = 「有身份」的东西，不可复制。Base 里只有 3 个：
-  `Array`、`IO.OP`、`App` —— 全是可变内存 / 资源句柄
-- **闭包永远不能复制**，`+` 也救不了
-- 判断按**执行路径**算，不按出现次数：`match` 两个分支里各用一次是合法的
+- Affine is not linear: a value is used **at most once**, and using it zero times is
+  perfectly legal
+- `+x` is the escape hatch, but the type must be `Data` (`expected : Data, observed : Type`)
+- `Type` = `Kind(&1)` = something with identity, not copyable. Base has exactly three:
+  `Array`, `IO.OP`, `App` — all mutable memory or resource handles
+- **A closure can never be copied**, `+` does not save it
+- The count is per **execution path**, not per occurrence: using `x` once in each arm
+  of a `match` is legal
 
-**语法形状**
+**Syntax shapes**
 
-- 没有 `if`：用 `match` 到 `True{}` / `False{}`，或 `Bool.pick(T, cond, a, b)`
-- `match` 只能看**参数**或字段，不能看局部变量，也不能看计算结果
-  → 报错会直接说 "give it its own def"，照做
-- 签名用圆括号 `-> IO(Unit)`，do 块用尖括号 `do IO<Unit>:`。写反了报
-  `unknown: IO`，读起来像没 import
-- 构造子是位置参数 `SCon{Chr{c}, SNil{}}`；字段名只用在模式里
-- 并行 let 必须写在一行
-- 自递归时，**缩小的那个参数必须排最左**，否则终止检查器拒绝
+- There is no `if`: `match` on `True{}` / `False{}`, or `Bool.pick(T, cond, a, b)`
+- `match` can only scrutinise a **parameter** or a field — not a local binding, and
+  not a computed value. The error says "give it its own def"; do that
+- The signature uses parentheses (`-> IO(Unit)`), the `do` block uses angle brackets
+  (`do IO<Unit>:`). Get it wrong and you get `unknown: IO`, which reads like a missing import
+- Constructors take positional arguments (`SCon{Chr{c}, SNil{}}`); field names are for
+  patterns only
+- A parallel `let` has to be on one line
+- In a self-recursive function, **the shrinking parameter must come first**, or the
+  termination checker refuses it
 
-**性能**
+**Performance**
 
-- `bend` 解释执行永远串行；量并行必须原生编译
-- 原生编译下 `a b = f(x) g(y)` 自动 fork 到多核，`f!` 才额外交给 GPU
-- **先选算法再上核**。见 `life/`：同一个生命游戏、同一个 64×64 网格、同样 16 代、
-  同样单线程，O(n²) 要 8069 ms，O(n) 只要 5 ms —— 约 1600 倍，全部来自算法，
-  和核数无关（十个核只换来 3.15 倍，见下一条）
-- **并行数字必须和产生它的实现绑在一起记**。见 `life/README.md`：为了能被证明
-  重构过一次，串行快了 13%，10 线程加速比却从 4.15× 掉到 2.67×，最优粒度也从
-  blk=1 翻转成 blk=16。同一个算法换个写法，结论就反了
-- **`LAWS.bend` 的 gate 真的拦得住**。见 `life/LIFE_PAR_PROOF.bend`：改坏 `tree_cells`
-  的偏移或 `block` 的取值，`bend` 立刻拒绝；`pure_par_sum` 那条同构定律的证明
-  只有三行，因为 `Nat.add` 没有 cons 结构，而列表有
-- **每个 `!` 程序要先交约 85ms 的固定入场费**，和它算多少无关（`gpu_floor` 算 4 和
-  `pow2!(26n)` 算 6700 万一样贵，同一进程调两次也只多几毫秒）。所以 **GPU 的墙钟数字
-  不是关于 GPU 的陈述**：扣掉这笔门费，mandelbrot 从「快 6×」变成「快约 20×」，
-  而 pow2 根本不是在比算术。想知道你在量哪一个，写一个什么都不干的 `!` 程序去量它。
-  见 `gpu/README.md`
+- `bend` run as an interpreter is always serial. Measuring parallelism requires a
+  native build
+- Under a native build, `a b = f(x) g(y)` forks across cores by itself. `!` is what
+  sends a call to the GPU — it is not what enables parallelism
+- **Pick the algorithm before you pick the core count.** See `life/`: same Game of
+  Life, same 64×64 grid, same 16 generations, same single thread — O(n²) takes
+  ≈ 8,100 ms and O(n) takes 5 ms, about **1,600×**. All of it from the algorithm, none
+  of it from the cores (ten cores buy about 3×, see the next line)
+- **A parallel number has to be recorded together with the implementation that
+  produced it.** See `life/README.md`: a rewrite done so the code could be *proved*
+  made the serial version ~18% faster and dropped the 10-thread speedup from 4.14×
+  to 2.57×, flipping the best granularity from `blk=1` to `blk=16`. Change how one
+  algorithm is written and the conclusion reverses
+- **The `LAWS.bend` gate really does stop you.** See `life/LIFE_PAR_PROOF.bend`:
+  break the right-subtree offset in `tree_cells`, or the leaf's value in `block`, and
+  `bend` refuses immediately. The isomorphic law in `pure_par_sum` proves in three
+  lines because `Nat.add` has no cons structure and a list does
+- **Every `!` program pays a fixed entry fee of about 85 ms**, whatever it computes
+  (`gpu_floor` computing 4 costs what `pow2!(26n)` computing 67 million costs, and a
+  second call in the same process costs a few ms more). So **a GPU wall-clock number
+  is not a statement about the GPU** — subtract the door and mandelbrot goes from
+  "6× faster" to "about 20× faster", while pow2 was never a comparison of arithmetic
+  at all. To find out which one you are measuring, write a program that does nothing
+  and measure that. See `gpu/README.md`

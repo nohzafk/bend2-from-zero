@@ -1,82 +1,102 @@
-# parallel — CPU 上的 fork-join
+# parallel — fork-join on the CPU
 
-Bend 的并行原语就是一行普通的赋值：
+Bend's parallelism primitive is an ordinary assignment:
 
 ```python
-a b = f(x) g(y)      # 两个调用各成一个任务，然后汇合
+a b = f(x) g(y)      # two calls, each its own task, then a join
 ```
 
-它向编译器承诺两件事：
+It promises the compiler two things:
 
-1. **两个调用互相独立**
-2. **它们耗时差不多**
+1. **The two calls are independent.**
+2. **They take roughly the same time.**
 
-第一件在 Bend 里永远成立（语言是纯的、仿射的），第二件是你自己的责任 ——
-调度器是二分 fork-join，任务只交给一个核、之后不再迁移，负载不均就直接体现为没加速。
+The first is free in Bend — the language is pure and affine. The second is your job:
+the scheduler is a contention-free binary fork-join machine, each task goes to one
+core and is never moved afterwards, so an uneven load shows up directly as missing
+speedup.
 
-## 为什么不用加锁，也不用你论证
+## Why you need neither locks nor an argument
 
-因为仿射性。一个值在同一时刻只有一个持有者，所以把 `f(x) g(y)` 拆到两个核上，
-**在类型上就不可能**出现两边同时碰同一个东西。这是 `../affinity/` 那套机制的第二个回报。
+Because of affinity. A value has exactly one holder at a time, so splitting
+`f(x) g(y)` across two cores **cannot**, at the type level, have both sides touch the
+same thing. This is the second payoff of the machinery in `../affinity/`.
 
-注意 `!` 不是并行的开关。原生编译下 `pow2(p) pow2(p)` 本来就会 fork 到多核；
-`!` 只是额外把这次调用交给 GPU（见 `../gpu/`）。
+Note that `!` is not the switch that turns parallelism on. Under a native build,
+`pow2(p) pow2(p)` forks across cores on its own. `!` only additionally hands that
+call to the GPU (see `../gpu/`).
 
-## 最小例子
+## The smallest example
 
 ```python
 def pow2(+n: Nat) -> U32:
   match n:
     case 0n:    1
     case 1n+p:
-      a b = pow2(p) pow2(p)     # 递归展开成一棵二叉树，每个内部节点是一次 fork
+      a b = pow2(p) pow2(p)     # unfolds into a binary tree; every inner node is a fork
       (a + b : U32)
 ```
 
-## 线程缩放
+## Thread scaling
 
-`pow2_26` = 2^26 = 6700 万次加法，原生编译，`--threads N`，每个配置三遍（2026-09-18 重测）：
+`pow2_26` = 2^26 = 67,108,864 additions, native build, `--threads N`, three runs per
+configuration (re-measured 2026-09-18):
 
 | threads | real | user |
 |---|---|---|
-| 1 | 0.223 – 0.229 s | 0.205 – 0.212 s |
-| 2 | 0.126 s | 0.215 s |
-| 4 | 0.074 – 0.076 s | 0.227 – 0.231 s |
-| 8 | **0.048 – 0.050 s** | 0.236 – 0.237 s |
-| 14 | 0.045 – 0.049 s | 0.253 – 0.256 s |
+| 1 | 0.22 – 0.23 s | 0.20 s |
+| 2 | 0.12 – 0.13 s | 0.21 s |
+| 4 | 0.07 s | 0.22 s |
+| 8 | **0.04 s** | 0.23 s |
+| 14 | 0.04 – 0.05 s | 0.25 s |
 
-**`user` 几乎不变而 `real` 掉到约 1/4.8** —— 这是真在并行的证据（总工作量不变，墙钟变短）。
-8 线程之后饱和；这台机器是 10 性能核 + 4 能效核，再往上只增加调度开销。
+At 1 thread `real` and `user` are the same, as they must be. At 8, `real` has dropped
+to **1/5.8** while `user` has *risen* from 0.20 to 0.23 — total work slightly up
+(fork-join overhead), wall clock down nearly sixfold. That combination is the evidence
+that this is real parallelism and not a measurement artefact.
 
-> 早先记的是「8 线程 0.04 s / 掉到 1/6」，重测后是 0.049 s / 约 1/4.8。同一台机器、
-> 同样三遍取稳定值，差异来自系统当时的负载。**并行加速比是会比值的数字**，记的时候
-> 连机器状态一起记。
+It saturates at 8. This machine is 10 performance cores plus 4 efficiency cores, so
+past 10 threads the scheduler is only adding contention.
 
-对照 `../gpu/`：同样这棵树，`pow2!(26n)` 交给 GPU 要 0.089 – 0.096 s —— 看着「只慢一点」，
-但其中约 85ms 是每个 `!` 程序的**固定入场费**。见 `../gpu/README.md`。
+> An earlier note here said "0.048 s at 8 threads, about 1/4.8". Re-measuring gave
+> 0.040 s and 1/5.8 on three consecutive runs. **A parallel speedup is a number that
+> varies** — record it together with the state of the machine, and re-check it before
+> quoting it.
 
-**踩过的坑：** 第一次量这组数字是在解释执行下跑的，`real` 完全不随线程数变化。
-原因写在 README 顶层 —— **JS 后端按文档忽略并行，一律串行**。量并行只能原生编译。
+For contrast, see `../gpu/`: the same tree handed to the GPU as `pow2!(26n)` takes
+0.089 – 0.096 s. That looks like "only a little slower", but about 85 ms of it is a
+**fixed entry fee** every `!` program pays. See `../gpu/README.md`.
 
-## 文件
+**A trap we fell into:** the first measurement of this table was taken under the
+interpreter, where `real` did not move with the thread count at all. The reason is
+stated at the top of the repository README — **the JS backend ignores parallelism by
+design and runs everything serially.** You can only measure parallelism under a
+native build.
 
-| 文件 | 说明 |
+## Files
+
+| File | What |
 |---|---|
 | `pow2.bend` / `pow2` | 2^22 |
-| `pow2_26.bend` / `pow2_26` | 2^26，上表用的就是它 |
-| `parsum` / `parsum.gpu` | 上游 demo `bend/demos/pure_par_sum/` 的编译产物 |
+| `pow2_26.bend` / `pow2_26` | 2^26 — this is what the table above used |
+| `parsum` / `parsum.gpu` | build output of the upstream demo `bend/demos/pure_par_sum/` |
 
-`parsum` 的源码不在本目录（在上游 `bend/demos/pure_par_sum/`）。它值得一看：
-那个 demo 带一条 `LAWS.bend`，声称**并行 fork/join 求和的树等于串行循环**，
-并有 `PROOF.bend` 用归纳法证明。它的检查器跑完只要 0.087 秒 —— 这是 Bend 把
-「几乎不做类型推断」换成「检查器不用搜索」的直接结果。
+The source for `parsum` is not in this directory (it is upstream, in
+`bend/demos/pure_par_sum/`). It is worth a look: that demo carries a `LAWS.bend`
+claiming **the parallel fork/join sum tree equals the serial loop**, with a
+`PROOF.bend` proving it by induction. Its checker finishes in 0.087 s — the direct
+result of Bend trading "almost no type inference" for "the checker never has to
+search".
 
-编译产物和源码放在一起（不是单独的 `build/`），跟 `../life/` 保持一致。
+Compiled binaries sit next to their sources rather than in a separate `build/`, to
+match `../life/`.
 
-## 跑
+## Running
 
 ```sh
 bend pow2_26.bend -o pow2_26
 ./pow2_26 --threads 1
 ./pow2_26 --threads 8
 ```
+
+Book: chapter 11.

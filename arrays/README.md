@@ -1,47 +1,53 @@
-# arrays — 数组读出来的是一个「对」
+# arrays — reading an array gives you a *pair*
 
-这些是**探针**，大部分**故意是错的**。每个文件试一种「想把数组里的值拿出来」的写法，
-看哪一种能过。失败的那些和成功的一样重要 —— 它们共同划出了那条规则。
+These are **probes**, and most of them are **deliberately wrong**. Each file tries one
+way of "getting a value out of an array" to see which one passes. The failures matter
+as much as the successes — together they draw the rule.
 
-## 规则
+## The rule
 
-`a[i]` 的返回类型是
+The type of `a[i]` is
 
 ```
 Sigma<&1, &1, Array<U32>, _ => U32>
 ```
 
-也就是**数组与元素的对**。原因在 `../affinity/notes.md`：`Array` 是 `Type`（不可复制），
-「就地改写」要求读写这个数组时同时握住它，所以读操作必须把数组一起交还。
+that is, **a pair of the array and the element**. The reason is in
+`../affinity/notes.md`: `Array` is a `Type` (not copyable), and in-place mutation
+requires holding the array while you read or write it — so a read has to hand the
+array back too.
 
-要拆开这个对，只有两条路：
+There are exactly two ways to take that pair apart:
 
-1. **在参数或字段的位置解构** —— `b_ok.bend`
-2. **用 Base 自带的投影** `Pair.fst` / `Pair.snd` —— `c_base.bend`、`f_post3.bend`
+1. **Destructure in an argument or a field position** — `b_ok.bend`
+2. **Use Base's projection** `Pair.fst` / `Pair.snd` — `c_base.bend`, `f_post3.bend`
 
-不能做的：在一个局部绑定上直接 `(a2, v) = ...`。报错会直接告诉你怎么绕：
-*"give it its own def"*。
+What you cannot do is `(a2, v) = ...` on a local binding, in place. The error tells
+you the way around it: *"give it its own def"*.
 
-## 八个文件
+## The eight files
 
-| 文件 | 写法 | 结果 |
+| File | What it tries | Result |
 |---|---|---|
 | `exp_arr.bend` | `U32.show(a[5] : U32)` | ❌ `expected : a term, observed ':'` |
-| `exp_arr2.bend` | `(a2, v) = a[5]` 就地解构 | ❌ `a match cannot scrutinize a computed value: give it its own def` |
-| `a_fail.bend` | 先 `p = a[5] <- 42`，再拆 `p` | ❌ `a match cannot scrutinize a local binder` |
-| `b_ok.bend` | 在**参数**位置解构 | ✅ `43` |
+| `exp_arr2.bend` | `(a2, v) = a[5]`, destructuring in place | ❌ `a match cannot scrutinize a computed value: give it its own def` |
+| `a_fail.bend` | bind `p = a[5] <- 42` first, then take `p` apart | ❌ `a match cannot scrutinize a local binder` |
+| `b_ok.bend` | destructure in an **argument** position | ✅ `43` |
 | `c_base.bend` | `Pair.fst` / `Pair.snd` | ✅ `42` |
-| `d_write.bend` | `Pair.snd(Array<U32>, U32, a[9] <- 7)` | ❌ 类型不符（写返回的不是 Sigma） |
-| `e_post1.bend` | `a[5]` 直接当返回值 | ✅ 打印出 `([0,0,0,0,0,42,0,0], 42)` |
-| `f_post3.bend` | `Pair.fst` 拿回数组，再 `Pair.snd(b[5])` | ✅ `42` |
+| `d_write.bend` | `Pair.snd(Array<U32>, U32, a[9] <- 7)` | ❌ type mismatch (a write does not return a Sigma) |
+| `e_post1.bend` | return `a[5]` as-is | ✅ prints `([0,0,0,0,0,42,0,0], 42)` |
+| `f_post3.bend` | `Pair.fst` to get the array back, then `Pair.snd(b[5])` | ✅ `42` |
 
-`e_post1.bend` 的输出最能说明问题：返回值**带着整个数组**，`Array<U32> & U32`。
-这不是 bug，是仿射性在保证「就地改写不需要拷贝」的代价。
+The output of `e_post1.bend` is the one that explains it: the return value **carries
+the entire array**, `Array<U32> & U32`. That is not a bug — it is the price of
+affinity guaranteeing that in-place mutation needs no copy.
 
-## 跑
+## Running
 
 ```sh
 cd arrays
 bend b_ok.bend             # ✅ 43
-bend exp_arr2.bend         # ❌ 故意的
+bend exp_arr2.bend         # ❌ on purpose
 ```
+
+Book: chapter 10.

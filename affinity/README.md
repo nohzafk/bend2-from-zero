@@ -1,85 +1,94 @@
-# affinity — 仿射性
+# affinity
 
-**理解 Bend 一切的第一把钥匙。** 这个目录是整个仓库里唯一有正式笔记的：
-先读 `notes.md`（199 行，含术语、定义、实验证据、回报、代价）。
+**The first key to understanding anything in Bend.** This is the only directory in
+the repo with formal notes: read `notes.md` first (199 lines — terminology,
+definitions, experimental evidence, payoffs, costs).
 
-一句话：**一个值在同一时刻只有一个持有者。**
+In one sentence: **a value has exactly one holder at a time.**
 
-## 目录里的文件
+## The files
 
-`notes.md` 里的表格引用的就是这些文件，全部实跑过。
+The tables in `notes.md` reference these; all of them have been run.
 
-| 文件 | 试什么 | 结果 |
+| File | What it tries | Result |
 |---|---|---|
-| `t1_drop.bend` | `x = {3:U32}` 声明后从不用 | ✅ 输出 `7` —— **可以不使用**，affine ≠ linear |
-| `affine_bad.bend` | `x` 用了两次 | ❌ `x (consumed more than once)` |
-| `t2_plus.bend` | `+x` 用两次 | ✅ `6` —— `+` 是逃生口 |
-| `t7_paths.bend` | `x` 在 `match` 两个分支里都出现 | ✅ `11` —— **按路径算，不按出现次数** |
-| `t9_listonly.bend` | `List<U32>` 用两次（无 `+`） | ❌ `consumed more than once` |
-| `t8_listplus.bend` | `+List<U32>` 用两次 | ✅ `6n` —— 代价是运行时引用计数 |
-| `t4_arrplus.bend` | 给数组加 `+`：`+a = [0 : U32*4n]` | ❌ `expected : Data, observed : Type` |
-| `t5_closure.bend` | 闭包调用两次 | ❌ `consumed more than once` |
-| `t6_closureplus.bend` | 给闭包加 `+` | ❌ `expected : Data, observed : Type` —— **和数组同一个错** |
-| `t10_template.bend` | `~f` 模板参数，调用两次 | ✅ `42` —— 闭包问题的正解 |
-| `t11_templatemiss.bend` | 同上但调用点漏写 `~` | ❌ `consumed more than once` |
-| `t3_arr.bend` | 数组读 | ❌ 见下 |
+| `t1_drop.bend` | declare `x = {3:U32}` and never use it | ✅ prints `7` — **unused is fine**, affine ≠ linear |
+| `affine_bad.bend` | use `x` twice | ❌ `x (consumed more than once)` |
+| `t2_plus.bend` | use `+x` twice | ✅ `6` — `+` is the escape hatch |
+| `t7_paths.bend` | `x` appears in both arms of a `match` | ✅ `11` — **counted per path, not per occurrence** |
+| `t9_listonly.bend` | use a plain `List<U32>` twice | ❌ `consumed more than once` |
+| `t8_listplus.bend` | use `+List<U32>` twice | ✅ `6n` — the price is runtime reference counting |
+| `t4_arrplus.bend` | put `+` on an array: `+a = [0 : U32*4n]` | ❌ `expected : Data, observed : Type` |
+| `t5_closure.bend` | call a closure twice | ❌ `consumed more than once` |
+| `t6_closureplus.bend` | put `+` on a closure | ❌ `expected : Data, observed : Type` — **the same error as the array** |
+| `t10_template.bend` | a `~f` template parameter, called twice | ✅ `42` — the real answer to the closure problem |
+| `t11_templatemiss.bend` | the same, but the call site omits `~` | ❌ `consumed more than once` |
+| `t3_arr.bend` | read from an array | ❌ see below |
 
-## 两个层级
+## Two levels
 
-**quantity（量）—— 写在变量上**
-
-```
--x   擦除      只出现在类型和证明里，运行时删掉
-x    仿射      默认，至多一次
-+x   可重用    要求类型是 Data，代价是引用计数
-```
-
-**kind（种类）—— 写在类型上**
+**quantity — written on a variable**
 
 ```
-Type = Kind(&1)   至多一次 ——「有身份」的东西
-Data = Kind(&2)   可复制   ——「无身份」的东西
+-x   erased      appears only in types and proofs; deleted at run time
+x    affine      the default; at most once
++x   reusable    requires the type to be Data; the price is reference counting
 ```
 
-`+` 要求 `Data` 的道理很直接：**复制一个东西的前提是它能被复制**。
-`t4_arrplus` 的报错 `expected : Data, observed : Type` 就是全部答案。
+**kind — written on a type**
 
-Base 实测 22 个类型声明：13 个 `is Data`、3 个 `is Type`，另外 6 个
-（`List`/`Maybe`/`Either`/`Result`/`Map`/`Sigma`）是 `is Kind(...)`，由自己的
-元素种类参数化。那 3 个 `Type` 是 `Array`（一块可变内存）、`IO.OP`（一个 IO 操作）、
-`App`（一个窗口状态）—— 全是「有身份」的东西。
+```
+Type = Kind(&1)   at most once — something with identity
+Data = Kind(&2)   copyable     — something without identity
+```
 
-## t3_arr 为什么没跑通
+Why `+` demands `Data` is direct: **the precondition for copying a thing is that it
+can be copied.** The error from `t4_arrplus`, `expected : Data, observed : Type`, is
+the whole answer.
 
-`a[i]` 读出来不是元素，是一个 **Sigma**（数组与元素的对）。要把它拆开有讲究，
-那正是隔壁 `../arrays/` 整个目录在讲的事。
+Measured over Base: 22 type declarations — 13 `is Data`, 3 `is Type`, and 6
+(`List`/`Maybe`/`Either`/`Result`/`Map`/`Sigma`) that are `is Kind(...)`, parameterised
+by the kind of their own element. Those 3 `Type`s are `Array` (a block of mutable
+memory), `IO.OP` (an IO operation) and `App` (a window state) — all things with identity.
 
-## 两处更正（2026-09-18 重跑时发现）
+## Why `t3_arr` does not pass
 
-写教程时把全部探针重跑了一遍，抓到两个**笔记自己错了**的地方：
+`a[i]` does not read out the element; it reads out a **Sigma**, a pair of the array
+and the element. Taking that pair apart has its own rules, and that is what the whole
+of `../arrays/` is about.
 
-**① `t6_closureplus.bend` 原本什么都没测到。** 它写的是 `+f = (x: U32) => ...`，
-而这不是 Bend 里闭包的写法 —— 报的是 `expected : an annotated term (cannot infer)`，
-一个纯粹的语法错，跟 `+` 无关。笔记据此写下的「闭包加不了 `+`」**结论是对的，
-立论是空的**。改用 `t5` 里那个能编译的写法后，才拿到真正的报错：
-`expected : Data, observed : Type` —— 和数组一模一样。现在数组和闭包是同一条规则
-的两个例子，比原来更好讲。
+## Two corrections (found by re-running, 2026-09-18)
 
-**② `~f` 模板参数的调用点也要写 `~`。** 笔记里贴的是函数定义，没贴调用点，于是
-看起来像 `twice(inc, 5)` 就该行。实际不行：实参没有 `~` 就退化成普通仿射值，
-报 `expected : -f / observed : f (consumed more than once)` —— 一个读起来像
-「闭包不能调两次」、其实在说「你漏了个 `~`」的错。指南的原文例子是
-`twice(~(x => (x + 1 : U32)), 40)`。已补成 `t10`/`t11` 一对正反例。
+While writing the tutorial every probe was re-run, and two of them turned out to be
+**cases of the notes being wrong**:
 
-两次都是**同一个毛病**：拿一个失败的实验去支撑一个正确的结论，而没有检查
-失败的原因是不是自己以为的那个。
+**① `t6_closureplus.bend` was testing nothing.** It was written as
+`+f = (x: U32) => ...`, which is not how a closure is written in Bend — it reports
+`expected : an annotated term (cannot infer)`, a plain syntax error with nothing to do
+with `+`. The note's conclusion ("a closure cannot take `+`") was **right, but it
+rested on nothing**. Rewritten the way `t5` compiles, the real error appears:
+`expected : Data, observed : Type` — identical to the array's. So the array and the
+closure are now two examples of one rule, which is a better story than two anecdotes.
 
-## 跑
+**② A `~f` template parameter must carry its `~` at the call site too.** The note
+quoted the function definition without the call site, so `twice(inc, 5)` looked like
+it should work. It does not: without the `~` the argument decays to an ordinary
+affine value and you get `expected : -f / observed : f (consumed more than once)` —
+an error that reads like "a closure cannot be called twice" but actually means "you
+omitted a `~`". The guide's own example is
+`twice(~(x => (x + 1 : U32)), 40)`. Now covered by the `t10`/`t11` pair.
+
+Both were **the same mistake**: using a failed experiment to support a correct
+conclusion, without checking whether it failed for the reason you assumed.
+
+## Running
 
 ```sh
 cd affinity
 bend t1_drop.bend               # ✅
-bend affine_bad.bend            # ❌ 故意失败的
+bend affine_bad.bend            # ❌ fails on purpose
 bend t10_template.bend          # ✅
-bend t11_templatemiss.bend      # ❌ 故意失败的
+bend t11_templatemiss.bend      # ❌ fails on purpose
 ```
+
+Book: chapters 8–9.

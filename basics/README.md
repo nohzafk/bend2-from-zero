@@ -1,36 +1,43 @@
 # basics
 
-第一次接触 Bend 时写的四个小东西。每个都只回答一个问题。
+Four small programs from first contact with Bend. Each answers exactly one question.
 
-| 文件 | 问的问题 | 结果 |
+| File | The question | Result |
 |---|---|---|
-| `hello.bend` | 最小程序长什么样 | `hello, bend 2` |
-| `exp_str.bend` | 字符串里 `\n` `\t` 转义吗 | `a` 换行 `b<TAB>tab` —— 转义正常 |
-| `exp_mod.bend` | 终止检查器认不认「结构性递归」实现的取模 | ✅ 返回 `1n`，即 `9 mod 4` |
-| `exp_list.bend` | 手写 `nth` 走链表 | `2`，即 `[1,2,3][1]` |
+| `hello.bend` | what does the smallest program look like | `hello, bend 2` |
+| `exp_str.bend` | do `\n` and `\t` escape inside a string | `a` newline `b<TAB>tab` — yes, escaping works |
+| `exp_mod.bend` | does the termination checker accept modulo written as structural recursion | ✅ returns `1n`, i.e. `9 mod 4` |
+| `exp_list.bend` | a hand-written `nth` that walks the list | `2`, i.e. `[1,2,3][1]` |
 
-## exp_mod：为什么这个值得单独试
+## `exp_mod`: why this is worth trying on its own
 
-Bend 要求递归必须可终止，而且要靠**参数结构变小**来证明。取模不是天然的结构递归，
-所以这里用了一个绕法：对 `x` 做结构性递归（`x` 一定在变小），把余数累加在 `k` 里。
+Bend requires recursion to terminate, and it proves that from a **parameter
+getting structurally smaller**. Modulo is not naturally structural recursion, so
+this uses a detour: recurse structurally on `x` (which is definitely shrinking) and
+accumulate the remainder in `k`.
 
 ```python
 def mod(+x: Nat, +n: Nat, +k: Nat) -> Nat:
   match x:
     case 0n:      k
-    case 1n+p:    mod(p, n, bump(k, n))     # x → p，结构上变小
+    case 1n+p:    mod(p, n, bump(k, n))     # x → p, structurally smaller
 ```
 
-它过了。这个模式在后来写生命游戏时反复用到 —— 终止检查器只看**参数**，不看语义。
+It passes. That pattern came back constantly when the Game of Life was written
+later — **the termination checker looks at the parameters, not at the meaning**.
 
-## exp_list：O(n) 的取元素
+## `exp_list`: element access is O(n)
 
-`nth` 是一步步走链表的，所以 `xs[i]` 的代价是 `O(i)`。这个朴素事实后来成了
-`../life/` 那一整串实验的起点：一个"只差一个索引函数"的程序，复杂度整整差了两个量级。
+`nth` walks the list one link at a time, so `xs[i]` costs `O(i)`. That plain fact
+became the starting point for the whole run of experiments in `../life/`: a program
+that is "only missing an index function" turned out to be two orders of magnitude
+away from the fast one.
 
-## 跑
+## Running
 
 ```sh
 cd basics
 bend hello.bend
 ```
+
+Book: chapters 4–7.

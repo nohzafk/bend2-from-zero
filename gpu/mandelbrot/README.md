@@ -1,69 +1,81 @@
 # mandelbrot
 
-4096×4096 的逃逸时间渲染（Mandelbrot 集），带直方图均衡化。
-**均匀数值负载**的代表：每个像素跑满同样轮数的同样算术。
+A 4096×4096 escape-time render of the Mandelbrot set, with histogram equalisation.
+**The representative uniform numeric workload:** every pixel runs the same arithmetic
+for the same number of rounds.
 
-- `main.bend` —— 与上游 `bend/bench/runtime/mandelbrot/main.bend` **逐字节相同**
-- `main.c` —— `bend` 生成的 C（4174 行），同一份同时编出 CPU 和 Metal 两版
-- `cpu` / `gpu` —— 两个二进制
+- `main.bend` — **byte-identical** to upstream `bend/bench/runtime/mandelbrot/main.bend`
+- `main.c` — the C `bend` generates (4,174 lines); one file builds both the CPU and the Metal version
+- `cpu` / `gpu` — the two binaries
 
-## 为什么这个负载 GPU 会赢
+## Why the GPU wins on this workload
 
-注释里写得很清楚：每个像素跑 `ITERS` 次**无分支**迭代（逃逸后靠 `sel` 冻结 `z`，
-而不是跳出去），所以**指令流对每个像素完全一致**。这正是 GPU 需要的形状。
+The source comment says it plainly: every pixel runs `ITERS` **branch-free** iterations
+(once a point escapes, `z` is frozen via `sel` rather than jumped out of), so **the
+instruction stream is identical for every pixel**. That is exactly the shape a GPU wants.
 
-两趟 fork：第一趟把 2^18 个 64 像素的块摊开，把逃逸时间分进 8 个桶并两两合并直方图；
-一个 CDF 过程把根直方图变成均衡查找表；第二趟每个像素一个叶子，用查找表重新着色并按
-位置加权求和。校验和混合了查找表和重着色结果。
+Two fork passes: the first spreads 2^18 blocks of 64 pixels, bins escape times into
+8 buckets and merges the histograms pairwise; a CDF pass turns the root histogram into
+an equalisation lookup table; the second pass gives each pixel one leaf, recolouring
+through the table and summing position-weighted results. The checksum mixes the lookup
+table with the recoloured output.
 
-## 数字
+## Numbers
 
-每个配置跑三遍，稳定后：
+Three runs per configuration, once settled:
 
 | | real |
 |---|---|
-| `cpu --threads 1` | 5.03 – 5.19 s |
+| `cpu --threads 1` | 5.10 – 5.12 s |
 | `cpu --threads 10` | 0.72 s |
-| **`gpu`** | **0.09 – 0.10 s** |
+| **`gpu`** | **0.10 – 0.12 s** |
 
-校验和 `3101455856`，与源码注释里记录的期望值一致（注释说这个值在集群上
-以 seq / par / metal 三种模式都验证过）。
+Checksum `3101455856`, matching the value recorded in the source comment (which says it
+was verified on a cluster in all three modes: seq / par / metal).
 
-**GPU 比 10 核 CPU 快 7.6 倍** —— 这个仓库里唯一一个 GPU 胜出的负载。
+**The naive ratio is 7.6× over the 10-core CPU — and that is the wrong number.** Every
+`!` program pays a fixed entry fee of about 85 ms before it computes anything (see
+`../README.md`). Subtract it and the comparison is ~30 ms of GPU work against 722 ms of
+10-core CPU work: **about 20×**, not 7.6×.
 
-⚠️ GPU 第一次跑会偏慢（我第一次得到 0.226 s，重复跑稳定在 0.095 s），
-而且宿主二进制每次运行都会重新编译/装载 Metal 内核并打印一行提示到 stderr。
-别把那行当成错误，也别只跑一遍就记数字。
+⚠️ The first GPU run is slower (the first measurement here was 0.226 s, settling to
+0.108 s on repeats), and the host binary recompiles or reloads the Metal kernel on every
+run and prints a line to stderr. Do not read that line as an error, and never record a
+number from a single run.
 
-## 尺寸旋钮
+## Size knobs
 
-源码开头记了两个尺寸（`hd` = 半宽/深度参数，`ITERS` = 迭代轮数）：
+Two sizes are recorded at the top of the source (`hd` = half-width/depth parameter,
+`ITERS` = iteration count):
 
-| 尺寸 | `hd` | `ITERS` | 期望校验和 |
+| Size | `hd` | `ITERS` | Expected checksum |
 |---|---|---|---|
 | small | `2n` | `7n` | 887240761 |
-| big | `18n` | `51n` | 3101455856 ← 这里编译的两个用的是它 |
+| big | `18n` | `51n` | 3101455856 ← the two binaries here were built with this one |
 
-## 跑
+## Running
 
 ```sh
 ./cpu --threads 10       # 0.72 s
-./gpu                    # 0.095 s
+./gpu                    # 0.11 s
 ```
 
-## 怎么重新编出这两个二进制
+## How to rebuild the two binaries
 
-CLI **没有** `--gpu` 开关（`bend --help` 只有 `-o` / `--checkup` / `--publish`）。
-两条路是分开的：
+The CLI has **no** `--gpu` switch (`bend --help` offers only `-o` / `--checkup` /
+`--publish`). The two builds are separate:
 
 ```sh
-# GPU 版：默认构建，同时产出主机程序和 Metal 内核
+# GPU build: the default; produces the host program and the Metal kernel together
 bend main.bend -o gpu            # → gpu + gpu.gpu
 
-# CPU 版：先让 bend 吐 C，再自己用 clang 编（这样不链 Metal）
+# CPU build: have bend emit C, then compile it yourself (this does not link Metal)
 bend main.bend -o main.c
 clang -O2 main.c -o cpu -lm
 ```
 
-第二条是本目录里 `main.c` 的由来，也是 `cpu` 这个二进制的来源 ——
-实测这样编出来是 70696 字节、校验和与耗时都和 `cpu` 一致（3101455856 / 5.15 s）。
+The second is where this directory's `main.c` comes from, and where the `cpu` binary
+comes from — measured at 70,696 bytes, with checksum and timings matching `cpu`
+(3101455856 / 5.15 s).
+
+Book: chapter 13.

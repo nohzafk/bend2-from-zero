@@ -1,68 +1,82 @@
 # queens
 
-N 皇后的并行穷举回溯搜索，N = 17。
-**分歧负载**的代表：搜索树提前剪枝，各分支的工作量天差地别。
+A parallel exhaustive backtracking search for N queens, N = 17.
+**The representative divergent workload:** the search tree is pruned early, and
+different branches differ wildly in how much work they hold.
 
-- `main.bend` —— 与上游 `bend/bench/runtime/queens/main.bend` **逐字节相同**
-- `main.c` —— `bend` 生成的 C（3866 行）
-- `cpu` / `gpu` —— 两个二进制
+- `main.bend` — **byte-identical** to upstream `bend/bench/runtime/queens/main.bend`
+- `main.c` — the C `bend` generates (3,866 lines)
+- `cpu` / `gpu` — the two binaries
 
-## 为什么这个负载 GPU 会输
+## Why the GPU loses on this workload
 
-前 4 行皇后在最前面就摆好，`batch` 把扁平的 `(c0,c1,c2,c3)` 前缀索引空间
-`0..2^d` fork 成一棵平衡树；每个叶子用奇数乘子打乱自己的索引，解出列四元组，
-合法的话就用经典的位掩码回溯器跑完剩下的 N-4 行。
+The first four queens are placed up front, and `batch` forks the flat `(c0,c1,c2,c3)`
+prefix index space `0..2^d` into a balanced tree; each leaf shuffles its own index with
+an odd multiplier, decodes the four-column tuple, and — if it is legal — runs the
+classic bitmask backtracker over the remaining N−4 rows.
 
-问题在于**每个叶子要跑多久完全不确定** —— 剪枝好的分支几乎立刻返回，
-剪枝差的分支要走很深。GPU 需要的是"所有通道做同样的事"，而这里恰恰不是。
-CPU 的乱序执行和缓存反而扛得住这种不规则。
+The problem is that **how long a leaf runs is completely unpredictable**. A
+well-pruned branch returns almost immediately; a badly-pruned one goes deep. A GPU
+needs every lane doing the same thing, and this is precisely not that. The CPU's
+out-of-order execution and caches cope with the irregularity instead.
 
-## 数字
+## Numbers
 
-每个配置跑三遍，稳定后：
+Three runs per configuration, once settled:
 
 | | real |
 |---|---|
-| `cpu --threads 1` | 6.07 s |
+| `cpu --threads 1` | 6.02 – 6.19 s |
 | `cpu --threads 10` | **0.85 s** |
-| `gpu` | 1.36 s |
+| `gpu` | 1.34 – 1.41 s |
 
-校验和 `2063750025`（= `(sols * 2654435761) ^ nodes`），两个二进制一致。
+Checksum `2063750025` (= `(sols * 2654435761) ^ nodes`), identical across both binaries.
 
-**GPU 比 10 核 CPU 慢 1.6 倍。** 这跟指南的说法一致：
+**The GPU is 1.6× slower than the 10-core CPU.** That agrees with the guide:
 
 > divergent work like n-queens stays faster on the CPU.
 
-## 这个文件里值得读的写法
+Unlike `pow2` (where the GPU was really just paying its entry fee), this is a real
+loss, and subtracting the ~85 ms door does not change it: ~1.29 s of GPU work against
+0.855 s of CPU work. See `../README.md`.
 
-源码开头的注释记录了几个 Bend 语言层面的绕法，都是写这类搜索时躲不掉的：
+## What is worth reading in this file
 
-- `match` 只能审视**参数**，所以每个判断用的 bool 都由**调用方**算好当参数传进来
-- 子调用的 `Stats` 结果**搭在兄弟调用的 acc 参数上**进去，避免就地解构一个调用结果
-- `solve` 的递归不是结构性的（候选位掩码不是检查器看得见的"结构"），
-  所以每个自调用前面都驮一个 Nat fuel，靠 `match f` / 在 `g` 上递归来证明终止
+The comments at the top of the source record a few Bend-level workarounds that are
+unavoidable when writing a search like this:
 
-这几条正是 `../arrays/` 和 `../../affinity/` 讲的那两个限制在真实程序里的样子。
+- `match` can only scrutinise a **parameter**, so every boolean a branch needs is
+  computed by the **caller** and passed in as an argument
+- a sub-call's `Stats` result **rides in on the sibling call's `acc` parameter**,
+  which avoids destructuring a call result in place
+- `solve`'s recursion is not structural (the candidate bitmask is not "structure" as
+  far as the checker is concerned), so every self-call carries a `Nat` fuel, and
+  termination is proved by `match f` and recursing on `g`
 
-## 尺寸旋钮
+These three are exactly the restrictions from `../arrays/` and `../../affinity/`
+showing up inside a real program.
 
-`main` 里写死 `run!(17n, size(), limit())`，即 N = 17、`limit = 11730`。
-前缀掩码是 `2^d - 1`，`d` 就是第一个参数（这里 17），
-所以调小 `d` 就缩小前缀空间 —— 上游原来硬编码 `131071`（d = 17）的那个常量被参数化了。
+## Size knobs
 
-## 跑
+`main` hardcodes `run!(17n, size(), limit())`, i.e. N = 17 and `limit = 11730`. The
+prefix mask is `2^d - 1` where `d` is the first argument (17 here), so lowering `d`
+shrinks the prefix space — upstream's hardcoded `131071` (d = 17) is parameterised here.
+
+## Running
 
 ```sh
 ./cpu --threads 10       # 0.85 s
 ./gpu                    # 1.36 s
 ```
 
-## 怎么重新编出这两个二进制
+## How to rebuild the two binaries
 
-CLI 没有 `--gpu` 开关，两条路分开：
+The CLI has no `--gpu` switch; the two builds are separate:
 
 ```sh
-bend main.bend -o gpu            # → gpu + gpu.gpu（Metal 内核）
-bend main.bend -o main.c         # 生成 C
-clang -O2 main.c -o cpu -lm      # CPU-only，不链 Metal
+bend main.bend -o gpu            # → gpu + gpu.gpu (the Metal kernel)
+bend main.bend -o main.c         # emit C
+clang -O2 main.c -o cpu -lm      # CPU only, does not link Metal
 ```
+
+Book: chapter 14.
