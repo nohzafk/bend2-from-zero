@@ -1,4 +1,4 @@
-# The proof of LIFE_LAWS.bend's tree_is_serial: induction on the depth d.
+# The proof of LIFE_PAR_LAWS.bend's tree_is_serial: induction on the depth d.
 #
 # The shape follows demos/pure_par_sum. The goal is {tree == loop}, and every
 # rewrite moves the *right* side -- the spec -- into the implementation's
@@ -7,7 +7,7 @@
 # there: a lemma is written with the form you want to eliminate on the RIGHT.
 import Base
 import ./life_par.bend as Par
-import ./LIFE_LAWS.bend as Laws
+import ./LIFE_PAR_LAWS.bend as Laws
 
 # Nat.add recurses on its first argument, so Nat.add(k, 0n) is stuck when k is
 # a variable. That is the only reason this lemma exists.

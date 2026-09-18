@@ -6,7 +6,7 @@
 # in the same order. It is the same claim demos/pure_par_sum makes about its
 # parallel sum, with a list of cells in place of a number.
 #
-# Written by hand, not by the AI. PROOF.bend proves it.
+# Written by hand, not by the AI. LIFE_PAR_PROOF.bend proves it.
 import Base
 import ./life_par.bend as Par
 

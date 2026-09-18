@@ -10,8 +10,8 @@
 | `life_par.bend` | 同上 + fork-join 并行，带粒度旋钮 | O(n²) |
 | `life_row.bend` | 按行滑动窗口，没有下标查找 | **O(n)** |
 | `life_anim.bend` | 用 `life_row` 的引擎做的终端动画 | O(n) |
-| `LIFE_LAWS.bend` | 定律：`life_par` 的树 == 同一个串行循环（人写） | — |
-| `LIFE_PROOF.bend` | 上面那条定律的证明（`bend` 跑它就是 gate） | — |
+| `LIFE_PAR_LAWS.bend` | 定律：`life_par` 的树 == 同一个串行循环（人写） | — |
+| `LIFE_PAR_PROOF.bend` | 上面那条定律的证明（`bend` 跑它就是 gate） | — |
 
 （`n` = 网格总格数。`life.bend` 是 8×8、每代打印图案的教学版；
 另外两个是基准，只看时间。）
@@ -106,10 +106,10 @@ fork，join 处用 `app` 把两半拼起来。`2^d × blk = w×h` 覆盖全网�
 这两条数字都由仓库里的代码复现：`./life_par --threads 1` 末尾的
 "naive, no fork" 一段，和 `./life_row --threads 1` 末尾的对照一行。
 
-## 定律与证明 —— LIFE_LAWS.bend / LIFE_PROOF.bend
+## 定律与证明 —— LIFE_PAR_LAWS.bend / LIFE_PAR_PROOF.bend
 
-`LIFE_LAWS.bend` 写下命题（人写），`LIFE_PROOF.bend` 证明它（AI 写）。
-`bend LIFE_PROOF.bend` 打印 `All terms check.` 才算数。
+`LIFE_PAR_LAWS.bend` 写下命题（人写），`LIFE_PAR_PROOF.bend` 证明它（AI 写）。
+`bend LIFE_PAR_PROOF.bend` 打印 `All terms check.` 才算数。
 
 > **定律**：树产出的格子序列，逐格等于同一个串行循环产出的序列。
 
@@ -121,8 +121,11 @@ Par.tree_cells(d, g, w, h, blk, k) == Par.block(g, w, h, Par.cells_in(d, blk), k
 把数字换成格子列表而已。
 
 > 注：Bend 的约定是这一对叫 `LAWS.bend` + `PROOF.bend`，且放在项目根
-> （`bend PROOF.bend` 就是文档里的 gate 命令）。这里带前缀是因为仓库里有
-> 六个主题目录，光叫 `PROOF.bend` 看不出证的是哪个。
+> （`bend PROOF.bend` 就是文档里的 gate 命令）。这里反对的是**主题**前缀 ——
+> 仓库里有六个主题目录，`LIFE_LAWS` 看不出证的是哪个。`LIFE_PAR_` 指的不是
+> 主题而是**主语文件**：`life_par.bend` 的定律就是 `LIFE_PAR_LAWS.bend`，
+> 于是 `import ./life_par.bend as Par` 和 `import ./LIFE_PAR_LAWS.bend as Laws`
+> 读起来是同一件事。下一个实现接上同一个后缀，不会撞名。
 
 ### 证明的形状
 
@@ -155,18 +158,22 @@ Par.tree_cells(d, g, w, h, blk, k) == Par.block(g, w, h, Par.cells_in(d, blk), k
 光 `cellnext` 一项就有几千字符，真正不同的地方看不见。它把那类项折成 `CELL`：
 
 ```sh
-bend LIFE_PROOF.bend 2>&1 | python3 elide_errors.py
+bend LIFE_PAR_PROOF.bend 2>&1 | python3 elide_errors.py
 ```
 
 ### 这个 gate 真的拦得住
 
 「通过了」本身不是证据 —— 假证明也会通过。所以故意弄坏：
 
-| 改动 | `bend LIFE_PROOF.bend` |
+改动都做在**实现文件** `life_par.bend` 里（改 `LIFE_PAR_LAWS.bend` 是没用的 ——
+那是规格，弄坏它只会让证明证不出别的东西）：
+
+| 改动 | `bend LIFE_PAR_PROOF.bend` |
 |---|---|
-| `tree_cells` 右子树偏移不再加左半边的格子数 | **Error** |
-| `block` 的格子取值 `cellnext(...)` 换成常数 `0n` | **Error** |
-| 恢复原样 | `All terms check.` |
+| `tree_cells` 右子树偏移 `Nat.add(k, cells_in(p, blk))` → `k` | **Error** |
+| 叶子起点 `block(g, w, h, blk, k)` → `block(g, w, h, blk, 0n)` | **Error** |
+| join 处 `app(a, b)` → `app(b, a)`（两半拼反） | **Error** |
+| 原样 | `All terms check.` |
 
 ### 下一条定律：为什么「下标安全」是另一类问题
 
@@ -186,7 +193,7 @@ Nat.is_lt(Nat.add(Nat.mul(Nat.mod(y, h), w), Nat.mod(x, w)), Nat.mul(h, w))
 | 需要的事实 | 代价 |
 |---|---|
 | `a < a + 1` | 一轮归纳，`{==}` 收尾 —— **好证**，实测通过 |
-| `Nat.add` 的结合律 / 交换律 | 各一轮归纳（结合律见 `LIFE_PROOF.bend` 的 `add_assoc`） |
+| `Nat.add` 的结合律 / 交换律 | 各一轮归纳（结合律见 `LIFE_PAR_PROOF.bend` 的 `add_assoc`） |
 | `m + r == B` 时 `Nat.mod.fin(Nat.divmod.go(n,m,d,r)) < B + 1` | 对 `n` 归纳 + 内层分支；**退出分支要 `r ≤ m + r`，那是穿过 `Nat.cmp` 的双变量归纳** |
 | `a < h` 且 `b < w` ⟹ `a*w + b < h*w` | `Nat.mul` 的分配律 + `Nat.cmp` 单调性，又是几轮归纳 |
 
@@ -242,7 +249,7 @@ bend life_par.bend -o life_par      # 原生才有并行
 bend life_row.bend -o life_row
 ./life_row --threads 1
 
-bend LIFE_PROOF.bend                # 证明的 gate：打印 All terms check.
+bend LIFE_PAR_PROOF.bend                # 证明的 gate：打印 All terms check.
 ```
 
 动画的长度和速度在 `life_anim.bend` 末尾改两处：`loop(320n, ...)` 的第一个参数，
