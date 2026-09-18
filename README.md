@@ -75,7 +75,11 @@ cd life && bend life_row.bend -o life_row && ./life_row --threads 8
 | `parallel/` | CPU 上的 fork-join：`a b = f(x) g(y)` |
 | `gpu/` | `f!(x)` 与 Metal；mandelbrot 与 queens 的胜负 |
 | `life/` | 生命游戏：三种写法（O(n²)串行 / O(n²)并行 / O(n)串行）+ 终端动画 + `LIFE_PAR_LAWS.bend`/`LIFE_PAR_PROOF.bend` 一条定律的完整证明 |
-| `GUIDE.txt` | 官方指南全文（本地副本，笔记里的 `GUIDE.txt:NNN` 指的就是它） |
+| `GUIDE.txt` | 官方指南全文（**上游文件的未修改副本**，笔记里的 `GUIDE.txt:NNN` 指的就是它） |
+
+这个仓库里有三个文件是上游 Bend 编译器的**未修改副本** —— `GUIDE.txt`、
+`gpu/mandelbrot/main.bend`、`gpu/queens/main.bend` —— 按 Apache-2.0 分发。
+出处、取自哪个版本、以及许可证副本在哪，见 [`THIRD-PARTY.md`](THIRD-PARTY.md)。
 
 ## 结论速查
 
