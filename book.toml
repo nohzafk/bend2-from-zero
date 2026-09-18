@@ -6,5 +6,6 @@ language = "en"
 src = "src"
 
 [output.html]
-default-theme = "ayu"
+default-theme = "light"
+preferred-dark-theme = "light"
 git-repository-url = "https://github.com/bendlang/bend"
