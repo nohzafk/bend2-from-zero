@@ -168,6 +168,35 @@ bend LIFE_PROOF.bend 2>&1 | python3 elide_errors.py
 | `block` 的格子取值 `cellnext(...)` 换成常数 `0n` | **Error** |
 | 恢复原样 | `All terms check.` |
 
+### 下一条定律：为什么「下标安全」是另一类问题
+
+候选是 `at()` 的下标安全 —— 任何下标都落在 `0 .. w*h` 内：
+
+```python
+Nat.is_lt(Nat.add(Nat.mul(Nat.mod(y, h), w), Nat.mod(x, w)), Nat.mul(h, w))
+```
+
+它和 `tree_is_serial` 不是一类。上面那条是**纯结构性**的：列表归纳，
+没有乘法、没有比较、没有 `Nat.cmp`。这条要靠**算术**，而 Base 里
+**一条算术引理都没有**（`bend base | grep "-> {.*=="` 是空的）。
+
+而且它不能直接写：`b = 0` 时 `Nat.mod(a, 0n) = a`，而 `a < 0` 是假的。
+所以命题本身得带一个「`b` 为正」的前提。接下来每一步都要自己造：
+
+| 需要的事实 | 代价 |
+|---|---|
+| `a < a + 1` | 一轮归纳，`{==}` 收尾 —— **好证**，实测通过 |
+| `Nat.add` 的结合律 / 交换律 | 各一轮归纳（结合律见 `LIFE_PROOF.bend` 的 `add_assoc`） |
+| `m + r == B` 时 `Nat.mod.fin(Nat.divmod.go(n,m,d,r)) < B + 1` | 对 `n` 归纳 + 内层分支；**退出分支要 `r ≤ m + r`，那是穿过 `Nat.cmp` 的双变量归纳** |
+| `a < h` 且 `b < w` ⟹ `a*w + b < h*w` | `Nat.mul` 的分配律 + `Nat.cmp` 单调性，又是几轮归纳 |
+
+**Bend 没有 tactics，Base 也没有引理库** —— 所以任何碰
+`Nat.mod` / `Nat.mul` / `Nat.cmp` 的定律，都要自带一小套算术。
+
+这不是 Bend 的缺陷，是它的定位：它是给 AI 写的规格语言，而引理库还没被写出来
+（它自己的 README 说 Lean 形式化落后于 TypeScript 实现）。但它确实改变了**选哪条
+定律当下一个** —— 离算术越近，越不划算。
+
 ## life_anim —— 让它动起来
 
 `life_row.bend` 的引擎原样搬过来（那部分是 O(n) 的，40×16 的网格根本不费力），
