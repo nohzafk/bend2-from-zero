@@ -1,35 +1,48 @@
 # 上游 clone，不是我们的代码（108 MB 里的绝大部分）
 bend/
 
-# ---- bend 的编译产物 ----
-# `bend x.bend -o x` 会同时产出两个文件：x（CPU/宿主）和 x.gpu（MetalLib 内核）
-parallel/pow2
-parallel/pow2_26
-parallel/pow2_gpu
-parallel/parsum
-parallel/parsum.gpu
-
-gpu/pow2_gpu
-gpu/pow2_gpu.gpu
-
-# the two probes that measure the `!` entry cost
-gpu/gpu_floor
-gpu/gpu_floor.gpu
-gpu/gpu_twice
-gpu/gpu_twice.gpu
-
-gpu/mandelbrot/cpu
-gpu/mandelbrot/gpu
-gpu/queens/cpu
-gpu/queens/gpu
-
-life/life_par
-life/life_row
-life/life_anim
-
-# `bend x.bend -o x.c` 生成的 C 源码（CPU-only 构建的中间产物，再 clang 出 cpu）
-gpu/mandelbrot/main.c
-gpu/queens/main.c
+# papercut 日志等本机约定（本机靠 ~/.config/git/ignore 忽略，克隆的人手上没有那个文件）
+.agents/
 
 # mdBook build output
 book/
+
+# ---- bend 的编译产物 ----
+#
+# `bend x.bend -o NAME` 产出两个文件：
+#   NAME       宿主可执行文件（CPU）
+#   NAME.gpu   MetalLib 内核，只在程序里出现 `!` 时才生成
+# 另有 `bend x.bend -o NAME.c` 产出的 C 中间产物（再 clang 成宿主端）。
+#
+# NAME 没有扩展名，而 glob 表达不了「没有扩展名」—— 没有模式能覆盖它。
+# 所以这三个会产出二进制的目录改用**白名单**：先忽略目录里的一切，
+# 再点名放回源码。规则是一句话：
+#
+#     这三个目录里，只有 *.md / *.bend / *.py 是源码，其余都是产物。
+#
+# 这样**新写的探针不用回来改这个文件**，编译出来的东西自动被忽略。
+# 代价：往里放第三种类型的源文件（比如 .json）要在这里加一行，否则它会消失。
+
+life/*
+!life/*.bend
+!life/*.md
+!life/*.py
+
+parallel/*
+!parallel/*.bend
+!parallel/*.md
+
+gpu/*
+!gpu/*.bend
+!gpu/*.md
+# gpu/ 下有两个子目录。上面那条 gpu/* 会连目录本身一起忽略，而 git 不允许
+# 在父目录被忽略的情况下重新包含里面的文件 —— 所以必须先放行目录，
+# 再对目录内容套一次同样的白名单。
+!gpu/mandelbrot
+!gpu/queens
+gpu/mandelbrot/*
+!gpu/mandelbrot/*.bend
+!gpu/mandelbrot/*.md
+gpu/queens/*
+!gpu/queens/*.bend
+!gpu/queens/*.md
