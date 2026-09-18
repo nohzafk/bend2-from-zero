@@ -8,4 +8,8 @@ src = "src"
 [output.html]
 default-theme = "light"
 preferred-dark-theme = "light"
-git-repository-url = "https://github.com/bendlang/bend"
+git-repository-url = "https://github.com/nohzafk/bend2-from-zero"
+# Without this the book assumes it lives at the domain root, which breaks the
+# 404 page and anything mdbook resolves absolutely. GitHub Pages serves a
+# project repo under /<repo>/, so the subpath has to be declared.
+site-url = "/bend2-from-zero/"
