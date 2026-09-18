@@ -24,3 +24,6 @@ life/life_anim
 # `bend x.bend -o x.c` 生成的 C 源码（CPU-only 构建的中间产物，再 clang 出 cpu）
 gpu/mandelbrot/main.c
 gpu/queens/main.c
+
+# mdBook build output
+book/

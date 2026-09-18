@@ -1,0 +1,10 @@
+[book]
+title = "Bend 2, from zero"
+description = "A tutorial built by playing with Bend 2 — every concept introduced from scratch, every number measured on this machine."
+authors = ["Randall"]
+language = "en"
+src = "src"
+
+[output.html]
+default-theme = "ayu"
+git-repository-url = "https://github.com/bendlang/bend"

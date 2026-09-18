@@ -8,6 +8,23 @@
 - 环境：Bend 2.0.5，macOS，Apple M3 Max（10 性能核 + 4 能效核）
 - `bend/` 是上游仓库的 clone，**不是我们的代码**，只作参考（不要在它里面改东西）
 
+## 教程（mdBook）
+
+`src/` 是一本从零写的 Bend 2 教程，`book.toml` 是它的 mdBook 配置：
+
+```sh
+mdbook serve      # http://localhost:3000
+mdbook build      # 输出到 book/（已 gitignore）
+```
+
+书里出现的每个 ❌ / ⚠️ 都对应仓库里一个**真实可跑的探针文件** —— 报错原文是粘贴的
+运行结果，不是手写的，所以你能自己复现每一处。
+
+`src/` 下有一组指向各主题目录的符号链接。这是必须的：mdBook 只复制 `src/` 内的
+非 md 文件，所以 `[hello_bad.bend](../basics/hello_bad.bend)` 在渲染出的 HTML 里
+**是死链**。有了链接，mdBook 会走进去把 `.bend` 带进 `book/` —— 链接活了，
+HTML 书也变成自包含的。
+
 ## 环境
 
 ```sh
