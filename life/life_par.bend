@@ -9,13 +9,6 @@ import Base
 # 运行：./life_par --threads 8
 # ============================================================
 
-def pow2(+n: Nat) -> Nat:
-  match n:
-    case 0n:
-      1n
-    case 1n+p:
-      Nat.double(pow2(p))
-
 def nth(+xs: List<&2, Nat>, +i: Nat) -> Nat:
   match xs:
     case Nil{}:
@@ -92,21 +85,6 @@ def count(+g: List<&2, Nat>, +acc: Nat) -> Nat:
       count(t, Nat.add(acc, h))
 
 # ---------- 并行：2^d 个叶子，每个叶子一个任务 ----------
-def Tree(d: Nat) -> Data:
-  match d:
-    case 0n:
-      List<&2, Nat>
-    case 1n+p:
-      Sigma<&2, &2, Tree(p), _ => Tree(p)>
-
-def build(+d: Nat, +g: List<&2, Nat>, +w: Nat, +h: Nat, +k: Nat, +blk: Nat) -> Tree(d):
-  match d:
-    case 0n:
-      block(g, w, h, blk, k)
-    case 1n+p:
-      a b = build(p, g, w, h, k, blk) build(p, g, w, h, Nat.add(k, Nat.mul(pow2(p), blk)), blk)
-      (a, b)
-
 def app(+xs: List<&2, Nat>, +ys: List<&2, Nat>) -> List<&2, Nat>:
   match xs:
     case Nil{}:
@@ -114,16 +92,27 @@ def app(+xs: List<&2, Nat>, +ys: List<&2, Nat>) -> List<&2, Nat>:
     case Con{h, t}:
       Con{h, app(t, ys)}
 
-def flatten(+d: Nat, +t: Tree(d), +acc: List<&2, Nat>) -> List<&2, Nat>:
+# 深度 d 的 fork-join 树：叶子串行算 blk 个连续格子，join 处把两半拼起来。
+# 覆盖 2^d * blk 个格子。这就是待证明的那个函数。
+# 深度 d 的树覆盖多少个格子。和树本身是同一次递归，所以不用乘法，
+# 也就没有分配律要证 —— 左半边覆盖 cells_in(p, blk) 个。
+def cells_in(+d: Nat, +blk: Nat) -> Nat:
   match d:
     case 0n:
-      app(t, acc)
+      blk
     case 1n+p:
-      (a, b) = t
-      flatten(p, a, flatten(p, b, acc))
+      Nat.add(cells_in(p, blk), cells_in(p, blk))
+
+def tree_cells(+d: Nat, +g: List<&2, Nat>, +w: Nat, +h: Nat, +blk: Nat, +k: Nat) -> List<&2, Nat>:
+  match d:
+    case 0n:
+      block(g, w, h, blk, k)
+    case 1n+p:
+      a b = tree_cells(p, g, w, h, blk, k) tree_cells(p, g, w, h, blk, Nat.add(k, cells_in(p, blk)))
+      app(a, b)
 
 def step_par(+d: Nat, +g: List<&2, Nat>, +w: Nat, +h: Nat, +blk: Nat) -> List<&2, Nat>:
-  flatten(d, build(d, g, w, h, 0n, blk), Nil{})
+  tree_cells(d, g, w, h, blk, 0n)
 
 def evolve_par(+gens: Nat, +g: List<&2, Nat>, +d: Nat, +w: Nat, +h: Nat, +blk: Nat) -> List<&2, Nat>:
   match gens:

@@ -57,7 +57,7 @@ cd life && bend life_row.bend -o life_row && ./life_row --threads 8
 | `arrays/` | 数组读出来的是一个「对」，以及怎么把它拆开 |
 | `parallel/` | CPU 上的 fork-join：`a b = f(x) g(y)` |
 | `gpu/` | `f!(x)` 与 Metal；mandelbrot 与 queens 的胜负 |
-| `life/` | 生命游戏，四种写法（O(n²)串行 / O(n²)并行 / O(n)串行 / O(n)终端动画） |
+| `life/` | 生命游戏：三种写法（O(n²)串行 / O(n²)并行 / O(n)串行）+ 终端动画 + `LIFE_LAWS.bend`/`LIFE_PROOF.bend` 一条定律的完整证明 |
 | `GUIDE.txt` | 官方指南全文（本地副本，笔记里的 `GUIDE.txt:NNN` 指的就是它） |
 
 ## 结论速查
@@ -88,5 +88,10 @@ cd life && bend life_row.bend -o life_row && ./life_row --threads 8
 
 - `bend` 解释执行永远串行；量并行必须原生编译
 - 原生编译下 `a b = f(x) g(y)` 自动 fork 到多核，`f!` 才额外交给 GPU
-- **先选算法再上核**。见 `life/`：同一个生命游戏，O(n²) 十核 509ms，
+- **先选算法再上核**。见 `life/`：同一个生命游戏，O(n²) 十核 678ms，
   O(n) 单核 4ms
+- **并行数字必须和产生它的实现绑在一起记**。见 `life/README.md`：为了能被证明
+  重构过一次，串行快了 13%，加速比却从 4.15× 掉到 2.67×，最优粒度也翻转了
+- **`LAWS.bend` 的 gate 真的拦得住**。见 `life/LIFE_PROOF.bend`：改坏 `tree_cells`
+  的偏移或 `block` 的取值，`bend` 立刻拒绝；`pure_par_sum` 那条同构定律的证明
+  只有三行，因为 `Nat.add` 没有 cons 结构，而列表有
