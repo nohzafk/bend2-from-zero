@@ -211,3 +211,8 @@ def main() -> IO(Unit):
     IO.print(cat3("  64x64  live=", Nat.show(c1), cat3("  ms=", Nat.show(Nat.sub(t2, t1)), "\n")))
     IO.print(cat3("128x128  live=", Nat.show(c2), cat3("  ms=", Nat.show(Nat.sub(t3, t2)), "\n")))
     IO.print(cat3("256x256  live=", Nat.show(c3), cat3("  ms=", Nat.show(Nat.sub(t4, t3)), "\n")))
+    IO.print("\n64x64, 16 generations -- head to head with the naive version\n")
+    t5 : Nat <- IO.now()
+    +c4 : Nat = run(64n, 64n, 16n)
+    t6 : Nat <- IO.now()
+    IO.print(cat3("  64x64  live=", Nat.show(c4), cat3("  ms=", Nat.show(Nat.sub(t6, t5)), "\n")))

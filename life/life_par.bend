@@ -146,3 +146,14 @@ def main() -> IO(Unit):
     report("blk=1  (4096 tasks)  live=", a, Nat.sub(t1, t0))
     report("blk=16 ( 256 tasks)  live=", b, Nat.sub(t2, t1))
     report("blk=64 (  64 tasks)  live=", c, Nat.sub(t3, t2))
+
+    # 同一个朴素算法，完全不 fork（d=0，一个 block 覆盖整个网格），
+    # 用来量 O(n^2) 的缩放，以及和 life_row 的 O(n) 对照
+    IO.print("\nnaive, no fork (d=0, blk=w*h)\n")
+    t4 : Nat <- IO.now()
+    +s32 : Nat = run_par(32n, 32n, 16n, 0n, 1024n)
+    +t5 : Nat <- IO.now()
+    +s64 : Nat = run_par(64n, 64n, 16n, 0n, 4096n)
+    t6 : Nat <- IO.now()
+    report("  32x32 16gen  live=", s32, Nat.sub(t5, t4))
+    report("  64x64 16gen  live=", s64, Nat.sub(t6, t5))
