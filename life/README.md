@@ -1,4 +1,4 @@
-# life — 生命游戏，四种写法 + 一条定律的证明
+# life — 生命游戏，四种写法 + 两条定律的证明
 
 同一个程序（8×8 到 256×256 的环形网格，一个滑翔机）。**这个目录是整个仓库
 最有价值的对照**：它同时演示了「并行能买到什么」和「选对算法能买到什么」，
@@ -12,6 +12,8 @@
 | `life_anim.bend` | 用 `life_row` 的引擎做的终端动画 | O(n) |
 | `LIFE_PAR_LAWS.bend` | 定律：`life_par` 的树 == 同一个串行循环（人写） | — |
 | `LIFE_PAR_PROOF.bend` | 上面那条定律的证明（`bend` 跑它就是 gate） | — |
+| `LIFE_ANIM_LAWS.bend` | 定律：`life_anim` 的快渲染 == 慢的显然规格（人写） | — |
+| `LIFE_ANIM_PROOF.bend` | 上面那条定律的证明（gate） | — |
 
 （`n` = 网格总格数。`life.bend` 是 8×8、每代打印图案的教学版；
 另外两个是基准，只看时间。）
@@ -204,6 +206,12 @@ Nat.is_lt(Nat.add(Nat.mul(Nat.mod(y, h), w), Nat.mod(x, w)), Nat.mul(h, w))
 （它自己的 README 说 Lean 形式化落后于 TypeScript 实现）。但它确实改变了**选哪条
 定律当下一个** —— 离算术越近，越不划算。
 
+**第二个数据点（`LIFE_ANIM` 那条定律）：`String` 这边同样一条引理都没有。**
+Base 里连 `append(a, SNil) == a` 都不存在。但两笔库税的**难度**差一个量级：
+String 引理是纯结构归纳（`append` 在第一个参数上 match，归纳一遍就完），
+而 Nat 那套要穿过 `Nat.cmp` —— 那是双变量归纳。同一堵墙，一处是当天能交完的，
+一处是交不完的。
+
 ## life_anim —— 让它动起来
 
 `life_row.bend` 的引擎原样搬过来（那部分是 O(n) 的，40×16 的网格根本不费力），
@@ -234,7 +242,78 @@ Nat.is_lt(Nat.add(Nat.mul(Nat.mod(y, h), w), Nat.mod(x, w)), Nat.mul(h, w))
 现在整个帧只翻一次。
 
 代价是：**每个格子必须是回文**（`"██"` / `"  "` 都是）。
-换成 `"▐█"` 这种非回文格子，每行就会翻个个儿。
+换成 `"▐█"` 这种非回文格子，每行就会翻个个儿 —— 实测过，4×4 的滑翔机渲染成
+`OXOX][][` / `][][OX][`，而不是 `[]XO[][]` / `[][]XO[]`。
+
+**机制**（写注释时想反过一次，所以写清楚）：`rowrev` 里是
+`append(cell(h), acc)` —— 它翻的是**格子顺序，格子内部一个字符都不动**；
+而 `frame` 最后那次翻的是**字符**。两者复合得到
+
+```
+reverse (rowrev r) == map reverse (map cell r)
+```
+
+所以一排只在**每个格子等于它自己的字符反转**时才拼得对。回文不是注意事项，
+是"整屏只翻一次"这个 O(帧长) 优化的**前提条件** —— 而这条现在由
+`LIFE_ANIM_PROOF.bend` 机器强制（见下面）。
+
+## 定律二 —— LIFE_ANIM_LAWS.bend / LIFE_ANIM_PROOF.bend
+
+命题一句话：**快的那个渲染 == 慢的、显然正确的那个渲染**。
+
+```python
+def spec_row(+r) -> String      # 一排格子 → 字符串，直白的 append 链
+def spec_rows(+rs) -> String    # 整屏，直白的 append 链
+
+law frame_is_spec:
+  for +rs: Rows
+  {Anim.frame(rs) == String.append("\u{1B}[H", spec_rows(rs)) : String}
+```
+
+上面那条「每格必须是回文」的约束**是定理的一部分，不是注释**：证明里有一条
+`cell_pal`，它同时是整条定律成立的原因。
+
+### 先验证命题是真的，再去证
+
+证一条假定律等于证谎话。所以动手前先用暴力检查跑了一遍：
+`frame(rs)` 与 `String.append(ESC, spec_rows(rs))` 逐字符比较，5 个网格
+（4×4、16×16、40×16，含演化 40 代之后的）全部相等，长度也对得上
+（40×16 → 3 + 16×(80+1) = 1299，那条 ESC 是 3 个字符不是 1 个）。
+
+### 形状与成本
+
+七条引理，其中**五条是 Base 缺的标准库引理**，只有两条是这条定律自己的：
+
+| 引理 | 谁需要它 |
+|---|---|
+| `append_nil2` / `append_assoc2` | Base 缺 |
+| `reverse_go_spec` / `reverse_append2` | Base 缺（`reverse` 是累加器式，卡在变量上） |
+| `pick_pal` / `cell_pal` | Base 缺 —— **这条就是回文约束本身** |
+| `rowrev_spec` | 定律自己的：`reverse(rowrev(r, acc))` == 这排格子加逆序的 acc |
+| `inner` + `frame_is_spec` | 定律自己的：`Rows` 上的累加器不变式 |
+
+### 两个写法要点
+
+- **改写注解的语义**：`%lem(args) : P` 里的 `P` 是**改写前**的目标，`_` 标在
+  **引理右边（被消费的那一项）**的位置。所以引理要写成
+  `{目标形式 == 目标里现在出现的形式}`。方向写反的时候 `%` 会明确报
+  "expected / observed"，照着改就行，但一开始不知道的话会连撞三次。
+- **参数修饰符看用法不看语义**：只在类型里出现的参数用 `-`，
+  在**证明体**里被用到多次的要 `+`。`reverse_go_spec` 的 `acc` 看着像"擦除"，
+  但它要出现在递归调用里，所以是 `+acc`。
+
+### 这个 gate 拦得住什么
+
+破坏都做在**实现文件** `life_anim.bend` 里：
+
+| 改动 | `bend LIFE_ANIM_PROOF.bend` |
+|---|---|
+| `frame` 去掉最后的 `String.reverse`（行的顺序反了） | **Error** |
+| 每行多翻一次（就是当年那个镜像 bug） | **Error** |
+| `cell` 换成非回文的 `"▐█"` | **Error** |
+| 原样 | `All terms check.` |
+
+第二条值得单看：**当年靠眼睛发现的那个镜像 bug，现在是编译期拦下来的。**
 
 ## 跑
 
@@ -249,7 +328,8 @@ bend life_par.bend -o life_par      # 原生才有并行
 bend life_row.bend -o life_row
 ./life_row --threads 1
 
-bend LIFE_PAR_PROOF.bend                # 证明的 gate：打印 All terms check.
+bend LIFE_PAR_PROOF.bend                # 证明 gate：打印 All terms check.
+bend LIFE_ANIM_PROOF.bend               # 同上，动画那条
 ```
 
 动画的长度和速度在 `life_anim.bend` 末尾改两处：`loop(320n, ...)` 的第一个参数，
