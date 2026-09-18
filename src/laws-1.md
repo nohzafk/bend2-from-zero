@@ -29,6 +29,12 @@ Read it as a sentence. *For any depth, grid, width, height, block size and start
 index: the fork-join tree produces exactly the list that one sequential loop over
 the same range produces.*
 
+(A note for later, because it is a trap: `Base` uses the same `law` keyword 72
+times to declare *type families* rather than propositions. In user code those are
+written with `def` — `def Tree(d: Nat) -> Data:`. Both uses are the same idea, a
+declaration you fill in, but the mechanism is not interchangeable. See
+[What Base does not give you](appendix-base-gaps.md).)
+
 There is nothing imperative here and nothing to run. `==` is not a comparison
 that returns a `Bool` — it is a **type**, and the law `tree_is_serial` names the
 type "both sides are the same list". A proof is a `def` of that type:

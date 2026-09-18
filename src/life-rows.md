@@ -94,17 +94,17 @@ Sixty-four generations, single thread:
 
 | grid | cells | total | **ns per cell, per generation** |
 |---|---|---|---|
-| 32×32 | 1,024 | 5 ms | **76** |
-| 64×64 | 4,096 | 18 ms | **69** |
-| 128×128 | 16,384 | 67 ms | **64** |
-| 256×256 | 65,536 | 314 ms | **75** |
+| 32×32 | 1,024 | 4 ms | **61** |
+| 64×64 | 4,096 | 17 ms | **65** |
+| 128×128 | 16,384 | 70 ms | **67** |
+| 256×256 | 65,536 | 308 ms | **73** |
 
 Compare the last column with the previous chapter's:
 
 | | 32×32 | 64×64 |
 |---|---|---|
-| naive | 29,800 ns | 119,600 ns |
-| **row window** | **76 ns** | **69 ns** |
+| naive | 30,900 ns | 123,800 ns |
+| **row window** | **61 ns** | **65 ns** |
 
 The naive column multiplies by four when the grid does. This one does not move.
 **Sixty-four times more cells for sixty-four times more time — that is what O(n)
@@ -116,10 +116,18 @@ Both versions, 64×64, sixteen generations, **one thread each**:
 
 | | ms |
 |---|---|
-| naive (`life_par.bend` with `d=0`, no fork at all) | 7,840 |
-| row window (`life_row.bend`) | **4** |
+| naive (`life_par.bend` with `d=0`, no fork at all) | 8,114 |
+| row window (`life_row.bend`) | **5** |
 
-**Roughly two thousand times.** Neither version used more than one core.
+**Roughly sixteen hundred times.** Neither version used more than one core.
+
+A caveat on that ratio, since it is the headline number of this chapter. `IO.now()`
+has **one-millisecond resolution**, so the divisor — 5 ms, and sometimes 4 — is
+three or four ticks wide. Measured across sessions the row-window side reads 4 or
+5 ms and the ratio moves between about 1,600× and 2,000×. The order of magnitude
+is solid; the third significant figure is not. Every `ns` column in this chapter
+is subject to the same thing, which is why the 32×32 row is the least trustworthy
+one — it is four ticks total.
 
 This is the number worth carrying away from the whole Performance part of the
 book. Ten cores bought about 3× in the last chapter. Changing the algorithm bought
