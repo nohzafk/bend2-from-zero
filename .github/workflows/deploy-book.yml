@@ -24,13 +24,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Pinned to the mdbook the book is written against, not to `latest`.
-      # Bump this and the local toolchain together: if CI builds with a newer
-      # mdbook than `mdbook serve` does, the published book slowly stops being
-      # the one you previewed.
-      - uses: peaceiris/actions-mdbook@v2
-        with:
-          mdbook-version: "0.5.2"
+      # The official release binary, not a runner action. peaceiris/actions-mdbook
+      # is the usual choice for this, but its newest release is from 2024-04 and
+      # still targets Node 20 -- deprecated on GitHub runners, so it warns today
+      # and breaks later. This is three lines with no Node in it.
+      #
+      # Version pinned to the mdbook the book is written against, not to
+      # `latest`: bump it and the local toolchain together, or the published
+      # book slowly stops being the one `mdbook serve` shows.
+      - name: Install mdBook
+        env:
+          MDBOOK_VERSION: "0.5.2"
+        run: |
+          curl -sSL "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
 
       - run: mdbook build
 
