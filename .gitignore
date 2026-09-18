@@ -1,0 +1,26 @@
+# 上游 clone，不是我们的代码（108 MB 里的绝大部分）
+bend/
+
+# ---- bend 的编译产物 ----
+# `bend x.bend -o x` 会同时产出两个文件：x（CPU/宿主）和 x.gpu（MetalLib 内核）
+parallel/pow2
+parallel/pow2_26
+parallel/pow2_gpu
+parallel/parsum
+parallel/parsum.gpu
+
+gpu/pow2_gpu
+gpu/pow2_gpu.gpu
+
+gpu/mandelbrot/cpu
+gpu/mandelbrot/gpu
+gpu/queens/cpu
+gpu/queens/gpu
+
+life/life_par
+life/life_row
+life/life_anim
+
+# `bend x.bend -o x.c` 生成的 C 源码（CPU-only 构建的中间产物，再 clang 出 cpu）
+gpu/mandelbrot/main.c
+gpu/queens/main.c
