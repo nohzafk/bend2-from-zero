@@ -114,3 +114,8 @@ cd life && bend life_row.bend -o life_row && ./life_row --threads 8
 - **`LAWS.bend` 的 gate 真的拦得住**。见 `life/LIFE_PAR_PROOF.bend`：改坏 `tree_cells`
   的偏移或 `block` 的取值，`bend` 立刻拒绝；`pure_par_sum` 那条同构定律的证明
   只有三行，因为 `Nat.add` 没有 cons 结构，而列表有
+- **每个 `!` 程序要先交约 85ms 的固定入场费**，和它算多少无关（`gpu_floor` 算 4 和
+  `pow2!(26n)` 算 6700 万一样贵，同一进程调两次也只多几毫秒）。所以 **GPU 的墙钟数字
+  不是关于 GPU 的陈述**：扣掉这笔门费，mandelbrot 从「快 6×」变成「快约 20×」，
+  而 pow2 根本不是在比算术。想知道你在量哪一个，写一个什么都不干的 `!` 程序去量它。
+  见 `gpu/README.md`

@@ -12,6 +12,12 @@ parallel/parsum.gpu
 gpu/pow2_gpu
 gpu/pow2_gpu.gpu
 
+# the two probes that measure the `!` entry cost
+gpu/gpu_floor
+gpu/gpu_floor.gpu
+gpu/gpu_twice
+gpu/gpu_twice.gpu
+
 gpu/mandelbrot/cpu
 gpu/mandelbrot/gpu
 gpu/queens/cpu
