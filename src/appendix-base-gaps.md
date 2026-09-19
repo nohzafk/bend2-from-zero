@@ -9,18 +9,18 @@ not.
 `Base` ships inside the Bend installation, as a single file:
 
 ```
-~/.bend/app/<version>/<hash>/bend2/base.bend
+~/.bend/bend2/base.bend
 ```
 
-Measured, for Bend 2.0.5:
+Measured, for Bend 2.0.16:
 
 | | |
 |---|---|
-| lines | 2,827 |
-| `def` | 373 |
+| lines | 2,850 |
+| `def` | 378 |
 | `type` | 22 |
 | `law` | 72 |
-| namespaces | 26 |
+| namespaces | 28 |
 | **lemmas** | **0** |
 
 The 22 types break down as **13 `is Data`**, **3 `is Type`** and **6 `is Kind`** —

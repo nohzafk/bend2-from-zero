@@ -11,13 +11,12 @@ a measurement needs a fixed input.
 | `gpu/queens/main.bend` | `bench/runtime/queens/main.bend` | byte-identical |
 
 Taken from upstream commit `e80e6922b632436ba1f2051441dd41a2a5e7c0a6`
-("Bend 2.0.16: term_key is the identity of a term"); verified byte-identical at
-that commit and at 2.0.5's `e6676b080f25b1bc1bf5b5b7d7a17e22f8022599`, which is
-when the numbers in this book were first taken.
+("Bend 2.0.16: term_key is the identity of a term") — the revision the compiler
+this book was written against ships.
 
 **The guide is deliberately not here.** The book quotes `bend guide`, but a copy
-in this repository would be stale within days — Bend released six versions in
-under three hours on 2026-09-19. Every install already carries a copy that
+in this repository would be stale within days, on a language that ships several
+releases a day. Every install already carries a copy that
 matches the compiler it came with (`bend guide`, or `~/.bend/guide/GUIDE.md`),
 so the quotes cite it by section name instead. See the introduction.
 

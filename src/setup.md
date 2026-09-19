@@ -13,7 +13,7 @@ bend --version
 ```
 
 ```
-bend 2.0.5
+bend 2.0.16
 ```
 
 That is the version this book was written against.
@@ -25,88 +25,76 @@ that has not set `BEND_HOME`, that means `~/.bend`:
 
 | Path | What it is |
 |---|---|
-| `~/.bend/bin/bend` | a **3.5 KB POSIX shell launcher** — not the compiler |
-| `~/.bend/current` | a symlink to the version currently installed |
-| `~/.bend/app/<version>/<hash>/` | the real implementation, in TypeScript |
+| `~/.bend/bin/bend` | the compiler — a single native binary |
+| `~/.bend/bend2/` | `base.bend`, and `effs/`, the effect definitions |
+| `~/.bend/guide/` | the guide, plus the effects and shaders guides |
+| `~/.bend/lib/` | packages pulled from the hub, keyed by content hash |
+| `~/.bend/check.json` | when it last asked whether a newer version exists |
 
-That first row matters more than it looks. `bend` is a shell script that
-resolves the version, checks for updates, and then hands the work to **bun**
-running the TypeScript. So the thing on your `PATH` is a launcher, and every
-invocation carries a small startup cost you will notice later when you are
-timing things — and an automatic update check, which is why a first run
-sometimes stalls.
+One self-contained file, with no runtime behind it. That is worth knowing
+before you read any timing in this book: nothing in the numbers is startup
+cost.
 
 > **Careful with the repository you downloaded.** If you cloned
 > `github.com/bendlang/bend` to read its source, there is a directory in it
 > named `bend/`. It is unrelated to `~/.bend/bin/bend`. One is the upstream
 > source tree; the other is the thing on your `PATH`.
 
-## The trap: the installer does not know about fish
+## The installer does not touch your shell
 
-The install script ends by adding `~/.bend/bin` to your shell's startup file,
-and it decides which one with this:
-
-```sh
-case ${SHELL:-} in
-  *zsh)  rc=$HOME/.zshrc ;;
-  *bash) rc=$HOME/.bashrc ;;
-  *)     rc=$HOME/.profile ;;
-esac
-```
-
-**Only zsh and bash are handled.** If your login shell is zsh, the line lands
-in `~/.zshrc` — which fish does not read. If your login shell *is* fish, you
-fall through to the `*)` branch and it writes to `~/.profile`, which fish does
-not read either. Either way the script cheerfully prints:
+It prints the line to add, and leaves it to you:
 
 ```
-Your PATH now has ~/.bend/bin; open a new shell to use bend.
+  Add it to your PATH: export PATH="$HOME/.bend/bin:$PATH"
 ```
 
-…and `which bend` finds nothing.
+On fish it prints the fish spelling instead:
 
-The fix is one line in your fish config:
-
-```fish
-fish_add_path ~/.bend/bin
+```
+  Add it to your PATH: fish_add_path $HOME/.bend/bin
 ```
 
-This is worth knowing about for a second reason: it is the kind of thing that
-makes people conclude a language is broken when it is a five-line shell script
-in the installer. Bend's compiler is fine. Its installer assumes bash.
+Nothing is written to your startup files, so `bend` resolves only once you have
+added that line yourself — on any shell, fish included.
 
-## Telemetry, and turning it off
+## The once-a-day version check
 
-The launcher sends an anonymous report on every run — version, OS, architecture,
-which subcommand, exit code, elapsed milliseconds — by POSTing to
-`bend-lang.com/ping` in the background. Set:
+Once a day, `bend` asks `bend-lang.com` what the latest version is. It sends its
+own version, the OS and the CPU type, and nothing else — no code, no file names,
+no timings. If a newer version exists it says so, and that is all: **the
+installed bend never updates itself.**
 
 ```sh
 export BEND_NO_TELEMETRY=1
 ```
 
-This book sets it everywhere, and so should you if you are going to run the
-benchmarks in it, since the reports are fire-and-forget but they are not free.
+turns the question off. This book sets it everywhere, and so should you if you
+are going to run the benchmarks in it.
 
 ## The thing that will waste your afternoon: two backends
 
 Bend has two ways to run your program, and they are not equivalent.
 
 ```sh
-bend hello.bend              # ① interpreted, on a JavaScript backend (bun)
+bend hello.bend              # ① the JavaScript target
 bend hello.bend -o hello     # ② compiled to a native executable
 ./hello
 ```
 
-① is instant and good for everything in the first half of this book. ② takes a
-few hundred milliseconds and is what you need for the second half.
+① starts instantly and is good for everything in the first half of this book. ②
+takes a few hundred milliseconds to build and is what you need for the second
+half.
 
-**The difference is parallelism.** The JavaScript backend **runs everything
-sequentially** — Bend's own documentation says so plainly, and it means what it
-says. A `fork-join` program under ① produces exactly the right answer, at
-exactly the speed of the non-parallel version. If you measure a Bend program
-without compiling it, you will find no parallelism anywhere, and conclude the
-whole thing is marketing.
+**The difference is parallelism.** The guide is blunt about it:
+
+> The JavaScript target ignores all that and just runs sequentially.
+>
+> — `bend guide`, *Parallelism*
+
+A `fork-join` program under ① produces exactly the right answer, at exactly the
+speed of the non-parallel version. If you measure a Bend program without
+compiling it, you will find no parallelism anywhere, and conclude the whole
+thing is marketing.
 
 So:
 
@@ -117,8 +105,9 @@ bend pow2.bend -o pow2
 ./pow2 --threads 8
 ```
 
-`--threads` only exists on the native binary. It is how you tell the runtime how
-many cores to spread the work over.
+`--threads` only exists on the native binary — `bend file.bend --threads 8` is
+refused as an unknown option. It is how you tell the runtime how many cores to
+spread the work over.
 
 ## Two kinds of `main`
 

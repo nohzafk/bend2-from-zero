@@ -443,8 +443,7 @@ Measured, on this machine:
 | `LIFE_PAR_PROOF.bend` | 0.07 s |
 | `LIFE_ANIM_PROOF.bend` | 0.06 s |
 
-Under a tenth of a second, including startup, re-measured on 2.0.16 while this
-part was revised (the appendix's own re-run read a few hundredths higher — the
+Under a tenth of a second, including startup, re-measured while this part was revised (the appendix's own re-run read a few hundredths higher — the
 order, as it warns, is the finding). This is the "several orders of
 magnitude" claim from the introduction, made concrete: a proof the size of a
 small paper is checked between keystrokes. The tradeoff is the one the language

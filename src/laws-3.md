@@ -5,7 +5,7 @@ This one is about the gate itself — `bend PROOF.bend`, the command that return
 the verdict — and about what that verdict is worth. Both chapters came back to
 the same small print, and this is where it gets exact: *"All terms check." is
 the only evidence, and it is not evidence at all.* Every output below is pasted
-from a real run of `tools/drift/gate_matrix.sh`, on Bend 2.0.16.
+from a real run of `tools/drift/gate_matrix.sh`.
 
 ## The distance between two sentences
 
@@ -53,8 +53,8 @@ upstream's `WONTFIX.txt`, under DESIGN:
 Two measured details about the note. First, the count covers everything the run
 loads: one `@unsafe` def anywhere in the import graph — even one no proof
 touches — degrades the message. Second, the count covers more than `@unsafe`:
-on 2.0.16 a file containing a `~` template instance prints it too, "until the
-checker verifies template expansion itself" (the changelog's words). A template
+a file containing a `~` template instance prints it too, "until the checker
+verifies template expansion itself" (the changelog's words). A template
 skips no check; that line is a disclosure, not a hole. But it means the message
 is something to read, not a bit to parse.
 
@@ -130,8 +130,8 @@ Stated with the same care, because it is not nothing:
 - **The break tests.** Change the implementation and the gate closes; restore
   it and the gate opens. Five of the six patches the previous chapters record
   — the three `life_par` ones and two of the three `life_anim` ones — were
-  re-run on 2.0.16 while this chapter was written, and every one still closes
-  the gate. (Each patch asserts it changed exactly one spot before writing,
+  re-run while this chapter was written, and every one still closes the
+  gate. (Each patch asserts it changed exactly one spot before writing,
   and every file was restored byte-identical — the discipline of the
   appendix, re-used.)
 - **Open laws are refused.** A declared law without a proof is

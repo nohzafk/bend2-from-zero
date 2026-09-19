@@ -83,11 +83,8 @@ Those quotes are therefore cited by **section name**, not by line number:
 >
 > — `bend guide`, *Some Section*
 
-Line numbers were the first attempt and they rotted within one release — the
-guide's own count moved from 605 lines to 621, and a citation of "line 586"
-ended up pointing at a paragraph about the GPU. A section name still gets you
-to the right place after the file has been edited around it, and it is checkable
-in one command. This book was written against **2.0.16**.
+A line number points at whatever drifts into that position; a section name
+survives edits around it, and you can check it in one command.
 
 ## How to read it
 
@@ -118,9 +115,11 @@ the book in the way.
 
 | | |
 |---|---|
-| Bend | 2.0.5 |
+| Bend | 2.0.16 |
 | Machine | Apple M3 Max, 10 performance cores + 4 efficiency cores, macOS |
 | Verified on | this machine only — the numbers are one machine's numbers |
 
-Bend is young. Version 2.0.5 was current while this was written, and some of
-what follows will have been fixed by the time you read it.
+Bend is young and it moves quickly, so some of what follows will have moved by
+the time you read it. Every measurement in this book is re-checked mechanically
+against whichever version you are running — see
+[the drift directory](https://github.com/nohzafk/bend2-from-zero/tree/main/tools/drift).

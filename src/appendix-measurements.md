@@ -11,7 +11,7 @@ of which machine, what command, and what the number did when it was re-run.
 | cores | 14 logical — **10 performance, 4 efficiency** |
 | memory | 36 GB, unified |
 | OS | macOS 27.0 |
-| Bend | 2.0.5 |
+| Bend | 2.0.16 |
 
 `hw.perflevel0.logicalcpu` reports 10. That is why `--threads 8` and `--threads 10`
 are where the parallel curves flatten and `--threads 14` is slower: past ten the
@@ -20,6 +20,10 @@ this book should be read as oversubscription, not as more capacity.
 
 **All numbers were re-run for this appendix on 2026-09-18**, on the machine above,
 with nothing else running. Where a value moved, the book quotes the new one.
+
+Every one of them is re-checked mechanically with `tools/drift/run_drift.py` —
+92 checks — so a version that moves a number says so instead of leaving the book
+quietly wrong.
 
 ## 1. The two proof gates
 

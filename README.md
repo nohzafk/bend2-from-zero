@@ -8,7 +8,7 @@ deliberately wrong** — written to make the compiler talk. That second kind usu
 teaches more than reading the docs does, so they are kept, and every README says
 "this one is ❌, and here is the error it gives".
 
-- Environment: Bend 2.0.5, macOS 27, Apple M3 Max (10 performance cores + 4 efficiency)
+- Environment: Bend 2.0.16, macOS 27, Apple M3 Max (10 performance cores + 4 efficiency)
 - `bend/` is a clone of the upstream repo. **It is not our code** — reference only,
   do not edit anything inside it.
 
@@ -37,11 +37,18 @@ in this repository (an untracked file is as good as missing on the published
 site). It runs in the Pages workflow, so a dead link fails the build
 instead of shipping.
 
+`tools/check-quotes.py` checks the book's other promise — that every compiler
+error in it is quoted from a real run. It finds each quoted error, runs the
+probe files the book references, and requires the quoted lines (line numbers
+included) to appear in the real output. It also runs in the Pages workflow,
+against a pinned bend release, so a quote that no longer reproduces fails the
+build.
+
 ## Setup
 
 ```sh
 curl -fsSL https://bend-lang.com/install.sh | sh
-bend --version                                       # this repo was written against 2.0.5
+bend --version                                       # this repo was written against 2.0.16
 ```
 
 **Where it lands.** The installer writes to `${BEND_HOME:-$HOME/.bend}`; `BEND_HOME`
@@ -49,22 +56,21 @@ is unset on this machine, so `~/.bend`:
 
 | Path | What it is |
 |---|---|
-| `~/.bend/bin/bend` | a 3.5 KB **POSIX shell launcher** (resolves the version → self-updates → hands off to bun) |
-| `~/.bend/current` | symlink to `~/.bend/app/2.0.5/ZRx01G` |
-| `~/.bend/app/<version>/<hash>/` | the TypeScript that is actually interpreted |
+| `~/.bend/bin/bend` | the compiler — one 63 MB native binary |
+| `~/.bend/bend2/` | `base.bend`, and `effs/` |
+| `~/.bend/guide/` | the guide, the effects guide, the shaders guide |
+| `~/.bend/lib/` | hub packages, keyed by content hash |
 
 The `bend/` directory in this repo is **not** that. It is a clone of the upstream
 source — same name, no relation.
 
-The launcher sends anonymous telemetry by default (a background POST of
-`{id, ver, os, arch, cmd, exit, ms}` to `bend-lang.com/ping` on every run) and
-auto-downloads new versions. `BEND_NO_TELEMETRY=1` turns that off.
+`bend` asks `bend-lang.com` once a day whether a newer version exists, sending
+its version, OS and CPU type and nothing else, and it never updates itself.
+`BEND_NO_TELEMETRY=1` turns the question off.
 
-**The installer's PATH step does not know about fish.** It picks the rc file by
-`case ${SHELL:-} in *zsh) ...;; *bash) ...;; *) ~/.profile;; esac`, so a fish user
-falls into the `*)` branch and gets a line written to `~/.profile`, which fish never
-reads — while the script prints *"Your PATH now has ~/.bend/bin; open a new shell to
-use bend."* On a fish machine, add `~/.bend/bin` to PATH yourself.
+**The installer does not edit your shell files.** It prints the line to add —
+`export PATH=...` on a POSIX shell, `fish_add_path ...` on fish — and leaves the
+edit to you.
 
 ## Running things
 

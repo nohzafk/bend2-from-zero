@@ -1,6 +1,6 @@
 # 仿射性（Affinity）—— Bend 2 的第一把钥匙
 
-> 本文件由一次 cordis-agent 教学会话产出，所有实验均在本机实跑（Bend 2.0.5，M3 Max）。
+> 本文件由一次 cordis-agent 教学会话产出，所有实验均在本机实跑（Bend 2.0.16，M3 Max）。
 > 实验文件都在本目录下（`t1_*.bend` … `t9_*.bend`、`affine_bad.bend`），官方指南全文见 `bend guide`（或 `~/.bend/guide/GUIDE.md`）。
 
 ---
