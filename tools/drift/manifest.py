@@ -280,6 +280,24 @@ CHECKS = [
            " is deleted is a parse error ('expected : ->') -- filed upstream as"
            " a diagnostic-er quality issue."),
 
+    # -------------------------------------------------------------- laws
+    # The laws part's smallest examples (src/laws-1.md).
+    C("laws/two_plus_two", "probes-ok", "laws", "two_plus_two.bend", "run",
+      expect_out=["All terms check."], timeout_s=60, source="measured",
+      note="a law with no variables; {==} closes it because both sides"
+           " compute"),
+    C("laws/add_zero", "probes-ok", "laws", "add_zero.bend", "run",
+      expect_out=["All terms check."], timeout_s=60, source="measured",
+      note="the first proof with a variable: match + the self-quote + {==}"),
+    C("laws/fill_rettype_bad", "probes-bad", "laws", "fill_rettype_bad.bend",
+      "run", expect_err=["expected : ':'"], expect_rc="nonzero",
+      timeout_s=60, source="measured",
+      note="a law's fill may not carry a return type"),
+    C("laws/add_zero_bad", "probes-bad", "laws", "add_zero_bad.bend", "run",
+      expect_err=["expected : Nat.add(x, 0n)"], expect_rc="nonzero",
+      timeout_s=60, source="measured",
+      note="the stuck-term refusal: {==} cannot close x + 0 == x"),
+
     # ---------------------------------------------------------------- fx
     # The effects probes (the fx/ topic directory).  Run mode = the JS lane;
     # entries that need the native lane use compile mode.  Exit codes are

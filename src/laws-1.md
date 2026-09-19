@@ -1,18 +1,308 @@
 # Your first law and proof
 
-Everything so far has been a program. This chapter is about the other thing Bend
-is for, and it is the reason the language exists at all.
+The last chapters left two claims dangling.
 
-Consider what we have been doing for four chapters. We wrote a parallel Life
-step, measured it, and concluded it computes the same thing as the sequential
-loop. We concluded that **by testing it** — running both, counting live cells,
-seeing 5 each time. That is evidence about the inputs we happened to try. It is
-not knowledge about the code.
+The first is from [Is it actually parallel?](life-parallel.md). We said the
+fork-join tree computes the same cells as the sequential loop. Our evidence was
+running both and counting live cells — `live=5` every time. That is evidence
+about the handful of grids we happened to try. It is not a statement about the
+code.
 
-Bend lets you replace it with something that is not evidence: a proof the
-compiler checks. Here is that claim, as a thing the compiler can read.
+The second is from [Making it move](life-anim.md). The renderer only works if
+every cell is a palindrome, and that fact lives in a comment above `cell`.
+Change `"██"` to `"▐█"` some day — the chapter's own words, "a perfectly
+reasonable thing to do" — and each row flips internally. Nothing between your
+edit and your terminal will object.
 
-## A law is a type
+Both claims are real, both are load-bearing, and both are the kind that break
+silently. Bend has a facility for exactly them: you write the claim down in a
+form the compiler reads, the compiler refuses to build until the claim is
+**proved**, and it refuses again the moment an edit makes the proof stop
+working.
+
+That facility is also the reason this language exists. [What Bend 2
+is](what-is-bend.md) quotes the pitch: code written by machines, which you will
+not read, and which therefore has to be *checked* instead of reviewed. The type
+checker already covers one half of that — a machine writes a program, and the
+types hold. Laws and proofs are the other half: a machine writes a program, and
+the fact that it computes what you asked holds too. That bet is about a future
+this book does not try to test. What it tests is the mechanism — and the
+mechanism starts here, on claims you have already made yourself.
+
+One thing to say before the first definition, because it is the question a
+tutorial owes you: **no law is required to write a Bend program.** Every
+chapter so far ran without one, and the compiler never asked. You reach for a
+law when a claim has three properties at once:
+
+- it is **load-bearing** — the program is wrong, not merely different, if it breaks;
+- it is **not already held by a type** — "this function returns a `String`" is
+  a claim too, and the type checker has that one;
+- a test can only **sample** it — three grids out of infinitely many, one
+  rendering run out of a million.
+
+The palindrome constraint and the parallel-tree equality are both that shape,
+and they are what the rest of this part is spent on. Three chapters: how to
+write a law and a proof (this one), what they cost (the next), and what the
+gate actually guarantees (the last).
+
+## The words, first
+
+Four words carry everything below, and they are worth pinning down before
+anything else is said.
+
+A **proposition** is a claim. Here is one about a number `x`:
+
+```python
+{Nat.add(x, 0n) == x : Nat}
+```
+
+Read it as a sentence: *the value of `Nat.add(x, 0n)` is the value `x`*. It
+looks like a boolean test; it is not one. It is a **type** — the type "these
+two terms are the same `Nat`". Hold that thought for one paragraph.
+
+A **proof** is a value of that type. So writing a proof is not a separate
+activity with its own language: because the claim is a type, a proof is **an
+ordinary `def`** — checked exactly the way every `def` in this book was
+checked, against its type. No tactics, no separate proof editor.
+
+A **law** is a proposition that has been given a name and declared as an
+obligation:
+
+```python
+law add_zero:
+  for x: Nat
+  {Nat.add(x, 0n) == x : Nat}
+```
+
+The `for` line introduces the variable the claim is about — `for x: Nat` reads
+"for every `x` of type `Nat`". While no proof exists, the law is an **open
+claim**, and the compiler reports it as one when you run the file.
+
+A **lemma** is a proof whose job is to be quoted inside other proofs. The word
+names a role, not a mechanism: any proof can be quoted, and the small facts
+that get quoted are the ones everyone calls lemmas.
+
+(The propositions in this book are all equations. A proposition can be any type
+at all; equations are what these claims needed.)
+
+Why any of this works is an idea borrowed from proof assistants — Lean, Rocq —
+and you are not expected to have met one. One paragraph. In that tradition a
+claim and a type are the same notion: a proposition **is** a type, and a proof
+**is** a term of that type. Bend takes the idea as its own, which is why the
+machinery checking your claims is the same type checker that has been checking
+your programs all along — and why checking here is as fast as type checking
+here, rather than the minutes a dedicated proof assistant might take.
+
+## The smallest law
+
+A law with no variables at all. Two plus two is four:
+
+```python
+import Base
+
+law two_plus_two:
+  {Nat.add(2n, 2n) == 4n : Nat}
+```
+
+Put that in a file and run it. The compiler says precisely what is missing:
+
+```
+$ bend two_plus_two.bend
+Error: 1 TODO found.
+The code is incomplete, and not a valid proof yet.
+```
+
+That is what "open claim" means mechanically: the file does not compile until
+a proof exists. Here is the proof. It is one line.
+
+```python
+def two_plus_two():
+  {==}
+```
+
+Nothing connects the two blocks except the **name**. A `def` with no return
+type whose name is a law *is* the proof of that law — no import, annotation or
+registration. The connection is strict enough that the reverse is enforced
+too: a `def` named after a law may not carry a return type at all, because the
+law already supplies it.
+
+```python
+# ❌ a fill with its own return type -- rejected
+def two_plus_two() -> {Nat.add(2n, 2n) == 4n : Nat}:
+```
+
+```
+Error:
+- expected : ':'
+- observed : '-'
+```
+
+(This rejection and the `{==}` refusal further down are kept as runnable
+files under `laws/` — the errors are indexed in
+[the appendix](appendix-probes.md).)
+
+Run the file again, and the open claim is closed:
+
+```
+All terms check.
+```
+
+`{==}` is the proof of `{x == x}`: "both sides are the same term". It closes
+this goal because the checker *computes* — `Nat.add(2n, 2n)` reduces to `4n`,
+the goal becomes `{4n == 4n}`, and the two sides are literally identical.
+When a goal is not closing and you want to see exactly what the checker is
+looking at, replace the body with `?anything`:
+
+```python
+def two_plus_two():
+  ?goal
+```
+
+```
+Error:
+- expected : {4n == 4n : Nat}
+- observed : ?goal
+```
+
+The `expected` line is the goal in the form it has **right now** — note that it
+reads `4n == 4n`: the computation already happened, and this is what remains to
+be said. Keep this instrument nearby; it answers "what do I owe?" at any point
+in a proof. The second instrument is `?TODO`, a hole that reports itself as
+`1 TODO found` — the same message as an unfilled law.
+
+## The first proof with a variable
+
+`two_plus_two` proves nothing interesting, because the checker can compute both
+of its sides. Interesting claims have variables in them — like the first fact
+the Life proof needed, which you can now derive for yourself:
+
+```python
+law add_zero:
+  for x: Nat
+  {Nat.add(x, 0n) == x : Nat}
+```
+
+For every `x`: `x + 0` is `x`. Try the one-liner:
+
+```python
+def add_zero(x):
+  {==}
+```
+
+❌ The compiler refuses:
+
+```
+Error:
+- expected : Nat.add(x, 0n)
+- observed : x
+```
+
+Read the complaint: `{==}` demanded that the two sides *be* the same term, and
+they are not, because one of them cannot even run. `Nat.add` matches on its
+**first** argument, and that argument is the unknown `x` — there is nothing to
+match, so the addition is stuck and sits in the goal unevaluated. (Note also
+that the fill takes the law's binder as its parameter, left untyped: the law
+already says `x: Nat`, and the def does not have to say it again.)
+
+That one mechanical fact — *which argument a function matches on decides when
+it can compute* — matters more than any other in this part of the book.
+
+To prove a claim "for every `x`", you look at how the value can be built. `Nat`
+has two ways to be: zero, or one-plus-something-smaller. So the proof has two
+cases, and "look at how the value is built" is spelled `match`:
+
+```python
+def add_zero(x):
+  match x:
+    case 0n:
+      {==}
+    case 1n+p:
+      %add_zero(p) : {1n+Nat.add(p, 0n) == 1n+_ : Nat}
+      {==}
+```
+
+**Case `0n`.** Both sides compute — `Nat.add(0n, 0n)` is `0n` — so `{==}`
+closes it.
+
+**Case `1n+p`.** Here `x` is one more than a smaller number `p`, and the goal
+is now `{1n+Nat.add(p, 0n) == 1n+p}`: the `+ 0` is still stuck, this time on
+`p`. The move to look at twice is the line quoting **`add_zero` itself**, at
+`p`:
+
+```python
+%add_zero(p) : {1n+Nat.add(p, 0n) == 1n+_ : Nat}
+```
+
+Calling the proof you are currently writing, on a smaller value, is
+**induction** — and the "smaller" requirement is not new: it is the decreasing
+argument rule from [Numbers and patterns](basics-numbers.md), applied to the
+proof's own recursive call. `p` is what `1n+p` is made of, so it shrinks, and
+the compiler is satisfied for the same reason it was satisfied by every
+recursive function in this book.
+
+What the line does: `add_zero(p)` is the statement "`p + 0` is `p`", and the
+rewrite uses it to replace the `p` on the goal's right — the spot marked `_` —
+with `Nat.add(p, 0n)`. The right side becomes `1n+Nat.add(p, 0n)`, identical to
+the left, and `{==}` closes the case.
+
+Dwell on that direction for a second, because it is the one thing in the
+mechanics that surprises everyone: the rewrite made the goal *bigger*, not
+smaller. `%` does not simplify. It **moves the goal toward a shape you choose
+when you write the lemma**. The rule is stated in full below, but you have now
+seen it work.
+
+And that is the whole toolkit. `{==}` is the only axiom; `%` is the only rule;
+every proof in this book, however long, is those two moves repeated — *move one
+side until it equals the other, one lemma at a time*.
+
+## Two containers for a proof
+
+A proof can be kept in two ways, and the difference is when you commit to the
+claim, not how the proof is checked.
+
+**The law form** — the claim is declared, and the proof fills it in:
+
+```python
+law add_zero:
+  for x: Nat
+  {Nat.add(x, 0n) == x : Nat}
+
+def add_zero(x):
+  ...           # the match you just wrote
+```
+
+The claim is an obligation from the moment it is written: while the proof is
+missing, the file reports `1 TODO found`.
+
+**The plain-def form** — no law anywhere, just a fact:
+
+```python
+def add_zero(a: Nat) -> {Nat.add(a, 0n) == a : Nat}:
+  ...           # same match, same two cases
+```
+
+Same proof, one line different: the proposition appears as the def's **return
+type** and has no name in the file. Nothing fails while it does not exist —
+and once it exists, it can be quoted with `%` like any law's proof.
+
+The law form is for claims that must not be forgotten: requirements, stated up
+front, that fail the build until they are filled. The plain-def form is for
+facts discovered *while* proving something else — which is what the word
+**lemma** is for in practice. The Life proof files use both, and the division
+is visible in them: `tree_is_serial` is a law, while `add_zero` and
+`add_assoc` are plain defs, written on the spot when the proof needed them.
+
+Bend's convention for a project puts the two forms in two files at the root:
+`LAWS.bend` states the laws — written when the requirement is stated, the
+human's file — and `PROOF.bend` imports it and holds the fills plus any helper
+lemmas. `bend PROOF.bend` is the gate: it answers `All terms check.` only when
+every law is filled and every proof holds. (The Life files follow the
+convention with a subject prefix — `LIFE_PAR_LAWS.bend`, `LIFE_PAR_PROOF.bend`
+— because this repository proves things about more than one subject.)
+
+## The claim we actually made
+
+Now the dangling claim from the parallel chapter, written as a law:
 
 ```python
 law tree_is_serial:
@@ -25,19 +315,22 @@ law tree_is_serial:
   {Par.tree_cells(d, g, w, h, blk, k) == Par.block(g, w, h, Par.cells_in(d, blk), k) : List<&2, Nat>}
 ```
 
-Read it as a sentence. *For any depth, grid, width, height, block size and start
-index: the fork-join tree produces exactly the list that one sequential loop over
-the same range produces.*
+Read it as a sentence. *For any depth, grid, width, height, block size and
+start index: the fork-join tree produces exactly the list that one sequential
+loop over the same range produces.*
+
+(The binders carry the same quantity marks as anywhere else — `for +d` says
+how often the proof may use `d`; choosing them is the next chapter's subject,
+so write them as the example does until then.)
 
 (A note for later, because it is a trap: `Base` uses the same `law` keyword 72
-times to declare *type families* rather than propositions. In user code those are
-written with `def` — `def Tree(d: Nat) -> Data:`. Both uses are the same idea, a
-declaration you fill in, but the mechanism is not interchangeable. See
+times to declare *type families* rather than propositions. In user code those
+are written with `def` — `def Tree(d: Nat) -> Data:`. Both uses are the same
+idea, a declaration you fill in, but the mechanism is not interchangeable. See
 [What Base does not give you](appendix-base-gaps.md).)
 
-There is nothing imperative here and nothing to run. `==` is not a comparison
-that returns a `Bool` — it is a **type**, and the law `tree_is_serial` names the
-type "both sides are the same list". A proof is a `def` of that type:
+And the proof begins the way the small one did — a `def` named after the law,
+with the law's binders as parameters:
 
 ```python
 def Laws.tree_is_serial(d, g, w, h, blk, k):
@@ -48,32 +341,19 @@ def Laws.tree_is_serial(d, g, w, h, blk, k):
       ...
 ```
 
-Note the shape. It is an ordinary function — it takes the law's parameters and
-its body is **induction on `d`**, which is a `match` because `Nat` is a datatype.
-The case `d = 0` is proved by `{==}`.
+(The `Laws.` prefix is the module: the law is declared inside `LAWS.bend`,
+imported under the alias `Laws`, and a fill is named after the law including
+the module it came from.)
 
-## `{==}` is reflexivity
+Depth zero needs no work — a tree of depth zero *is* one leaf, and one leaf
+*is* the loop, so `{==}` closes that case. At depth `p + 1` the tree is two
+depth-`p` trees joined, while the spec is still one undecomposed loop.
+Something has to split that loop in two. That is the first non-trivial lemma.
 
-`{==}` is the proof of `{x == x}`: the two sides are already the same term.
+## `%`: one rule, and how to aim it
 
-That is the whole of the interesting content in this kind of proof. There is no
-tactic language, no `auto`, no `simp`. `{==}` is the only axiom and `%` is the
-only rule. So the entire craft is: **move one side until it equals the other, one
-lemma at a time.** The depth-0 case needs no work because a tree of depth zero
-*is* one leaf, and one leaf *is* the loop.
-
-At depth `p + 1`, the tree is two depth-`p` trees joined, and the spec is one
-undecomposed loop. Something has to split that loop in two. That is the first
-non-trivial lemma.
-
-## `%`: applying a lemma
-
-```python
-%cells_add(g, w, h, Par.cells_in(p, blk), Par.cells_in(p, blk), k) : {Par.tree_cells(1n+p, g, w, h, blk, k) == _ : List<&2, Nat>}
-```
-
-`%lemma(args) : P` rewrites the goal using `lemma`. The rule, and it is the one
-thing to get right:
+You have used `%` once — the self-quote inside `add_zero`. Here is the rule
+stated once, in full, because every remaining step of every proof is it:
 
 > **A lemma `e : {a == b}` applied as `%e(...) : P` replaces `b` with `a` in the
 > goal.** `P` is the goal written out with the occurrence of `b` replaced by `_`.
@@ -87,7 +367,13 @@ The right side is what the goal currently contains; the left side is what
 replaces it. Getting this backwards gives an error that says so plainly —
 `expected` and `observed`, with the two terms — and the fix is to swap them.
 
-In the line above, `cells_add(...)` has conclusion
+In the proof, the needed lemma splits a sequential loop in two:
+
+```python
+%cells_add(g, w, h, Par.cells_in(p, blk), Par.cells_in(p, blk), k) : {Par.tree_cells(1n+p, g, w, h, blk, k) == _ : List<&2, Nat>}
+```
+
+`cells_add(...)` has conclusion
 `{app(block(n,k), block(m,k+n)) == block(n+m,k)}`, so its *right* side is the
 combined loop `block(..., n+m, k)`. The goal's second component is
 `block(g, w, h, cells_in(p,blk) + cells_in(p,blk), k)` — the same form. The `_`
@@ -110,25 +396,31 @@ proof follows the recursion of the term.
 
 ## The library tax
 
-Two lemmas in the file exist for reasons that have nothing to do with Life:
+Two lemmas in the proof file exist for reasons that have nothing to do with
+Life:
 
 ```python
 def add_zero(a: Nat) -> {Nat.add(a, 0n) == a : Nat}:
 def add_assoc(a: Nat, -b: Nat, -c: Nat) -> {Nat.add(Nat.add(a, b), c) == Nat.add(a, Nat.add(b, c)) : Nat}:
 ```
 
-`Nat.add` recurses on its **first** argument. So when the first argument is a
-variable `k`, the term `Nat.add(k, 0n)` does not reduce — the reducer has nothing
-to match on. That is the entire reason `add_zero` exists: not because it is
-mathematically interesting, but because one side of an equation is stuck.
+You have met `add_zero` already — it is the fact you derived above, and the
+reason it exists is the one you watched fail: `Nat.add` is stuck when its first
+argument is a variable, so an equation containing `Nat.add(k, 0n)` for a
+variable `k` cannot be closed by computation, only by a lemma. `add_assoc` is
+the same diagnosis one level deeper: the offsets in the proof meet as
+`(k + 1) + q`, and no amount of computation turns that into `k + (1 + q)`.
 
-This is worth naming because it recurses through everything below. **Base has no
-lemma library.** There is no `Nat.add_zero` to import; there are no standard
-facts about `Nat.add`, `Nat.mul`, `Nat.mod` or `Nat.cmp`. Every proof that touches
-arithmetic brings its own small arithmetic with it. For this law that was two
-lemmas, both easy. For the law we *did not* write — index safety — the same
-beginning leads into `Nat.cmp` and iterated induction on two variables at once,
-and that is a different order of work. We will come back to that.
+Both are plain defs, not laws, because they were *needs*, not requirements —
+the distinction from "Two containers" doing its work.
+
+This is worth naming because it recurses through everything below. **Base has
+no lemma library.** There is no `Nat.add_zero` to import; there are no standard
+facts about `Nat.add`, `Nat.mul`, `Nat.mod` or `Nat.cmp`. Every proof that
+touches arithmetic brings its own small arithmetic with it. For this law that
+was two lemmas, both easy. For the law we *did not* write — index safety — the
+same beginning leads into `Nat.cmp` and iterated induction on two variables at
+once, and that is a different order of work. We will come back to that.
 
 ## Running it
 
@@ -139,6 +431,10 @@ cd life && bend LIFE_PAR_PROOF.bend
 ```
 All terms check.
 ```
+
+The law is in `life/LIFE_PAR_LAWS.bend`, the proof — lemmas included — in
+`life/LIFE_PAR_PROOF.bend`; both are printed in full at the end of this
+chapter.
 
 Measured, on this machine:
 
@@ -157,12 +453,12 @@ free.
 ## ⚠️ "All terms check" is not evidence
 
 A passing proof means the compiler verified your proof *of the type you wrote*.
-It says nothing about whether that type is the thing you meant. Prove a false law
-and it will happily check.
+It says nothing about whether that type is the thing you meant. Prove a false
+law and it will happily check.
 
 So the only evidence that the law is real is the other direction: **break the
-implementation and watch the gate close.** All three breaks below are made in the
-implementation file `life_par.bend` — never in the law:
+implementation and watch the gate close.** All three breaks below are made in
+the implementation file `life_par.bend` — never in the law:
 
 | change to `life_par.bend` | `bend LIFE_PAR_PROOF.bend` |
 |---|---|
