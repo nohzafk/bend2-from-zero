@@ -1,6 +1,6 @@
 {
  "meta": {
-  "date": "2026-09-19 10:23 UTC",
+  "date": "2026-09-19 11:11 UTC",
   "bend_version": "2.0.16",
   "bend_path": "/Users/randall/.bend/bin/bend",
   "bend_sha": "da9bc51449f04a65bf633351fb754cd6f883f5f5d9ab0c4e947f5c6f19eb7386",
@@ -10,12 +10,12 @@
   "perf_cores": "10",
   "macos": "27.0",
   "repo": "/Users/randall/projects/bend2-from-zero",
-  "commit": "9faee16",
-  "dirty": 6,
-  "load_start": "2.82/2.81/2.79",
+  "commit": "98eb466",
+  "dirty": 4,
+  "load_start": "2.20/2.13/2.20",
   "caffeinate": "yes",
-  "load_end": "3.74/3.17/2.93",
-  "elapsed_s": 112.2
+  "load_end": "2.56/2.25/2.23",
+  "elapsed_s": 110.3
  },
  "results": [
   {
@@ -31,7 +31,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a declared datatype (unknown: IO)\nLocation: main\n4 | # Writing IO<Unit> there does not compile. See src/basics-hello.md.\n5>| def main() -> IO<Unit>:\n6 |   do IO<Unit>:\n",
-     "secs": 0.057,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -49,7 +49,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : String\n- observed : U32\nLocation: main\n6 |   do IO<Unit>:\n7>|     IO.print(42)\n8 | \n",
-     "secs": 0.057,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -67,7 +67,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a decreasing self-call (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : loop\nContext:\n- p : Nat\nLocation: loop\n10 |     case 1n+p:\n11>|       loop(Nat.add(p, 1n))\n12 | \n",
-     "secs": 0.057,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -85,7 +85,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a decreasing self-call (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : evolve\nContext:\n- g : Nat\n- q : Nat\nLocation: evolve\n14 |     case 1n+q:\n15>|       evolve(step(g), q)\n16 | \n",
-     "secs": 0.057,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -103,7 +103,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : x\n- observed : x (consumed more than once)\nLocation: main\n3 | def main() -> U32:\n4>|   x = {3 : U32}\n5 |   (x + x : U32)\n",
-     "secs": 0.056,
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -121,7 +121,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : xs\n- observed : xs (consumed more than once)\nLocation: main\n2 | def main() -> Nat:\n3>|   xs = {[1, 2, 3] : List<U32>}\n4 |   Nat.add(List.length(&1, U32, xs), List.length(&1, U32, xs))\n",
-     "secs": 0.057,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -139,7 +139,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Data\n- observed : Type\nLocation: main\n3 | def main() -> U32:\n4>|   +a = [0 : U32*4n]\n5 |   b = a[0]\n",
-     "secs": 0.058,
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -157,7 +157,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : f\n- observed : f (consumed more than once)\nLocation: main\n2 | def main() -> U32:\n3>|   f = {x => (x + 1 : U32) : U32 -> U32}\n4 |   (f(1) + f(2) : U32)\n",
-     "secs": 0.057,
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -175,7 +175,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Data\n- observed : Type\nLocation: main\n3 | def main() -> U32:\n4>|   +f = {x => (x + 1 : U32) : U32 -> U32}\n5 |   (f(1) + f(2) : U32)\n",
-     "secs": 0.058,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -193,7 +193,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : -f\n- observed : f (consumed more than once)\nLocation: twice~0\n10 | # closure and is really about the missing ~. Compare t10_template.bend.\n11>| def twice(~f: U32 -> U32, x: U32) -> U32:\n12 |   f(f(x))\n",
-     "secs": 0.056,
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -211,7 +211,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a local binder: give it its own def)\nLocation:\n4 |   a1 = a[5] <- 42\n5>|   p = a1[0]\n6 |   (a2, b) = p\n",
-     "secs": 0.039,
+     "secs": 0.036,
      "timeout": false
     }
    ]
@@ -229,7 +229,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a term\n- observed : ':'\nLocation:\n7 |     a[5] <- 42\n8>|     IO.print(U32.show(a[5] : U32))\n9 | \n",
-     "secs": 0.039,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -247,7 +247,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a computed value: give it its own def)\nLocation:\n6 |     a[5] <- 42\n7>|     (a2, v) = a[5]\n8 |     IO.print(U32.show(v))\n",
-     "secs": 0.039,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -265,7 +265,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a local binder: give it its own def)\nLocation:\n3 |   a = [0 : U32*4n]\n4>|   p = a[5] <- 42\n5 |   (a2, b) = p\n",
-     "secs": 0.038,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -283,7 +283,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Sigma<&1, &1, Array<U32>, _ => U32>\n- observed : Array<U32>\nContext:\n- a : Array<U32>\n- a : Array<U32>\nLocation: main\n5 |   a[5] <- 42\n6>|   Pair.snd(Array<U32>, U32, a[9] <- 7)    # write idx 9, look at the second half\n7 | \n",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -301,7 +301,7 @@
      "rc": 0,
      "out": "hello, bend 2\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.063,
      "timeout": false
     }
    ]
@@ -319,7 +319,7 @@
      "rc": 0,
      "out": "a\nb\ttab\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.068,
      "timeout": false
     }
    ]
@@ -337,7 +337,7 @@
      "rc": 0,
      "out": "1n\n",
      "err": "",
-     "secs": 0.057,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -355,7 +355,7 @@
      "rc": 0,
      "out": "2\n",
      "err": "",
-     "secs": 0.062,
+     "secs": 0.059,
      "timeout": false
     }
    ]
@@ -373,7 +373,7 @@
      "rc": 0,
      "out": "1\n",
      "err": "",
-     "secs": 0.061,
+     "secs": 0.059,
      "timeout": false
     }
    ]
@@ -391,7 +391,7 @@
      "rc": 0,
      "out": "\u000033\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -409,7 +409,7 @@
      "rc": 0,
      "out": "7\n",
      "err": "",
-     "secs": 0.059,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -427,7 +427,7 @@
      "rc": 0,
      "out": "6\n",
      "err": "",
-     "secs": 0.057,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -445,7 +445,7 @@
      "rc": 0,
      "out": "11\n",
      "err": "",
-     "secs": 0.058,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -463,7 +463,7 @@
      "rc": 0,
      "out": "6n\n",
      "err": "",
-     "secs": 0.057,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -481,7 +481,7 @@
      "rc": 0,
      "out": "42\n",
      "err": "All terms check, with 1 unsafe annotation.\n",
-     "secs": 0.057,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -499,7 +499,7 @@
      "rc": 0,
      "out": "43\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -517,7 +517,7 @@
      "rc": 0,
      "out": "42\n",
      "err": "",
-     "secs": 0.061,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -535,7 +535,7 @@
      "rc": 0,
      "out": "([0, 0, 0, 0, 0, 42, 0, 0], 42)\n",
      "err": "",
-     "secs": 0.059,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -553,7 +553,7 @@
      "rc": 0,
      "out": "42\n",
      "err": "",
-     "secs": 0.061,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -571,7 +571,7 @@
      "rc": 0,
      "out": "4194304\n",
      "err": "",
-     "secs": 0.12,
+     "secs": 0.113,
      "timeout": false
     }
    ]
@@ -589,7 +589,7 @@
      "rc": 0,
      "out": "generation 0\n\n.#......\n..#.....\n###.....\n........\n........\n........\n........\n........\n\ngeneration 1\n\n........\n#.#.....\n.##.....\n.#......\n........\n........\n........\n........\n\ngeneration 2\n\n........\n..#.....\n#.#.....\n.##.....\n........\n........\n........\n........\n\ngeneration 4\n\n........\n..#.....\n...#....\n.###....\n........\n........\n........\n........\n\n\n",
      "err": "",
-     "secs": 0.082,
+     "secs": 0.079,
      "timeout": false
     }
    ]
@@ -607,21 +607,21 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.074,
+     "secs": 0.071,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.075,
+     "secs": 0.07,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.073,
+     "secs": 0.071,
      "timeout": false
     }
    ]
@@ -639,14 +639,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.069,
-     "timeout": false
-    },
-    {
-     "rc": 0,
-     "out": "All terms check.\n",
-     "err": "",
-     "secs": 0.069,
+     "secs": 0.065,
      "timeout": false
     },
     {
@@ -654,6 +647,13 @@
      "out": "All terms check.\n",
      "err": "",
      "secs": 0.068,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.065,
      "timeout": false
     }
    ]
@@ -689,7 +689,7 @@
      "rc": 1,
      "out": "",
      "err": "Error: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.\n",
-     "secs": 0.059,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -705,7 +705,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.26,
+    "secs": 0.236,
     "timeout": false
    },
    "runs": [
@@ -713,21 +713,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.545,
+     "secs": 0.438,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.253,
+     "secs": 0.222,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.241,
+     "secs": 0.214,
      "timeout": false
     }
    ]
@@ -745,21 +745,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.132,
+     "secs": 0.12,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.13,
+     "secs": 0.123,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.131,
+     "secs": 0.121,
      "timeout": false
     }
    ]
@@ -777,21 +777,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.075,
+     "secs": 0.074,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.076,
+     "secs": 0.074,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.073,
+     "secs": 0.074,
      "timeout": false
     }
    ]
@@ -809,21 +809,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.049,
+     "secs": 0.044,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.049,
+     "secs": 0.045,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.049,
+     "secs": 0.045,
      "timeout": false
     }
    ]
@@ -841,21 +841,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.046,
+     "secs": 0.043,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.046,
+     "secs": 0.049,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.046,
+     "secs": 0.051,
      "timeout": false
     }
    ]
@@ -871,7 +871,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.568,
+    "secs": 0.558,
     "timeout": false
    },
    "runs": [
@@ -879,21 +879,21 @@
      "rc": 0,
      "out": "4\n",
      "err": "",
-     "secs": 0.078,
+     "secs": 0.073,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "4\n",
      "err": "",
-     "secs": 0.085,
+     "secs": 0.077,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "4\n",
      "err": "",
-     "secs": 0.083,
+     "secs": 0.072,
      "timeout": false
     }
    ]
@@ -909,7 +909,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.567,
+    "secs": 0.566,
     "timeout": false
    },
    "runs": [
@@ -917,21 +917,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.09,
+     "secs": 0.085,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.099,
+     "secs": 0.091,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.093,
+     "secs": 0.091,
      "timeout": false
     }
    ]
@@ -947,7 +947,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.869,
+    "secs": 0.615,
     "timeout": false
    },
    "runs": [
@@ -955,21 +955,21 @@
      "rc": 0,
      "out": "33554432\n67108864\n",
      "err": "",
-     "secs": 0.092,
+     "secs": 0.089,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "33554432\n67108864\n",
      "err": "",
-     "secs": 0.107,
+     "secs": 0.099,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "33554432\n67108864\n",
      "err": "",
-     "secs": 0.09,
+     "secs": 0.088,
      "timeout": false
     }
    ]
@@ -985,7 +985,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.098,
+    "secs": 0.097,
     "timeout": false
    },
    "runs": [
@@ -993,21 +993,21 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.807,
+     "secs": 5.218,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.611,
+     "secs": 5.015,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.615,
+     "secs": 5.019,
      "timeout": false
     }
    ]
@@ -1025,21 +1025,21 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.749,
+     "secs": 0.729,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.753,
+     "secs": 0.725,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.748,
+     "secs": 0.73,
      "timeout": false
     }
    ]
@@ -1055,7 +1055,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.836,
+    "secs": 0.817,
     "timeout": false
    },
    "runs": [
@@ -1063,21 +1063,21 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.101,
+     "secs": 0.095,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.116,
+     "secs": 0.097,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.109,
+     "secs": 0.095,
      "timeout": false
     }
    ]
@@ -1093,7 +1093,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.103,
+    "secs": 0.097,
     "timeout": false
    },
    "runs": [
@@ -1101,21 +1101,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 6.779,
+     "secs": 6.109,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 6.601,
+     "secs": 5.891,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 6.608,
+     "secs": 5.895,
      "timeout": false
     }
    ]
@@ -1133,21 +1133,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.904,
+     "secs": 0.866,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.894,
+     "secs": 0.861,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.903,
+     "secs": 0.865,
      "timeout": false
     }
    ]
@@ -1163,7 +1163,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.763,
+    "secs": 0.758,
     "timeout": false
    },
    "runs": [
@@ -1171,21 +1171,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.736,
+     "secs": 1.64,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.743,
+     "secs": 1.853,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.648,
+     "secs": 1.706,
      "timeout": false
     }
    ]
@@ -1207,16 +1207,16 @@
    "runs": [
     {
      "rc": 0,
-     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=5\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=73\n\n256x256  live=5  ms=316\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=9\n\n  64x64  live=5  ms=25\n\n128x128  live=5  ms=71\n\n256x256  live=5  ms=303\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
      "err": "",
-     "secs": 0.639,
+     "secs": 0.648,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=5\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=72\n\n256x256  live=5  ms=315\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=4\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=69\n\n256x256  live=5  ms=301\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
      "err": "",
-     "secs": 0.43,
+     "secs": 0.411,
      "timeout": false
     }
    ]
@@ -1232,22 +1232,22 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.412,
+    "secs": 0.392,
     "timeout": false
    },
    "runs": [
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1842\n\nblk=16 ( 256 tasks)  live=5  ms=2114\n\nblk=64 (  64 tasks)  live=5  ms=2079\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=521\n\n  64x64 16gen  live=5  ms=8316\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1783\n\nblk=16 ( 256 tasks)  live=5  ms=2027\n\nblk=64 (  64 tasks)  live=5  ms=1993\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=499\n\n  64x64 16gen  live=5  ms=7991\n\n",
      "err": "",
-     "secs": 15.085,
+     "secs": 14.502,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1842\n\nblk=16 ( 256 tasks)  live=5  ms=2112\n\nblk=64 (  64 tasks)  live=5  ms=2079\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=521\n\n  64x64 16gen  live=5  ms=8326\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1764\n\nblk=16 ( 256 tasks)  live=5  ms=2039\n\nblk=64 (  64 tasks)  live=5  ms=2002\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=499\n\n  64x64 16gen  live=5  ms=7991\n\n",
      "err": "",
-     "secs": 14.9,
+     "secs": 14.313,
      "timeout": false
     }
    ]
@@ -1263,16 +1263,16 @@
    "runs": [
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=767\n\nblk=16 ( 256 tasks)  live=5  ms=757\n\nblk=64 (  64 tasks)  live=5  ms=1042\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=528\n\n  64x64 16gen  live=5  ms=8082\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=659\n\nblk=16 ( 256 tasks)  live=5  ms=642\n\nblk=64 (  64 tasks)  live=5  ms=978\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=507\n\n  64x64 16gen  live=5  ms=7772\n\n",
      "err": "",
-     "secs": 11.195,
+     "secs": 10.576,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=756\n\nblk=16 ( 256 tasks)  live=5  ms=724\n\nblk=64 (  64 tasks)  live=5  ms=1071\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=529\n\n  64x64 16gen  live=5  ms=8084\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=670\n\nblk=16 ( 256 tasks)  live=5  ms=651\n\nblk=64 (  64 tasks)  live=5  ms=979\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=507\n\n  64x64 16gen  live=5  ms=7735\n\n",
      "err": "",
-     "secs": 11.183,
+     "secs": 10.56,
      "timeout": false
     }
    ]
@@ -1290,7 +1290,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.057,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -1308,7 +1308,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.057,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -1326,7 +1326,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.058,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -1344,7 +1344,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -1362,7 +1362,541 @@
      "rc": 0,
      "out": "t1_ok rc=0 out=All terms check. err=\nt2_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt3_todo rc=1 out= err=Error: 1 TODO found.\nt4_noimport rc=1 out= err=bend: PROOF.bend must import ./LAWS.bend (see bend --help)\nt5_vacuous rc=0 out=All terms check. err=\nt6_nearby_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt7_straydef rc=1 out= err=Error:\n",
      "err": "",
-     "secs": 0.5,
+     "secs": 0.477,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/deadlock",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "deadlock.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "bend: deadlock: every computation waits on a channel\n",
+     "secs": 0.059,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/sleep_par",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "sleep_par.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "total ms=709\n",
+     "err": "",
+     "secs": 0.784,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/join_reuse_bad",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "join_reuse_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : ch\n- observed : ch (consumed more than once)\nLocation: main\n11 |   do IO<Unit>:\n12>|     ch : Chan(U32) <- IO.fork(U32, one())\n13 |     r1 : U32 <- IO.join(U32, ch)\n",
+     "secs": 0.088,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/join_twice",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "join_twice.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "first join=41\n",
+     "err": "IO.join: the channel was closed\n",
+     "secs": 0.065,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/match_in_do_bad",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "match_in_do_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : a term (a match heads a def body, not a term)\n- observed : ' '\nLocation:\n 9 |     b : Bool <- Chan.send(U32, ch, 7)\n10>|     match b:\n11 |       case True{}:\n",
+     "secs": 0.037,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/close_recv",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "close_recv.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "send=true\nrecv=7\nrecv=none\n",
+     "err": "",
+     "secs": 0.063,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/send_after_close",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "send_after_close.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "send-after-close=false\n",
+     "err": "",
+     "secs": 0.062,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/orphan_deadlock",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "orphan_deadlock.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "main done\n",
+     "err": "bend: deadlock: every computation waits on a channel\n",
+     "secs": 0.061,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/die",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "die.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 7,
+     "out": "before die\n",
+     "err": "custom failure message\n",
+     "secs": 0.061,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/try_fail",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "try_fail.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 2,
+     "out": "",
+     "err": "No such file or directory\n",
+     "secs": 0.065,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/room_full",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "room_full.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "send=true\n",
+     "err": "bend: deadlock: every computation waits on a channel\n",
+     "secs": 0.061,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/chan_fifo",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "chan_fifo.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "four sends done\nrecv=10\nrecv=20\nrecv=30\nrecv=40\n",
+     "err": "",
+     "secs": 0.065,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/spawn",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "spawn.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "main done\nspawned ran after 300ms\n",
+     "err": "",
+     "secs": 0.378,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/io/args",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/io",
+   "file": "args.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "argc=3\n",
+     "err": "",
+     "secs": 0.101,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/custom/clock",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/custom",
+   "file": "clock.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "ms since boot: 53\n",
+     "err": "",
+     "secs": 0.062,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/custom/shout_repeat",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/custom",
+   "file": "shout_repeat.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "HELLO, BEND\nababababab\nXXX\n",
+     "err": "",
+     "secs": 0.06,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/custom/utf8",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/custom",
+   "file": "utf8.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "héllo·世界héllo·世界\nHéLLO, WöRLD\n",
+     "err": "",
+     "secs": 0.06,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/custom/delay",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/custom",
+   "file": "delay.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "t0=56 d_builtin=307 d_custom=303\n",
+     "err": "",
+     "secs": 0.683,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/custom/busy",
+   "group": "fx",
+   "mode": "compile",
+   "dir": "fx/custom",
+   "file": "busy.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.37,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "tick 300\ntick 600\ntick 900\nbusy done after 1010 ms\n",
+     "err": "",
+     "secs": 1.255,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/custom/misnamed_host",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/custom",
+   "file": "misnamed_host.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "TypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefined)\n",
+     "secs": 0.079,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/custom/missing_registration",
+   "group": "fx",
+   "mode": "compile",
+   "dir": "fx/custom",
+   "file": "missing_registration.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.242,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "bend: an alien request\n",
+     "secs": 0.1,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/file/roundtrip",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/file",
+   "file": "roundtrip.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "size=11\nread back: hello, file\n",
+     "err": "",
+     "secs": 0.077,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/file/position",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/file",
+   "file": "position.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "chunk: [hello]\nchunk: [, fil]\nat-bytes=4\n",
+     "err": "",
+     "secs": 0.075,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/file/open_missing",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/file",
+   "file": "open_missing.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 2,
+     "out": "",
+     "err": "No such file or directory\n",
+     "secs": 0.067,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/file/read_after_close_bad",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/file",
+   "file": "read_after_close_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : f\n- observed : f (consumed more than once)\nLocation: main\n7 |   do IO<Unit>:\n8>|     f : File <- IO.try(File, File.open(\"out.txt\", \"r\"))\n9 |     File.close(f)\n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/tcp/roundtrip",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/tcp",
+   "file": "roundtrip.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "listening on 127.0.0.1:7811\nserver got: ping\nclient got: pong\ndone\n",
+     "err": "",
+     "secs": 0.08,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/tcp/refused",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/tcp",
+   "file": "refused.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 61,
+     "out": "",
+     "err": "Connection refused\n",
+     "secs": 0.066,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/lane/lazy_checker",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/lane",
+   "file": "lazy_checker.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "7n\n",
+     "err": "",
+     "secs": 0.054,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "fx/lane/lazy_checker_baseline",
+   "group": "fx",
+   "mode": "run",
+   "dir": "fx/lane",
+   "file": "lazy_checker_baseline.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "7n\n",
+     "err": "",
+     "secs": 0.054,
      "timeout": false
     }
    ]

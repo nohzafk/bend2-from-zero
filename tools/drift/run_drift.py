@@ -106,7 +106,8 @@ def run_check(check, bend, repo, scratch, env, cache):
 
     if mode == "run":
         for _ in range(runs):
-            result["runs"].append(sh([str(bend), check["file"]], cwd, env, timeout))
+            result["runs"].append(
+                sh([str(bend), check["file"]] + check["args"], cwd, env, timeout))
         return result
 
     if mode == "script":
@@ -178,8 +179,8 @@ def verdict(check, result):
     else:
         if last["timeout"]:
             problems.append("timed out")
-        elif last["rc"] != 0:
-            problems.append(f"rc={last['rc']}")
+        elif last["rc"] != rc_want:
+            problems.append(f"rc={last['rc']} (want {rc_want})")
     for s in check.get("expect_out") or []:
         if s not in last["out"]:
             problems.append(f"stdout missing {s!r}")
@@ -249,7 +250,7 @@ def write_reports(meta, results, outdir, label):
     L.append("Verdict is against **manifest.py** (the recorded claim); the "
              "`book` column is what the 2.0.5-written book says, for context.\n")
 
-    for group in ["probes-bad", "probes-ok", "proofs", "hub", "gate", "bench"]:
+    for group in ["probes-bad", "probes-ok", "proofs", "hub", "gate", "fx", "bench"]:
         rows = [r for r in results if r["check"]["group"] == group]
         if not rows:
             continue
