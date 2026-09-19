@@ -130,15 +130,22 @@ misleading. `a declared datatype (unknown: IO)` reads like "you forgot to
 import `Base`". What actually happened is the **angle brackets in the return
 type**.
 
-The rule:
+The rule, and it is stranger than it looks:
 
-- in a **signature**, a type is applied with **parentheses**: `IO(Unit)`,
-  `List(Nat)`;
-- in a **`do` block**, and in some other positions, it is written with **angle
-  brackets**: `do IO<Unit>:`, `List<&2, Nat>`.
+- `IO` and `Chan` are **functions from a type to a type**. `Base` declares them
+  with `def`, not `type`, so they are applied like any function, with
+  **parentheses**: `IO(Unit)`, `Chan(U32)`.
+- everything declared with `type` — `List`, `Maybe`, `Array`, `Result` — is
+  applied with **angle brackets**: `List<Nat>`, `Maybe<U32>`. The other
+  direction is an error too, and that one says so plainly: `List(Nat)` gives
+  `expected : a family instance (write List<..>)`.
+- inside a **`do` block** the type is written with angle brackets even when it
+  is `IO`: `do IO<Unit>:`. `do IO(Unit):` is refused with `expected : '<'`.
 
-The compiler points at the signature line and never mentions the brackets. The
-same mistake cost this book's author a bisection session, and it is preserved
+The compiler points at the signature line and never mentions the brackets — and
+for `IO<Unit>` the message is worse than unhelpful, since it blames a type that
+was never declared rather than the brackets you got wrong. The same mistake cost
+this book's author a bisection session, and it is preserved
 in the repository as [`basics/hello_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend).
 
 ### `42` is not a `Nat`
@@ -202,5 +209,6 @@ end are where it is paid out in full.
 | [`basics/hello_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend) | ❌ `IO<Unit>` in the signature |
 | [`basics/hello_arg.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_arg.bend) | ❌ `IO.print(42)` |
 
-Next: [numbers and patterns](basics-numbers.md) — where Bend's most load-bearing
-syntax, the `n` suffix on a `match` pattern, makes a promise about termination.
+Next: [affine values](affinity.md) — the one rule in Bend that has no
+counterpart in the language you already know, and the reason everything after
+it is shaped the way it is.

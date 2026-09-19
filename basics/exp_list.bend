@@ -1,6 +1,6 @@
 import Base
 
-def nth(+xs: List<&2, Nat>, +i: Nat) -> Nat:
+def nth(xs: List<Nat>, i: Nat) -> Nat:
   match xs:
     case Nil{}:
       0n

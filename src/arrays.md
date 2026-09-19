@@ -39,7 +39,8 @@ duplicated, the read cannot keep a copy and hand you the value. It must give the
 array back. So the return type is a pair, and there is no version of this design
 that returns a bare element.
 
-This is the affinity chapter, arriving at the syntax you actually type.
+This is the affinity rule from chapter two, arriving at the syntax you actually
+type.
 
 ## Four ways to try to get the value out
 
@@ -162,9 +163,9 @@ against the same name.
 
 ---
 
-That is the whole idea. Affinity, kinds, and the pair — three chapters, one
-mechanism, and at this point you have seen everything in Bend that is genuinely
-unlike other languages.
+That is the whole idea. Affinity, kinds, and the pair — one mechanism, spread
+over three chapters, and at this point you have seen everything in Bend that is
+genuinely unlike other languages.
 
 The rest of the book is what that mechanism *buys*: [parallelism that cannot
 race](parallel.md), [a GPU path where the compiler does the memory

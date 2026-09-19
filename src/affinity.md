@@ -8,6 +8,21 @@ sentence, and it is the reason Bend exists in the shape it does.
 >
 > — `GUIDE.txt:55`
 
+This chapter is the first one to use notation that chapter one did not
+introduce, so here is what the examples contain, in one place:
+
+```python
+x = {3 : U32}      # bind x to 3. The type is written out because Bend will not
+                   # infer it -- a bare `x = 3` is refused with `cannot infer`.
+(x + x : U32)      # a function's body: an expression with its type stated.
+match c:           # look at a value and take the first branch that fits.
+  case True{}:     # a branch names a constructor; the `{}` holds its fields,
+  case False{}:    # and is empty when it has none.
+```
+
+`match` gets a chapter of its own later. For now: it takes the branch whose
+constructor fits, and nothing else.
+
 Here it is failing:
 
 ```python
@@ -19,8 +34,9 @@ Error:
 - expected : x
 - observed : x (consumed more than once)
 Location: main
-4 |   x = {3 : U32}
-5>|   (x + x : U32)
+3 | def main() -> U32:
+4>|   x = {3 : U32}
+5 |   (x + x : U32)
 ```
 
 That error message — *consumed more than once* — is the one you will see most
@@ -152,10 +168,13 @@ the program runs.
 - **There is no borrowing.** Rust's `&x` has no counterpart here. This is not an
   omission — search the whole guide and `borrow` appears zero times. Bend
   answers "I want to use it twice" with `+x`, which is a different and heavier
-  answer, and it does not answer "let me look without taking" at all.
-- **Closures are affine and cannot be marked otherwise.** The next chapter is
-  largely about that, because the workaround is one of the more elegant things
-  in the language.
+  answer, and it does not answer "let me look without taking" at all. Read the
+  mark, for now, as *this one may be used more than once*. It is a request
+  rather than a permission, so it does not always get granted —
+  [copies and kinds](kinds-and-copies.md) is where that story lands.
+- **Closures are affine and cannot be marked otherwise.** The chapter on copies
+  is largely about that, because the workaround is one of the more elegant
+  things in the language.
 
 The comparison with Rust is worth making explicit, since Rust is where most
 readers will have met "affine" before:
@@ -175,5 +194,6 @@ readers will have met "affine" before:
 | [`affinity/t1_drop.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t1_drop.bend) | ✅ | never used at all |
 | [`affinity/t7_paths.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t7_paths.bend) | ✅ | twice in the source, once per path |
 
-Next: [copies, kinds and the `+` mark](kinds-and-copies.md) — what `+` really
-costs, and why it is refused for some types and not others.
+Next: [numbers and patterns](basics-numbers.md) — back to the surface of the
+language, where Bend's most load-bearing syntax, the `n` suffix on a `match`
+pattern, makes a promise about termination.

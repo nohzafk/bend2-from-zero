@@ -34,6 +34,7 @@ The list of legal escapes is short, and the compiler will recite it at you if yo
 guess. This is not a made-up error message — it is what Bend answers to `"\e"`:
 
 ```python
+import Base
 def main() -> IO(Unit):
   do IO<Unit>:
     IO.print("\e")
@@ -134,11 +135,12 @@ def String.reverse(s: String) -> String:
 
 ---
 
-That is the language's surface. Syntax, numbers, lists, strings — nothing you
-have seen so far would be out of place in a language you already know.
+That is the language's surface: the syntax, the numbers, the lists, the
+strings. The one rule from chapter two has been running in the background of
+all of it — every function here consumed its arguments, and nothing complained.
 
-That ends now. The next chapter is about the one rule in Bend that changes how
-you write every single function, and until it makes sense, nothing else about
-Bend will.
+The two chapters that follow are about the machinery behind that rule: the
+quantity marks that ask permission to copy, and the types that refuse it.
 
-Next: [affine values](affinity.md).
+Next: [copies, kinds and the `+` mark](kinds-and-copies.md) — where the `&2` on
+`List.range` finally gets its explanation.

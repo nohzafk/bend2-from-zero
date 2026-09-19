@@ -7,16 +7,19 @@
 - [What Bend 2 is, and why this book](what-is-bend.md)
 - [Getting set up](setup.md)
 
-# The language
+# First contact
 
 - [A first program](basics-hello.md)
+- [Affine values: everything is used at most once](affinity.md)
+
+# The language
+
 - [Numbers and patterns](basics-numbers.md)
 - [Lists](basics-lists.md)
 - [Strings and characters](basics-strings.md)
 
-# The idea that changes everything
+# Copies and kinds
 
-- [Affine values: everything is used at most once](affinity.md)
 - [Copies, kinds, and the `+` mark](kinds-and-copies.md)
 - [Arrays: a read hands you a pair](arrays.md)
 

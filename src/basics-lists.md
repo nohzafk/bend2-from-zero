@@ -10,7 +10,8 @@ type List<a, -A: Kind(a)> is Kind(a):
 ```
 
 Two things in that declaration are worth noticing now and will make sense in
-the next chapter. The `-A: Kind(a)` and the `is Kind(a)` are about **how many
+[copies and kinds](kinds-and-copies.md), two chapters from here. The
+`-A: Kind(a)` and the `is Kind(a)` are about **how many
 times a value of this type may be copied**, and that is the single most
 consequential thing about Bend. For this chapter, read past it.
 
@@ -82,9 +83,9 @@ in scope.
 You are allowed to find this signature strange. It is Bend being honest about
 something most languages hide: the *"may this be copied?"* question is part of a
 list's type, so a function that takes lists cannot ignore it. If you have ever
-wondered why Bend's type annotations feel like they leak, this is the leak. The
-next chapter explains where it comes from and why the language considers it a
-feature.
+wondered why Bend's type annotations feel like they leak, this is the leak.
+[copies and kinds](kinds-and-copies.md) explains where it comes from and why
+the language considers it a feature.
 
 > **A note on the direction of travel.** While writing the Life chapters, this
 > book's author eventually wrote a four-line `app` rather than call
@@ -101,7 +102,8 @@ it is why the Life chapters end up using lists for the grid even though an array
 would be faster to index.
 
 Hold on to that tension. It is the same tension as `&2`, seen from the other
-side, and the next two chapters are about resolving it.
+side, and the chapters on [copies](kinds-and-copies.md) and
+[arrays](arrays.md) are about resolving it.
 
 ## The files
 

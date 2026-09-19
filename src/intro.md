@@ -70,14 +70,20 @@ it yourself.
 The chapters are ordered the way the ideas depend on each other, and they are
 meant to be read in order. Roughly:
 
+- **First contact** — a program, and then the one rule that makes Bend unlike
+  anything you have used before. The rule comes second, on purpose: until it
+  lands the rest of the language is a pile of details, and after it most of the
+  language is obvious.
 - **The language** — the syntax and the parts of the standard library this book
   actually uses.
-- **The idea that changes everything** — affine values. Until this lands,
-  nothing about Bend makes sense; after it, most of the language is obvious.
+- **Copies and kinds** — what the rule costs, when the `+` mark is refused, and
+  the two kinds of type that decide it.
 - **Making it fast** — parallel work on the CPU, then the GPU, and when each
   one loses.
 - **A worked example** — Conway's Life, built four times: naively, then fast,
   then parallel, then moving. Every number is measured.
+- **Effects** — how a program touches the world outside it, and how to write an
+  effect of your own.
 - **Laws** — turning a belief about your program into something a compiler
   checks for you.
 

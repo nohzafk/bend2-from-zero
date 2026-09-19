@@ -76,8 +76,8 @@ Error:
 Context:
 - p : Nat
 Location: loop
-7 |     case 1n+p:
-8>|       loop(Nat.add(p, 1n))
+10 |     case 1n+p:
+11>|       loop(Nat.add(p, 1n))
 ```
 
 Read the error carefully, because Bend told you the whole rule in one line:
@@ -104,8 +104,8 @@ Context:
 - g : Nat
 - q : Nat
 Location: evolve
-10 |     case 1n+q:
-11>|       evolve(step(g), q)
+14 |     case 1n+q:
+15>|       evolve(step(g), q)
 ```
 
 **`gens` cannot be last.** The shrinking argument has to come before anything
@@ -141,6 +141,12 @@ making the recursion structural anyway:
 remainder in `k`. The check passes because **the checker looks at the
 parameters, not at the meaning.** `bump` is where the arithmetic lives, and it
 is not recursive at all.
+
+Two of those parameters carry a `+` — `+k` in `bump`, `+n` in `mod` — and they
+are there because of the rule from chapter two: both are used twice on the same
+path, and the mark is how you ask to be allowed that. The mark is not always
+granted — [copies and kinds](kinds-and-copies.md) is about what decides, and
+about why most of this book's code manages without it.
 
 That shape — recurse structurally on whatever shrinks, accumulate the real work
 in an argument — is the standard way to get non-structural loops past the

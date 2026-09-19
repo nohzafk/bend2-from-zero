@@ -1,9 +1,10 @@
 # Copies, kinds, and the `+` mark
 
-The last chapter left a promise unkept: there is a way to use a value twice —
-write `+x` — but it is refused for some types and not others. This chapter is
-about what decides that, and about the loose end from the lists chapter, where
-`List.range` returned a `List<&2, Nat>` and nobody said what the `&2` was.
+The chapter on affine values left a promise unkept: there is a way to use a
+value twice — write `+x` — but it is refused for some types and not others. This
+chapter is about what decides that, and about the loose end from the lists
+chapter, where `List.range` returned a `List<&2, Nat>` and nobody said what the
+`&2` was.
 
 ## Three quantities
 
