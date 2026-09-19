@@ -214,12 +214,11 @@ CHECKS = [
       source="source",
       note="Measured 2026-09-19: ~1.7 s (median) here, above the book's"
            " 1.34-1.41 s.  queens-gpu is the only workload whose GPU compute is"
-           " not hidden"
-           " under the ~85 ms entry fee (mandelbrot's real work is ~30 ms), so"
-           " it is the only one that can show a GPU-state difference; the"
-           " difference is environment (GUI/GPU contention), per the book's own"
-           " warning to record a parallel number with the machine's state."
-           "  See reports/drift-2.0.16-quiet.md."),
+           " not hidden under the ~85 ms entry fee (mandelbrot's real work is"
+           " ~30 ms), so it is the only one that can show a GPU-state"
+           " difference; the difference is environment (GUI/GPU contention),"
+           " per the book's own warning to record a parallel number with the"
+           " machine's state."),
     C("life/life_row @1t", "bench", "life", "life_row.bend", "compile",
       args=["--threads", "1"], runs=2, timeout_s=300,
       expect_out=["32x32", "64x64", "128x128", "256x256"],

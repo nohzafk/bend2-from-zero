@@ -1,10 +1,10 @@
 # Drift report — bend 2.0.16 (2.0.16)
 
-- date: 2026-09-19 14:19 UTC
+- date: 2026-09-19 14:26 UTC
 - machine: Apple M3 Max, 14 cores (10 performance), macOS 27.0
 - bend binary: `/Users/randall/.bend/bin/bend` sha256 `da9bc51449f04a65…`
-- repo: `/Users/randall/projects/bend2-from-zero` at `65ddc7e` (clean)
-- load average at start/end: 2.31/2.31/2.23 / 3.25/2.50/2.30
+- repo: `/Users/randall/projects/bend2-from-zero` at `3c8b3bf` (dirty: 2 files)
+- load average at start/end: 1.92/2.23/2.25 / 1.79/2.10/2.19
 - caffeinate running: yes
 
 Verdict is against **manifest.py** (the recorded claim); the `book` column is what the book quotes, for context.
@@ -101,7 +101,7 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | fx/custom/clock |  | `ms since boot: 53` | OK |
 | fx/custom/shout_repeat |  | `HELLO, BEND` | OK |
 | fx/custom/utf8 |  | `héllo·世界héllo·世界` | OK |
-| fx/custom/delay |  | `t0=56 d_builtin=308 d_custom=302` | OK |
+| fx/custom/delay |  | `t0=56 d_builtin=307 d_custom=302` | OK |
 | fx/custom/busy |  | `tick 300` | OK |
 | fx/custom/misnamed_host |  | `TypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefi` | OK |
 | fx/custom/missing_registration |  | `bend: an alien request` | OK |
@@ -118,23 +118,23 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 
 | check | book | now | verdict |
 |---|---|---|---|
-| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.21s (runs after first: 0.22 / 0.21); first run 0.56s (cold)  | OK |
-| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.12s (runs after first: 0.12 / 0.12) | OK |
+| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.22s (runs after first: 0.22 / 0.23); first run 0.60s (cold)  | OK |
+| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.12s (runs after first: 0.12 / 0.13) | OK |
 | parallel/pow2_26 @4t | 0.07 s | settled 0.07s (runs after first: 0.07 / 0.07) | OK |
-| parallel/pow2_26 @8t | 0.04 s | settled 0.04s (runs after first: 0.04 / 0.04) | OK |
+| parallel/pow2_26 @8t | 0.04 s | settled 0.04s (runs after first: 0.05 / 0.04) | OK |
 | parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.04s (runs after first: 0.04 / 0.04) | OK |
 | gpu/gpu_floor | 0.08-0.09 s | settled 0.07s (runs after first: 0.08 / 0.07) | OK |
 | gpu/pow2_gpu | 0.09-0.10 s | settled 0.09s (runs after first: 0.09 / 0.09) | OK |
 | gpu/gpu_twice | 0.09 s | settled 0.09s (runs after first: 0.10 / 0.09) | OK |
-| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.02s (runs after first: 5.02 / 5.02) | OK |
-| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.72s (runs after first: 0.72 / 0.73) | OK |
-| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.10s (runs after first: 0.11 / 0.10) | OK |
-| gpu/queens cpu @1t | 6.02-6.19 s | settled 5.92s (runs after first: 5.92 / 6.00) | OK |
+| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.02s (runs after first: 5.02 / 5.04) | OK |
+| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.73s (runs after first: 0.73 / 0.73) | OK |
+| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.10s (runs after first: 0.10 / 0.10) | OK |
+| gpu/queens cpu @1t | 6.02-6.19 s | settled 6.32s (runs after first: 6.32 / 6.32) | OK |
 | gpu/queens cpu @10t | 0.85 s | settled 0.87s (runs after first: 0.87 / 0.87) | OK |
-| gpu/queens gpu | 1.34-1.41 s | settled 1.71s (runs after first: 1.90 / 1.71) | OK |
-| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.41s (runs after first: 0.41); first run 0.61s (cold)  | OK |
-| life/life_par @1t | 1t: 1795 / 2065 / 2025 ms | settled 14.27s (runs after first: 14.27) | OK |
-| life/life_par @10t | 10t: 690 / 684 / 1045 ms | settled 10.56s (runs after first: 10.56) | OK |
+| gpu/queens gpu | 1.34-1.41 s | settled 1.75s (runs after first: 1.78 / 1.75) | OK |
+| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.41s (runs after first: 0.41); first run 0.65s (cold)  | OK |
+| life/life_par @1t | 1t: 1795 / 2065 / 2025 ms | settled 14.29s (runs after first: 14.29) | OK |
+| life/life_par @10t | 10t: 690 / 684 / 1045 ms | settled 10.57s (runs after first: 10.57) | OK |
 
 ## bench raw stdout (last run of each)
 
@@ -175,9 +175,9 @@ row-window Life, 64 generations -- O(n)?
 
   64x64  live=5  ms=17
 
-128x128  live=5  ms=69
+128x128  live=5  ms=68
 
-256x256  live=5  ms=301
+256x256  live=5  ms=305
 
 
 64x64, 16 generations -- head to head with the naive version
@@ -186,9 +186,9 @@ row-window Life, 64 generations -- O(n)?
 -- life/life_par @1t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=1764
+blk=1  (4096 tasks)  live=5  ms=1773
 
-blk=16 ( 256 tasks)  live=5  ms=2035
+blk=16 ( 256 tasks)  live=5  ms=2029
 
 blk=64 (  64 tasks)  live=5  ms=1992
 
@@ -197,22 +197,22 @@ naive, no fork (d=0, blk=w*h)
 
   32x32 16gen  live=5  ms=499
 
-  64x64 16gen  live=5  ms=7968
+  64x64 16gen  live=5  ms=7980
 -- life/life_par @10t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=668
+blk=1  (4096 tasks)  live=5  ms=653
 
-blk=16 ( 256 tasks)  live=5  ms=634
+blk=16 ( 256 tasks)  live=5  ms=627
 
-blk=64 (  64 tasks)  live=5  ms=974
+blk=64 (  64 tasks)  live=5  ms=978
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=506
+  32x32 16gen  live=5  ms=507
 
-  64x64 16gen  live=5  ms=7757
+  64x64 16gen  live=5  ms=7785
 ```
 
 ## Annotations
@@ -223,7 +223,7 @@ naive, no fork (d=0, blk=w*h)
 - **affinity/t10_template** — A def that is a template instance counts as unsafe (intended, per the CHANGELOG), so a file with a template prints 'All terms check, with N unsafe annotations.' on stderr 'until the checker verifies template expansion itself'.  The template does NOT skip any check; this is a disclosure, not a soundness hole.
 - **arrays/e_post1** — book README prints it without spaces; the actual normalizer output has spaces after commas.  Formatting only.
 - **gpu/gpu_floor** — .gpu semantics: `bend -o X` writes X.gpu beside X; a launch LOADS it when present (silent), and prints 'compiling the GPU program (missing or stale)' and recompiles only when the file is absent or empty.  A run never writes the kernel back on Metal -- with X.gpu absent, every run notes and recompiles (~0.08 s either way; Metal's OS cache feeds the recompile).  A .gpu from a different program loaded silently and still computed correctly (the kernel source is embedded in the host binary).  The papercut of 2026-09-18 described an X.gpu-less binary, so its 'prints every run' is correct for that setup only.
-- **gpu/queens gpu** — Measured 2026-09-19: ~1.7 s (median) here, above the book's 1.34-1.41 s.  queens-gpu is the only workload whose GPU compute is not hidden under the ~85 ms entry fee (mandelbrot's real work is ~30 ms), so it is the only one that can show a GPU-state difference; the difference is environment (GUI/GPU contention), per the book's own warning to record a parallel number with the machine's state.  See reports/drift-2.0.16-quiet.md.
+- **gpu/queens gpu** — Measured 2026-09-19: ~1.7 s (median) here, above the book's 1.34-1.41 s.  queens-gpu is the only workload whose GPU compute is not hidden under the ~85 ms entry fee (mandelbrot's real work is ~30 ms), so it is the only one that can show a GPU-state difference; the difference is environment (GUI/GPU contention), per the book's own warning to record a parallel number with the machine's state.
 - **hub/nat.bend** — published as 0x1ee1b5d0c2a66817bf368b849f3117fc
 - **hub/string.bend** — published as 0x89df026edd2acf2673b5e469e037eaf1
 - **hub/list.bend** — published as 0x085d89db9ee8a21865e959816bb20e5b
