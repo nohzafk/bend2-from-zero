@@ -1,10 +1,10 @@
 # Drift report — bend 2.0.16 (2.0.16)
 
-- date: 2026-09-19 11:11 UTC
+- date: 2026-09-19 13:14 UTC
 - machine: Apple M3 Max, 14 cores (10 performance), macOS 27.0
 - bend binary: `/Users/randall/.bend/bin/bend` sha256 `da9bc51449f04a65…`
-- repo: `/Users/randall/projects/bend2-from-zero` at `98eb466` (dirty: 4 files)
-- load average at start/end: 2.20/2.13/2.20 / 2.56/2.25/2.23
+- repo: `/Users/randall/projects/bend2-from-zero` at `2ee0f41` (clean)
+- load average at start/end: 2.51/2.46/2.41 / 2.62/2.49/2.42
 - caffeinate running: yes
 
 Verdict is against **manifest.py** (the recorded claim); the `book` column is what the 2.0.5-written book says, for context.
@@ -28,6 +28,8 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | arrays/exp_arr2 | a match cannot scrutinize a computed value: give it its own def | `Error:` | OK |
 | arrays/a_fail | a match cannot scrutinize a local binder: give it its own def | `Error:` | OK |
 | arrays/d_write | expected : Sigma<&1, &1, Array<U32>, _ => U32> / observed : Array<U32> | `Error:` | OK |
+| laws/fill_rettype_bad |  | `Error:` | OK |
+| laws/add_zero_bad |  | `Error:` | OK |
 
 ## probes-ok
 
@@ -50,6 +52,9 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | arrays/f_post3 | 42 | `42` | OK |
 | parallel/pow2 | 2^22 (README only) | `4194304` | OK |
 | life/life | 8x8 teaching version, prints the pattern every generation | `generation 0` | OK |
+| laws/two_plus_two |  | `All terms check.` | OK |
+| laws/add_zero |  | `All terms check.` | OK |
+| laws/use_twice |  | `All terms check.` | OK |
 
 ## proofs
 
@@ -96,7 +101,7 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | fx/custom/clock |  | `ms since boot: 53` | OK |
 | fx/custom/shout_repeat |  | `HELLO, BEND` | OK |
 | fx/custom/utf8 |  | `héllo·世界héllo·世界` | OK |
-| fx/custom/delay |  | `t0=56 d_builtin=307 d_custom=303` | OK |
+| fx/custom/delay |  | `t0=54 d_builtin=308 d_custom=302` | OK |
 | fx/custom/busy |  | `tick 300` | OK |
 | fx/custom/misnamed_host |  | `TypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefi` | OK |
 | fx/custom/missing_registration |  | `bend: an alien request` | OK |
@@ -113,23 +118,23 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 
 | check | book (2.0.5) | now | verdict |
 |---|---|---|---|
-| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.21s (runs after first: 0.22 / 0.21); first run 0.44s (cold)  | OK |
+| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.22s (runs after first: 0.22 / 0.22); first run 0.60s (cold)  | OK |
 | parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.12s (runs after first: 0.12 / 0.12) | OK |
 | parallel/pow2_26 @4t | 0.07 s | settled 0.07s (runs after first: 0.07 / 0.07) | OK |
-| parallel/pow2_26 @8t | 0.04 s | settled 0.04s (runs after first: 0.04 / 0.04) | OK |
-| parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.05s (runs after first: 0.05 / 0.05) | OK |
+| parallel/pow2_26 @8t | 0.04 s | settled 0.05s (runs after first: 0.05 / 0.05) | OK |
+| parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.04s (runs after first: 0.04 / 0.04) | OK |
 | gpu/gpu_floor | 0.08-0.09 s | settled 0.07s (runs after first: 0.08 / 0.07) | OK |
 | gpu/pow2_gpu | 0.09-0.10 s | settled 0.09s (runs after first: 0.09 / 0.09) | OK |
-| gpu/gpu_twice | 0.09 s | settled 0.09s (runs after first: 0.10 / 0.09) | OK |
-| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.01s (runs after first: 5.01 / 5.02) | OK |
-| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.72s (runs after first: 0.72 / 0.73) | OK |
+| gpu/gpu_twice | 0.09 s | settled 0.09s (runs after first: 0.09 / 0.09) | OK |
+| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.01s (runs after first: 5.03 / 5.01) | OK |
+| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.72s (runs after first: 0.73 / 0.72) | OK |
 | gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.10s (runs after first: 0.10 / 0.10) | OK |
-| gpu/queens cpu @1t | 6.02-6.19 s | settled 5.89s (runs after first: 5.89 / 5.89) | OK |
-| gpu/queens cpu @10t | 0.85 s | settled 0.86s (runs after first: 0.86 / 0.86) | OK |
-| gpu/queens gpu | 1.34-1.41 s | settled 1.71s (runs after first: 1.85 / 1.71) | OK |
-| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.41s (runs after first: 0.41); first run 0.65s (cold)  | OK |
-| life/life_par @1t | 1t: 1795 / 2065 / 2025 ms | settled 14.31s (runs after first: 14.31) | OK |
-| life/life_par @10t | 10t: 690 / 684 / 1045 ms | settled 10.56s (runs after first: 10.56) | OK |
+| gpu/queens cpu @1t | 6.02-6.19 s | settled 5.90s (runs after first: 5.90 / 5.91) | OK |
+| gpu/queens cpu @10t | 0.85 s | settled 0.86s (runs after first: 0.86 / 0.87) | OK |
+| gpu/queens gpu | 1.34-1.41 s | settled 1.71s (runs after first: 1.73 / 1.71) | OK |
+| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.41s (runs after first: 0.41); first run 0.61s (cold)  | OK |
+| life/life_par @1t | 1t: 1795 / 2065 / 2025 ms | settled 14.15s (runs after first: 14.15) | OK |
+| life/life_par @10t | 10t: 690 / 684 / 1045 ms | settled 10.52s (runs after first: 10.52) | OK |
 
 ## bench raw stdout (last run of each)
 
@@ -170,7 +175,7 @@ row-window Life, 64 generations -- O(n)?
 
   64x64  live=5  ms=17
 
-128x128  live=5  ms=69
+128x128  live=5  ms=68
 
 256x256  live=5  ms=301
 
@@ -181,33 +186,33 @@ row-window Life, 64 generations -- O(n)?
 -- life/life_par @1t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=1764
+blk=1  (4096 tasks)  live=5  ms=1767
 
-blk=16 ( 256 tasks)  live=5  ms=2039
+blk=16 ( 256 tasks)  live=5  ms=2004
 
-blk=64 (  64 tasks)  live=5  ms=2002
+blk=64 (  64 tasks)  live=5  ms=1984
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=499
+  32x32 16gen  live=5  ms=494
 
-  64x64 16gen  live=5  ms=7991
+  64x64 16gen  live=5  ms=7880
 -- life/life_par @10t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=670
+blk=1  (4096 tasks)  live=5  ms=665
 
-blk=16 ( 256 tasks)  live=5  ms=651
+blk=16 ( 256 tasks)  live=5  ms=614
 
-blk=64 (  64 tasks)  live=5  ms=979
+blk=64 (  64 tasks)  live=5  ms=959
 
 
 naive, no fork (d=0, blk=w*h)
 
   32x32 16gen  live=5  ms=507
 
-  64x64 16gen  live=5  ms=7735
+  64x64 16gen  live=5  ms=7757
 ```
 
 ## Annotations
@@ -224,6 +229,11 @@ naive, no fork (d=0, blk=w*h)
 - **hub/list.bend** — published as 0x085d89db9ee8a21865e959816bb20e5b
 - **hub/example.bend** — the consumer example; fetches all three packages by hash
 - **gate/matrix** — T6 phase 0.  t2 pins the effective gate semantics: a FALSE law 'proven' by @unsafe non-termination passes with rc=0; the only signal is the degraded stdout line -- deliberate per upstream #776/#805 (disclosure shipped in 2.0.8, exit code unchanged), so CI must match `All terms check.` exactly, or forbid @unsafe.  t5: an emptied law set passes.  t6: the unsafe count is book-wide, not proof-scoped.  t7: a stray proof def after the law is deleted is a parse error ('expected : ->') -- filed upstream as a diagnostic-er quality issue.
+- **laws/two_plus_two** — a law with no variables; {==} closes it because both sides compute
+- **laws/add_zero** — the first proof with a variable: match + the self-quote + {==}
+- **laws/fill_rettype_bad** — a law's fill may not carry a return type
+- **laws/add_zero_bad** — the stuck-term refusal: {==} cannot close x + 0 == x
+- **laws/use_twice** — the quantity marks on the smallest case: +x because the proof consumes the variable twice
 - **fx/io/deadlock** — one computation waits on a channel nobody sends to
 - **fx/io/sleep_par** — two forked 700 ms sleeps finish in ~709 ms (one sleep's time)
 - **fx/io/join_reuse_bad** — join consumes the channel; a second join does not compile

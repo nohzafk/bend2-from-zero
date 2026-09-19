@@ -1,6 +1,6 @@
 {
  "meta": {
-  "date": "2026-09-19 11:11 UTC",
+  "date": "2026-09-19 13:14 UTC",
   "bend_version": "2.0.16",
   "bend_path": "/Users/randall/.bend/bin/bend",
   "bend_sha": "da9bc51449f04a65bf633351fb754cd6f883f5f5d9ab0c4e947f5c6f19eb7386",
@@ -10,12 +10,12 @@
   "perf_cores": "10",
   "macos": "27.0",
   "repo": "/Users/randall/projects/bend2-from-zero",
-  "commit": "98eb466",
-  "dirty": 4,
-  "load_start": "2.20/2.13/2.20",
+  "commit": "2ee0f41",
+  "dirty": 0,
+  "load_start": "2.51/2.46/2.41",
   "caffeinate": "yes",
-  "load_end": "2.56/2.25/2.23",
-  "elapsed_s": 110.3
+  "load_end": "2.62/2.49/2.42",
+  "elapsed_s": 110.5
  },
  "results": [
   {
@@ -31,7 +31,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a declared datatype (unknown: IO)\nLocation: main\n4 | # Writing IO<Unit> there does not compile. See src/basics-hello.md.\n5>| def main() -> IO<Unit>:\n6 |   do IO<Unit>:\n",
-     "secs": 0.054,
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -49,7 +49,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : String\n- observed : U32\nLocation: main\n6 |   do IO<Unit>:\n7>|     IO.print(42)\n8 | \n",
-     "secs": 0.054,
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -121,7 +121,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : xs\n- observed : xs (consumed more than once)\nLocation: main\n2 | def main() -> Nat:\n3>|   xs = {[1, 2, 3] : List<U32>}\n4 |   Nat.add(List.length(&1, U32, xs), List.length(&1, U32, xs))\n",
-     "secs": 0.054,
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -139,7 +139,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Data\n- observed : Type\nLocation: main\n3 | def main() -> U32:\n4>|   +a = [0 : U32*4n]\n5 |   b = a[0]\n",
-     "secs": 0.053,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -157,7 +157,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : f\n- observed : f (consumed more than once)\nLocation: main\n2 | def main() -> U32:\n3>|   f = {x => (x + 1 : U32) : U32 -> U32}\n4 |   (f(1) + f(2) : U32)\n",
-     "secs": 0.053,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -175,7 +175,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Data\n- observed : Type\nLocation: main\n3 | def main() -> U32:\n4>|   +f = {x => (x + 1 : U32) : U32 -> U32}\n5 |   (f(1) + f(2) : U32)\n",
-     "secs": 0.054,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -193,7 +193,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : -f\n- observed : f (consumed more than once)\nLocation: twice~0\n10 | # closure and is really about the missing ~. Compare t10_template.bend.\n11>| def twice(~f: U32 -> U32, x: U32) -> U32:\n12 |   f(f(x))\n",
-     "secs": 0.053,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -211,7 +211,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a local binder: give it its own def)\nLocation:\n4 |   a1 = a[5] <- 42\n5>|   p = a1[0]\n6 |   (a2, b) = p\n",
-     "secs": 0.036,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -301,7 +301,7 @@
      "rc": 0,
      "out": "hello, bend 2\n",
      "err": "",
-     "secs": 0.063,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -319,7 +319,7 @@
      "rc": 0,
      "out": "a\nb\ttab\n",
      "err": "",
-     "secs": 0.068,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -355,7 +355,7 @@
      "rc": 0,
      "out": "2\n",
      "err": "",
-     "secs": 0.059,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -427,7 +427,7 @@
      "rc": 0,
      "out": "6\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -445,7 +445,7 @@
      "rc": 0,
      "out": "11\n",
      "err": "",
-     "secs": 0.057,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -481,7 +481,7 @@
      "rc": 0,
      "out": "42\n",
      "err": "All terms check, with 1 unsafe annotation.\n",
-     "secs": 0.055,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -499,7 +499,7 @@
      "rc": 0,
      "out": "43\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -517,7 +517,7 @@
      "rc": 0,
      "out": "42\n",
      "err": "",
-     "secs": 0.057,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -535,7 +535,7 @@
      "rc": 0,
      "out": "([0, 0, 0, 0, 0, 42, 0, 0], 42)\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -571,7 +571,7 @@
      "rc": 0,
      "out": "4194304\n",
      "err": "",
-     "secs": 0.113,
+     "secs": 0.112,
      "timeout": false
     }
    ]
@@ -589,7 +589,7 @@
      "rc": 0,
      "out": "generation 0\n\n.#......\n..#.....\n###.....\n........\n........\n........\n........\n........\n\ngeneration 1\n\n........\n#.#.....\n.##.....\n.#......\n........\n........\n........\n........\n\ngeneration 2\n\n........\n..#.....\n#.#.....\n.##.....\n........\n........\n........\n........\n\ngeneration 4\n\n........\n..#.....\n...#....\n.###....\n........\n........\n........\n........\n\n\n",
      "err": "",
-     "secs": 0.079,
+     "secs": 0.081,
      "timeout": false
     }
    ]
@@ -607,21 +607,21 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.071,
+     "secs": 0.072,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.07,
+     "secs": 0.072,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.071,
+     "secs": 0.073,
      "timeout": false
     }
    ]
@@ -639,21 +639,21 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.065,
+     "secs": 0.064,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.068,
+     "secs": 0.066,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.065,
+     "secs": 0.067,
      "timeout": false
     }
    ]
@@ -671,7 +671,7 @@
      "rc": 1,
      "out": "",
      "err": "Error: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.\n",
-     "secs": 0.068,
+     "secs": 0.066,
      "timeout": false
     }
    ]
@@ -689,7 +689,7 @@
      "rc": 1,
      "out": "",
      "err": "Error: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.\n",
-     "secs": 0.057,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -705,7 +705,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.236,
+    "secs": 0.237,
     "timeout": false
    },
    "runs": [
@@ -713,21 +713,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.438,
+     "secs": 0.605,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.222,
+     "secs": 0.221,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.214,
+     "secs": 0.221,
      "timeout": false
     }
    ]
@@ -745,14 +745,7 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.12,
-     "timeout": false
-    },
-    {
-     "rc": 0,
-     "out": "67108864\n",
-     "err": "",
-     "secs": 0.123,
+     "secs": 0.121,
      "timeout": false
     },
     {
@@ -760,6 +753,13 @@
      "out": "67108864\n",
      "err": "",
      "secs": 0.121,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.123,
      "timeout": false
     }
    ]
@@ -784,14 +784,14 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.074,
+     "secs": 0.073,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.074,
+     "secs": 0.073,
      "timeout": false
     }
    ]
@@ -809,13 +809,6 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.044,
-     "timeout": false
-    },
-    {
-     "rc": 0,
-     "out": "67108864\n",
-     "err": "",
      "secs": 0.045,
      "timeout": false
     },
@@ -823,7 +816,14 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.045,
+     "secs": 0.05,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.046,
      "timeout": false
     }
    ]
@@ -848,14 +848,14 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.049,
+     "secs": 0.043,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.051,
+     "secs": 0.043,
      "timeout": false
     }
    ]
@@ -871,7 +871,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.558,
+    "secs": 0.571,
     "timeout": false
    },
    "runs": [
@@ -879,21 +879,21 @@
      "rc": 0,
      "out": "4\n",
      "err": "",
-     "secs": 0.073,
-     "timeout": false
-    },
-    {
-     "rc": 0,
-     "out": "4\n",
-     "err": "",
-     "secs": 0.077,
-     "timeout": false
-    },
-    {
-     "rc": 0,
-     "out": "4\n",
-     "err": "",
      "secs": 0.072,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.079,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.075,
      "timeout": false
     }
    ]
@@ -909,7 +909,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.566,
+    "secs": 0.544,
     "timeout": false
    },
    "runs": [
@@ -917,14 +917,14 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.085,
+     "secs": 0.089,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.091,
+     "secs": 0.092,
      "timeout": false
     },
     {
@@ -947,7 +947,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.615,
+    "secs": 0.596,
     "timeout": false
    },
    "runs": [
@@ -955,14 +955,14 @@
      "rc": 0,
      "out": "33554432\n67108864\n",
      "err": "",
-     "secs": 0.089,
+     "secs": 0.091,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "33554432\n67108864\n",
      "err": "",
-     "secs": 0.099,
+     "secs": 0.09,
      "timeout": false
     },
     {
@@ -985,7 +985,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.097,
+    "secs": 0.095,
     "timeout": false
    },
    "runs": [
@@ -993,21 +993,21 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.218,
+     "secs": 5.206,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.015,
+     "secs": 5.028,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.019,
+     "secs": 5.014,
      "timeout": false
     }
    ]
@@ -1025,13 +1025,6 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.729,
-     "timeout": false
-    },
-    {
-     "rc": 0,
-     "out": "3101455856\n",
-     "err": "",
      "secs": 0.725,
      "timeout": false
     },
@@ -1040,6 +1033,13 @@
      "out": "3101455856\n",
      "err": "",
      "secs": 0.73,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.725,
      "timeout": false
     }
    ]
@@ -1055,7 +1055,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.817,
+    "secs": 0.794,
     "timeout": false
    },
    "runs": [
@@ -1063,14 +1063,14 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.095,
+     "secs": 0.097,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.097,
+     "secs": 0.105,
      "timeout": false
     },
     {
@@ -1101,21 +1101,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 6.109,
+     "secs": 6.101,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 5.891,
+     "secs": 5.902,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 5.895,
+     "secs": 5.91,
      "timeout": false
     }
    ]
@@ -1133,21 +1133,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.866,
+     "secs": 0.869,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.861,
+     "secs": 0.86,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.865,
+     "secs": 0.871,
      "timeout": false
     }
    ]
@@ -1163,7 +1163,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.758,
+    "secs": 0.744,
     "timeout": false
    },
    "runs": [
@@ -1171,21 +1171,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.64,
+     "secs": 1.764,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.853,
+     "secs": 1.727,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.706,
+     "secs": 1.705,
      "timeout": false
     }
    ]
@@ -1201,22 +1201,22 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.476,
+    "secs": 0.466,
     "timeout": false
    },
    "runs": [
     {
      "rc": 0,
-     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=9\n\n  64x64  live=5  ms=25\n\n128x128  live=5  ms=71\n\n256x256  live=5  ms=303\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=8\n\n  64x64  live=5  ms=24\n\n128x128  live=5  ms=70\n\n256x256  live=5  ms=303\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
      "err": "",
-     "secs": 0.648,
+     "secs": 0.608,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=4\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=69\n\n256x256  live=5  ms=301\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=4\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=68\n\n256x256  live=5  ms=301\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
      "err": "",
-     "secs": 0.411,
+     "secs": 0.41,
      "timeout": false
     }
    ]
@@ -1232,22 +1232,22 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.392,
+    "secs": 0.386,
     "timeout": false
    },
    "runs": [
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1783\n\nblk=16 ( 256 tasks)  live=5  ms=2027\n\nblk=64 (  64 tasks)  live=5  ms=1993\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=499\n\n  64x64 16gen  live=5  ms=7991\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1774\n\nblk=16 ( 256 tasks)  live=5  ms=2012\n\nblk=64 (  64 tasks)  live=5  ms=1985\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=497\n\n  64x64 16gen  live=5  ms=7904\n\n",
      "err": "",
-     "secs": 14.502,
+     "secs": 14.369,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1764\n\nblk=16 ( 256 tasks)  live=5  ms=2039\n\nblk=64 (  64 tasks)  live=5  ms=2002\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=499\n\n  64x64 16gen  live=5  ms=7991\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1767\n\nblk=16 ( 256 tasks)  live=5  ms=2004\n\nblk=64 (  64 tasks)  live=5  ms=1984\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=494\n\n  64x64 16gen  live=5  ms=7880\n\n",
      "err": "",
-     "secs": 14.313,
+     "secs": 14.147,
      "timeout": false
     }
    ]
@@ -1263,16 +1263,16 @@
    "runs": [
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=659\n\nblk=16 ( 256 tasks)  live=5  ms=642\n\nblk=64 (  64 tasks)  live=5  ms=978\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=507\n\n  64x64 16gen  live=5  ms=7772\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=677\n\nblk=16 ( 256 tasks)  live=5  ms=635\n\nblk=64 (  64 tasks)  live=5  ms=976\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=505\n\n  64x64 16gen  live=5  ms=7758\n\n",
      "err": "",
-     "secs": 10.576,
+     "secs": 10.573,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=670\n\nblk=16 ( 256 tasks)  live=5  ms=651\n\nblk=64 (  64 tasks)  live=5  ms=979\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=507\n\n  64x64 16gen  live=5  ms=7735\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=665\n\nblk=16 ( 256 tasks)  live=5  ms=614\n\nblk=64 (  64 tasks)  live=5  ms=959\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=507\n\n  64x64 16gen  live=5  ms=7757\n\n",
      "err": "",
-     "secs": 10.56,
+     "secs": 10.521,
      "timeout": false
     }
    ]
@@ -1290,7 +1290,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -1308,7 +1308,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -1326,7 +1326,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -1344,7 +1344,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.058,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -1362,7 +1362,97 @@
      "rc": 0,
      "out": "t1_ok rc=0 out=All terms check. err=\nt2_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt3_todo rc=1 out= err=Error: 1 TODO found.\nt4_noimport rc=1 out= err=bend: PROOF.bend must import ./LAWS.bend (see bend --help)\nt5_vacuous rc=0 out=All terms check. err=\nt6_nearby_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt7_straydef rc=1 out= err=Error:\n",
      "err": "",
-     "secs": 0.477,
+     "secs": 0.474,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "laws/two_plus_two",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "laws",
+   "file": "two_plus_two.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.054,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "laws/add_zero",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "laws",
+   "file": "add_zero.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.054,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "laws/fill_rettype_bad",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "laws",
+   "file": "fill_rettype_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : ':'\n- observed : '-'\nLocation:\n7 | \n8>| def two_plus_two() -> {Nat.add(2n, 2n) == 4n : Nat}:\n9 |   {==}\n",
+     "secs": 0.036,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "laws/add_zero_bad",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "laws",
+   "file": "add_zero_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : Nat.add(x, 0n)\n- observed : x\nContext:\n- x : Nat\nLocation: add_zero\n10 | def add_zero(x):\n11>|   {==}\n12 | \n",
+     "secs": 0.054,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "laws/use_twice",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "laws",
+   "file": "use_twice.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.053,
      "timeout": false
     }
    ]
@@ -1380,7 +1470,7 @@
      "rc": 1,
      "out": "",
      "err": "bend: deadlock: every computation waits on a channel\n",
-     "secs": 0.059,
+     "secs": 0.06,
      "timeout": false
     }
    ]
@@ -1398,7 +1488,7 @@
      "rc": 0,
      "out": "total ms=709\n",
      "err": "",
-     "secs": 0.784,
+     "secs": 0.781,
      "timeout": false
     }
    ]
@@ -1416,7 +1506,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : ch\n- observed : ch (consumed more than once)\nLocation: main\n11 |   do IO<Unit>:\n12>|     ch : Chan(U32) <- IO.fork(U32, one())\n13 |     r1 : U32 <- IO.join(U32, ch)\n",
-     "secs": 0.088,
+     "secs": 0.089,
      "timeout": false
     }
    ]
@@ -1452,7 +1542,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a term (a match heads a def body, not a term)\n- observed : ' '\nLocation:\n 9 |     b : Bool <- Chan.send(U32, ch, 7)\n10>|     match b:\n11 |       case True{}:\n",
-     "secs": 0.037,
+     "secs": 0.036,
      "timeout": false
     }
    ]
@@ -1488,7 +1578,7 @@
      "rc": 0,
      "out": "send-after-close=false\n",
      "err": "",
-     "secs": 0.062,
+     "secs": 0.065,
      "timeout": false
     }
    ]
@@ -1506,7 +1596,7 @@
      "rc": 1,
      "out": "main done\n",
      "err": "bend: deadlock: every computation waits on a channel\n",
-     "secs": 0.061,
+     "secs": 0.06,
      "timeout": false
     }
    ]
@@ -1524,7 +1614,7 @@
      "rc": 7,
      "out": "before die\n",
      "err": "custom failure message\n",
-     "secs": 0.061,
+     "secs": 0.064,
      "timeout": false
     }
    ]
@@ -1560,7 +1650,7 @@
      "rc": 1,
      "out": "send=true\n",
      "err": "bend: deadlock: every computation waits on a channel\n",
-     "secs": 0.061,
+     "secs": 0.06,
      "timeout": false
     }
    ]
@@ -1578,7 +1668,7 @@
      "rc": 0,
      "out": "four sends done\nrecv=10\nrecv=20\nrecv=30\nrecv=40\n",
      "err": "",
-     "secs": 0.065,
+     "secs": 0.064,
      "timeout": false
     }
    ]
@@ -1596,7 +1686,7 @@
      "rc": 0,
      "out": "main done\nspawned ran after 300ms\n",
      "err": "",
-     "secs": 0.378,
+     "secs": 0.377,
      "timeout": false
     }
    ]
@@ -1614,7 +1704,7 @@
      "rc": 0,
      "out": "argc=3\n",
      "err": "",
-     "secs": 0.101,
+     "secs": 0.094,
      "timeout": false
     }
    ]
@@ -1632,7 +1722,7 @@
      "rc": 0,
      "out": "ms since boot: 53\n",
      "err": "",
-     "secs": 0.062,
+     "secs": 0.061,
      "timeout": false
     }
    ]
@@ -1684,9 +1774,9 @@
    "runs": [
     {
      "rc": 0,
-     "out": "t0=56 d_builtin=307 d_custom=303\n",
+     "out": "t0=54 d_builtin=308 d_custom=302\n",
      "err": "",
-     "secs": 0.683,
+     "secs": 0.681,
      "timeout": false
     }
    ]
@@ -1702,7 +1792,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.37,
+    "secs": 0.369,
     "timeout": false
    },
    "runs": [
@@ -1710,7 +1800,7 @@
      "rc": 0,
      "out": "tick 300\ntick 600\ntick 900\nbusy done after 1010 ms\n",
      "err": "",
-     "secs": 1.255,
+     "secs": 1.369,
      "timeout": false
     }
    ]
@@ -1728,7 +1818,7 @@
      "rc": 1,
      "out": "",
      "err": "TypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefined)\n",
-     "secs": 0.079,
+     "secs": 0.08,
      "timeout": false
     }
    ]
@@ -1744,7 +1834,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.242,
+    "secs": 0.236,
     "timeout": false
    },
    "runs": [
@@ -1752,7 +1842,7 @@
      "rc": 1,
      "out": "",
      "err": "bend: an alien request\n",
-     "secs": 0.1,
+     "secs": 0.21,
      "timeout": false
     }
    ]
@@ -1770,7 +1860,7 @@
      "rc": 0,
      "out": "size=11\nread back: hello, file\n",
      "err": "",
-     "secs": 0.077,
+     "secs": 0.081,
      "timeout": false
     }
    ]
@@ -1788,7 +1878,7 @@
      "rc": 0,
      "out": "chunk: [hello]\nchunk: [, fil]\nat-bytes=4\n",
      "err": "",
-     "secs": 0.075,
+     "secs": 0.074,
      "timeout": false
     }
    ]
@@ -1806,7 +1896,7 @@
      "rc": 2,
      "out": "",
      "err": "No such file or directory\n",
-     "secs": 0.067,
+     "secs": 0.066,
      "timeout": false
     }
    ]
@@ -1824,7 +1914,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : f\n- observed : f (consumed more than once)\nLocation: main\n7 |   do IO<Unit>:\n8>|     f : File <- IO.try(File, File.open(\"out.txt\", \"r\"))\n9 |     File.close(f)\n",
-     "secs": 0.057,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -1842,7 +1932,7 @@
      "rc": 0,
      "out": "listening on 127.0.0.1:7811\nserver got: ping\nclient got: pong\ndone\n",
      "err": "",
-     "secs": 0.08,
+     "secs": 0.078,
      "timeout": false
     }
    ]
@@ -1860,7 +1950,7 @@
      "rc": 61,
      "out": "",
      "err": "Connection refused\n",
-     "secs": 0.066,
+     "secs": 0.065,
      "timeout": false
     }
    ]
