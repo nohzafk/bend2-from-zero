@@ -34,7 +34,8 @@ read the files straight from the topic directories.
 `tools/book-links.py` checks the built book: every relative link must resolve
 under `book/`, and every GitHub link must name a file that exists and is tracked
 in this repository (an untracked file is as good as missing on the published
-site).
+site). It runs in the Pages workflow, so a dead link fails the build
+instead of shipping.
 
 ## Setup
 
