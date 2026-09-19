@@ -1,5 +1,5 @@
 import Base
-# x 在【两个分支里都出现】，但任何一条执行路径上只走一次
+# x appears in BOTH branches, but no single path takes both
 def describe(c: Bool, x: U32) -> U32:
   match c:
     case True{}:

@@ -1,6 +1,6 @@
 import Base
 
-# 探针 2：数组读的手感。a[i] 返回 Array<U32> & U32（一个 Sigma）
+# A probe: how an array read feels. a[i] returns Array<U32> & U32 (a Sigma).
 def main() -> IO(Unit):
   do IO<Unit>:
     a = [0 : U32*8n]

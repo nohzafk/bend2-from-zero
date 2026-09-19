@@ -1,5 +1,5 @@
 import Base
-# 闭包本身能调两次吗？用 t5 那个能编译的闭包写法，只加一个 +
+# can the closure itself be called twice? t5 again, plus one +
 def main() -> U32:
   +f = {x => (x + 1 : U32) : U32 -> U32}
   (f(1) + f(2) : U32)

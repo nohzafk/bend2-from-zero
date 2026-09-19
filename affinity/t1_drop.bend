@@ -1,5 +1,5 @@
 import Base
-# x 声明了，但一次都没用
+# x is declared, and then never used
 def main() -> U32:
   x = {3 : U32}
   7

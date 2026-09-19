@@ -1,5 +1,5 @@
 import Base
-# 试图把数组标成可重用
+# trying to mark an array as reusable
 def main() -> U32:
   +a = [0 : U32*4n]
   b = a[0]
