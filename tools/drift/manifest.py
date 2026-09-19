@@ -213,7 +213,17 @@ CHECKS = [
       args=["--threads", "10"], runs=3, expect_out=["2063750025"], timeout_s=300,
       book="0.85 s"),
     C("gpu/queens gpu", "bench", "gpu/queens", "main.bend", "compile",
-      runs=3, expect_out=["2063750025"], timeout_s=300, book="1.34-1.41 s"),
+      runs=3, expect_out=["2063750025"], timeout_s=300, book="1.34-1.41 s",
+      source="source",
+      note="Re-measured 2026-09-19: ~1.7 s (median) here, and the same ~1.7 s"
+           " from the Sep-18 2.0.5-built binary (gpu/queens/gpu) interleaved on"
+           " the same machine -- so this is NOT a 2.0.5->2.0.16 regression."
+           "  queens-gpu is the only workload whose GPU compute is not hidden"
+           " under the ~85 ms entry fee (mandelbrot's real work is ~30 ms), so"
+           " it is the only one that can show a GPU-state difference; the"
+           " difference is environment (GUI/GPU contention), per the book's own"
+           " warning to record a parallel number with the machine's state."
+           "  See reports/drift-2.0.16-quiet.md."),
     C("life/life_row @1t", "bench", "life", "life_row.bend", "compile",
       args=["--threads", "1"], runs=2, timeout_s=300,
       expect_out=["32x32", "64x64", "128x128", "256x256"],

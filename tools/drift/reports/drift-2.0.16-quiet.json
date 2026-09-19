@@ -1,0 +1,605 @@
+{
+ "meta": {
+  "date": "2026-09-19 10:43 UTC",
+  "bend_version": "2.0.16",
+  "bend_path": "/Users/randall/.bend/bin/bend",
+  "bend_sha": "da9bc51449f04a65bf633351fb754cd6f883f5f5d9ab0c4e947f5c6f19eb7386",
+  "machine": "Randalls-MacBook-Pro.local",
+  "cpu": "Apple M3 Max",
+  "cores": "14",
+  "perf_cores": "10",
+  "macos": "27.0",
+  "repo": "/Users/randall/projects/bend2-from-zero",
+  "commit": "bb2d1d9",
+  "dirty": 0,
+  "load_start": "2.35/2.73/2.79",
+  "caffeinate": "yes",
+  "load_end": "1.93/2.46/2.68",
+  "elapsed_s": 103.3
+ },
+ "results": [
+  {
+   "name": "parallel/pow2_26 @1t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.247,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.625,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.224,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.233,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @2t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.128,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.127,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.127,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @4t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.074,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.075,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.074,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @8t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.046,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.046,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.051,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @14t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.045,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.045,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.045,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/gpu_floor",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu",
+   "file": "gpu_floor.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.557,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.072,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.081,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.073,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/pow2_gpu",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu",
+   "file": "pow2_gpu.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.554,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.086,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.092,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.091,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/gpu_twice",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu",
+   "file": "gpu_twice.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.66,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "33554432\n67108864\n",
+     "err": "",
+     "secs": 0.087,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "33554432\n67108864\n",
+     "err": "",
+     "secs": 0.099,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "33554432\n67108864\n",
+     "err": "",
+     "secs": 0.087,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/mandelbrot cpu @1t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/mandelbrot",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.095,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 5.21,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 5.024,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 5.02,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/mandelbrot cpu @10t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/mandelbrot",
+   "file": "main.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.725,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.728,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.729,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/mandelbrot gpu",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu/mandelbrot",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.822,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.099,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.097,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.111,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/queens cpu @1t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/queens",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.099,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 6.532,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 6.319,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 6.325,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/queens cpu @10t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/queens",
+   "file": "main.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 0.871,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 0.863,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 0.872,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/queens gpu",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu/queens",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.767,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 1.642,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 1.706,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 1.741,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/life_row @1t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "life",
+   "file": "life_row.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.468,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=9\n\n  64x64  live=5  ms=25\n\n128x128  live=5  ms=72\n\n256x256  live=5  ms=303\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "err": "",
+     "secs": 0.63,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=5\n\n  64x64  live=5  ms=16\n\n128x128  live=5  ms=70\n\n256x256  live=5  ms=313\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=4\n\n",
+     "err": "",
+     "secs": 0.425,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/life_par @1t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "life",
+   "file": "life_par.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.396,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1779\n\nblk=16 ( 256 tasks)  live=5  ms=2023\n\nblk=64 (  64 tasks)  live=5  ms=1993\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=499\n\n  64x64 16gen  live=5  ms=7967\n\n",
+     "err": "",
+     "secs": 14.47,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1763\n\nblk=16 ( 256 tasks)  live=5  ms=2023\n\nblk=64 (  64 tasks)  live=5  ms=1996\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=500\n\n  64x64 16gen  live=5  ms=7970\n\n",
+     "err": "",
+     "secs": 14.269,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/life_par @10t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "life",
+   "file": "life_par.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=662\n\nblk=16 ( 256 tasks)  live=5  ms=632\n\nblk=64 (  64 tasks)  live=5  ms=979\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=507\n\n  64x64 16gen  live=5  ms=7754\n\n",
+     "err": "",
+     "secs": 10.556,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=657\n\nblk=16 ( 256 tasks)  live=5  ms=647\n\nblk=64 (  64 tasks)  live=5  ms=984\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=506\n\n  64x64 16gen  live=5  ms=7755\n\n",
+     "err": "",
+     "secs": 10.568,
+     "timeout": false
+    }
+   ]
+  }
+ ]
+}
