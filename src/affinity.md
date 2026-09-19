@@ -6,7 +6,7 @@ sentence, and it is the reason Bend exists in the shape it does.
 
 > **Bend, by default, is *affine*, meaning variables must be used, at most, once.**
 >
-> — `GUIDE.txt:55`
+> — `bend guide`, *Types and Functions*
 
 This chapter is the first one to use notation that chapter one did not
 introduce, so here is what the examples contain, in one place:
@@ -129,7 +129,7 @@ not three features. They are one feature seen from three sides.
 > There is no garbage collector. Since values are affine, a `match` frees the
 > node it opens on the spot, and only `+` values carry a reference count.
 >
-> — `GUIDE.txt:586`
+> — `bend guide`, *Under the Hood*
 
 If nobody else can be holding the value, then the moment you take it apart there
 is nothing left to do with it — so taking it apart *is* freeing it. That is why
@@ -142,7 +142,7 @@ is not a style rule. It is the only way the language has to free memory.
 > independent. 2. They run in roughly the same time. **Since Bend is pure and
 > affine, the first point always holds.**
 >
-> — `GUIDE.txt:147-153`
+> — `bend guide`, *Parallelism*
 
 The first promise is not something you assert. It is something the type system
 has already made true: if `x` has one owner, it cannot be in two parallel

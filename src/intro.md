@@ -65,6 +65,30 @@ Error:
 Code marked ❌ is kept in the repository as runnable files, so you can break
 it yourself.
 
+## The convention for quotes from the guide
+
+Bend ships its own guide, and several chapters quote it. It is **not copied
+into this repository** — a copy would be out of date the next time Bend
+releases, which is often. It is on your machine already, from the same install
+that gave you the compiler:
+
+```sh
+bend guide                      # the whole thing, version-matched to your bend
+~/.bend/guide/GUIDE.md          # the same file, if you would rather read it here
+```
+
+Those quotes are therefore cited by **section name**, not by line number:
+
+> An example quote from the guide.
+>
+> — `bend guide`, *Some Section*
+
+Line numbers were the first attempt and they rotted within one release — the
+guide's own count moved from 605 lines to 621, and a citation of "line 586"
+ended up pointing at a paragraph about the GPU. A section name still gets you
+to the right place after the file has been edited around it, and it is checkable
+in one command. This book was written against **2.0.16**.
+
 ## How to read it
 
 The chapters are ordered the way the ideas depend on each other, and they are

@@ -135,7 +135,7 @@ It is not free, and the guide says why in the same breath as the no-GC claim:
 > Since values are affine, a `match` frees the node it opens on the spot, and
 > **only `+` values carry a reference count.**
 >
-> — `GUIDE.txt:586`
+> — `bend guide`, *Under the Hood*
 
 So the price of `+x` is a runtime reference count — a real increment, decrement
 and check, on every use. When you write `+x` you are trading the thing that makes

@@ -17,7 +17,7 @@ The guide states the contract:
 > A parallel call promises the compiler two things: 1. The calls are
 > independent. 2. They run in roughly the same time.
 >
-> — `GUIDE.txt:147-153`
+> — `bend guide`, *Parallelism*
 
 **The first promise is not something you assert.** It is something the type
 system has already made true, and this is the payoff from the affinity chapters

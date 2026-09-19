@@ -1,7 +1,7 @@
 # 仿射性（Affinity）—— Bend 2 的第一把钥匙
 
 > 本文件由一次 cordis-agent 教学会话产出，所有实验均在本机实跑（Bend 2.0.5，M3 Max）。
-> 实验文件都在本目录下（`t1_*.bend` … `t9_*.bend`、`affine_bad.bend`），官方指南全文在仓库根目录 `../GUIDE.txt`。
+> 实验文件都在本目录下（`t1_*.bend` … `t9_*.bend`、`affine_bad.bend`），官方指南全文见 `bend guide`（或 `~/.bend/guide/GUIDE.md`）。
 
 ---
 
@@ -51,7 +51,7 @@
 
 注意是「路径」，不是「出现次数」。
 
-指南原文（`GUIDE.txt:55`）：
+指南原文（`bend guide`，Types and Functions）：
 
 > Bend, by default, is *affine*, meaning variables must be used, at most, once.
 
@@ -116,7 +116,7 @@ App        一个应用/窗口状态
 ### 回报 1：内存 —— 没有 GC
 
 > There is no garbage collector. Since values are affine, a `match` frees the node it
-> opens on the spot, and only `+` values carry a reference count.  （`GUIDE.txt:586`）
+> opens on the spot, and only `+` values carry a reference count.  （`bend guide`，Under the Hood）
 
 拆 = 取 + 释放，是同一个动作。这解释了为什么 Bend 强制你用 `match` 拆值 —— 不是风格，
 是它内存管理的唯一方式。
@@ -126,7 +126,7 @@ App        一个应用/窗口状态
 > A parallel call promises the compiler two things: 1. The calls are independent.
 > 2. They run in roughly the same time.
 > **Since Bend is pure and affine, the first point always holds.** The second is yours
-> to keep.  （`GUIDE.txt:147-153`）
+> to keep.  （`bend guide`，Parallelism）
 
 - 第 1 条由类型系统免费给：x 只有一个持有者，两个并行调用在类型上不可能有别名。
 - 第 2 条才是人的工作：负载均衡。

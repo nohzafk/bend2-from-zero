@@ -92,18 +92,21 @@ The first time we measured parallelism we measured it under the interpreter and 
 
 | Directory | What it covers | In the book |
 |---|---|---|
-| `basics/` | first contact: hello, strings, modulo, lists | ch. 4–7 |
-| `affinity/` | **affinity** — the first key to everything in Bend (plus a 199-line `notes.md`) | ch. 8–9 |
-| `arrays/` | reading an array gives you a *pair*; how to take it apart | ch. 10 |
-| `parallel/` | fork-join on the CPU: `a b = f(x) g(y)` | ch. 11 |
-| `gpu/` | `f!(x)` and Metal; mandelbrot vs queens | ch. 12–14 |
-| `life/` | Game of Life: four implementations, a terminal animation, and two complete laws with proofs | ch. 15–20 |
-| `GUIDE.txt` | the official guide in full (**an unmodified copy of an upstream file**; `GUIDE.txt:NNN` references in the notes point here) | — |
+| `basics/` | first contact: hello, strings, modulo, lists | *A first program*, *Numbers and patterns*, *Lists*, *Strings and characters* |
+| `affinity/` | **affinity** — the first key to everything in Bend (plus a 199-line `notes.md`) | *Affine values*, *Copies, kinds, and the `+` mark* |
+| `arrays/` | reading an array gives you a *pair*; how to take it apart | *Arrays: a read hands you a pair* |
+| `parallel/` | fork-join on the CPU: `a b = f(x) g(y)` | *Parallel by default: fork-join* |
+| `gpu/` | `f!(x)` and Metal; mandelbrot vs queens | *The GPU, and the `!` mark*, and the two workload chapters |
+| `life/` | Game of Life: four implementations, a terminal animation, and two complete laws with proofs | *Life the obvious way* through *Making it move*, then the *Laws* chapters |
 
-Three files here are **unmodified copies** of files from the upstream Bend compiler —
-`GUIDE.txt`, `gpu/mandelbrot/main.bend`, `gpu/queens/main.bend` — redistributed under
+Two files here are **unmodified copies** of files from the upstream Bend compiler —
+`gpu/mandelbrot/main.bend` and `gpu/queens/main.bend` — redistributed under
 Apache-2.0. For provenance, the upstream revision, and the licence text, see
 [`THIRD-PARTY.md`](THIRD-PARTY.md).
+
+The guide is **not** copied here, on purpose: a copy would be stale within days.
+Quotes from it cite `bend guide` by section, and every install has the
+version-matched file at `~/.bend/guide/GUIDE.md`.
 
 ## Findings, in one place
 
