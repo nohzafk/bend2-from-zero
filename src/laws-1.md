@@ -320,8 +320,8 @@ start index: the fork-join tree produces exactly the list that one sequential
 loop over the same range produces.*
 
 (The binders carry the same quantity marks as anywhere else — `for +d` says
-how often the proof may use `d`; choosing them is the next chapter's subject,
-so write them as the example does until then.)
+that the proof may consume `d` more than once; choosing them is the next
+chapter's subject, so write them as the example does until then.)
 
 (A note for later, because it is a trap: `Base` uses the same `law` keyword 72
 times to declare *type families* rather than propositions. In user code those
@@ -440,10 +440,12 @@ Measured, on this machine:
 
 | | wall clock |
 |---|---|
-| `LIFE_PAR_PROOF.bend` | 0.12 s |
-| `LIFE_ANIM_PROOF.bend` | 0.09 s |
+| `LIFE_PAR_PROOF.bend` | 0.07 s |
+| `LIFE_ANIM_PROOF.bend` | 0.06 s |
 
-Under a tenth of a second, including startup. This is the "several orders of
+Under a tenth of a second, including startup, re-measured on 2.0.16 while this
+part was revised (the appendix's own re-run read a few hundredths higher — the
+order, as it warns, is the finding). This is the "several orders of
 magnitude" claim from the introduction, made concrete: a proof the size of a
 small paper is checked between keystrokes. The tradeoff is the one the language
 states openly — Bend does almost no type inference, so you annotate everything

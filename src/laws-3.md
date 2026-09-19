@@ -1,9 +1,11 @@
 # The gate, and its edges
 
-The two chapters before this one ended with the same small print: "All terms
-check." is the only evidence, and it is not evidence at all. This chapter runs
-down what the gate actually guarantees. Every output below is pasted from a
-real run of `tools/drift/gate_matrix.sh`, on Bend 2.0.16.
+The last two chapters showed how to write a law and a proof, and what they cost.
+This one is about the gate itself — `bend PROOF.bend`, the command that returns
+the verdict — and about what that verdict is worth. Both chapters came back to
+the same small print, and this is where it gets exact: *"All terms check." is
+the only evidence, and it is not evidence at all.* Every output below is pasted
+from a real run of `tools/drift/gate_matrix.sh`, on Bend 2.0.16.
 
 ## The distance between two sentences
 
@@ -29,28 +31,32 @@ def Laws.false_law(x):
   Laws.false_law(x)
 ```
 
-It compiles, and `bend PROOF.bend` prints:
+`@unsafe` is the guide's one decorator: it tells the checker not to ask for a
+decreasing argument, an exemption real programs need when a loop cannot be
+proven to terminate. It also moves the def outside the proof's guarantees —
+**a function allowed not to terminate inhabits every type** — so it inhabits
+`{x == 1}` as easily as anything else. It compiles, and `bend PROOF.bend`
+prints:
 
 ```
 All terms check, with 1 unsafe annotation.
 ```
 
-and exits 0. A non-terminating function inhabits any type; `@unsafe` turns off
-the termination check; the false law is "proved". This is not a bug and not a
-secret — it is the first entry in upstream's `WONTFIX.txt`, under DESIGN:
+and exits 0. This is not a bug and not a secret — it is the first entry in
+upstream's `WONTFIX.txt`, under DESIGN:
 
 > **`@unsafe` programs check and exit 0 (#776, #805)**
 > The checker prints "All terms check, with N unsafe annotations." and exits
 > 0. `@unsafe` is a choice the author made in the source; read the note, not
 > the exit code.
 
-Two measured details about the note. First, the count is **book-wide**: one
-`@unsafe` def anywhere in the import graph — even one no proof touches —
-degrades the message. Second, the count covers more than `@unsafe`: on 2.0.16 a
-file containing a `~` template instance prints it too, "until the checker
-verifies template expansion itself" (the changelog's words). A template skips
-no check; that line is a disclosure, not a hole. But it means the message is
-something to read, not a bit to parse.
+Two measured details about the note. First, the count covers everything the run
+loads: one `@unsafe` def anywhere in the import graph — even one no proof
+touches — degrades the message. Second, the count covers more than `@unsafe`:
+on 2.0.16 a file containing a `~` template instance prints it too, "until the
+checker verifies template expansion itself" (the changelog's words). A template
+skips no check; that line is a disclosure, not a hole. But it means the message
+is something to read, not a bit to parse.
 
 ### The vanishing spec
 
@@ -142,7 +148,11 @@ The previous chapter stopped at a wall: a law about index safety would need
 facts about arithmetic that `Base` does not state, and the wall's height was
 the work of writing them. What has changed since those chapters were written
 is small but real — the lemmas they had to write by hand are now published
-packages on the Bend hub, importable by content hash:
+packages on the **Bend hub**, importable by content hash. The hub is Bend's
+public package store, and it is content-addressed: a package has no name and no
+version — the hash *is* its identity, computed from the files themselves — so
+the import line below names one frozen set of facts that cannot change
+afterwards:
 
 ```python
 import 0x1ee1b5d0c2a66817bf368b849f3117fc/nat.bend as Nat

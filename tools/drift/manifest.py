@@ -298,6 +298,11 @@ CHECKS = [
       timeout_s=60, source="measured",
       note="the stuck-term refusal: {==} cannot close x + 0 == x"),
 
+    C("laws/use_twice", "probes-ok", "laws", "use_twice.bend", "run",
+      expect_out=["All terms check."], timeout_s=60, source="measured",
+      note="the quantity marks on the smallest case: +x because the proof"
+           " consumes the variable twice"),
+
     # ---------------------------------------------------------------- fx
     # The effects probes (the fx/ topic directory).  Run mode = the JS lane;
     # entries that need the native lane use compile mode.  Exit codes are

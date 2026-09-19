@@ -1,9 +1,10 @@
 # A second law, and the wall underneath
 
-The previous chapter's law compared two functions that both compute Life. This
-one compares two functions that both compute **a string**, and it is the more
-interesting of the two — because the thing being proved is not an optimisation
-detail, it is a constraint we discovered the hard way.
+The last chapter built the machinery on claims small enough to watch. This one
+points it at the second claim the Life work needed — the renderer's — and it is
+also where the cost of proving shows up. The claim itself compares two functions
+that both compute **a string**, and the thing being proved is not an optimisation
+detail: it is a constraint discovered the hard way.
 
 ## The setup
 
@@ -45,7 +46,7 @@ law frame_is_spec:
 ```
 
 Fast renderer equals cursor-home escape followed by the slow renderer. This is
-the same shape as the previous chapter: **implementation on the left, obvious
+the same shape as every law in this part: **implementation on the left, obvious
 specification on the right.**
 
 ## The palindrome constraint is a theorem
@@ -55,8 +56,8 @@ Look again at the comment in `life_anim.bend`:
 > every cell must be a palindrome. `"██"` and `"  "` both are; change to `"▐█"`
 > and every row flips internally (measured).
 
-In the previous chapter that was a note in the source and a paragraph in the
-book. Here it is a lemma:
+Until now that was a note in the source and a paragraph in the animation
+chapter. Here it is a lemma:
 
 ```python
 def pick_pal(b: Bool)
@@ -104,11 +105,15 @@ been written.
 ## Two things to know when writing the proofs
 
 **Accumulator functions need the accumulator spelled out.** `String.reverse`
-is not a structural recursion — it calls `reverse.go(s, acc)`. That means a goal
-containing `reverse(x)` for a variable `x` is stuck, and the invariant has to be
-generalised over the accumulator before induction will go through. Hence
-`reverse_go_spec(s, +acc)`, and `rowrev_spec(r, +acc)`, and `inner(rs, +acc)`
-which is the law generalised over the accumulator:
+is not a structural recursion — it calls `reverse.go(s, acc)`, and a goal
+containing `reverse(x)` for a variable `x` is stuck on it. Induction will not
+go through until the claim is *strengthened*: instead of proving the goal as
+written, you prove something that also says what is true of the accumulator at
+every step, and which gives the goal back when the accumulator is empty. For
+`reverse` that stronger statement is "`reverse.go(s, acc)` equals the reverse of
+`s`, followed by `acc`" — the **invariant** of the accumulator. Hence
+`reverse_go_spec(s, +acc)`, and `rowrev_spec(r, +acc)`, and `inner(rs, +acc)`,
+which is this law's own invariant:
 
 ```python
 def inner(rs: Anim.Rows, +acc: String)
@@ -118,12 +123,50 @@ def inner(rs: Anim.Rows, +acc: String)
 The law is then `inner(rs, SNil{})` with the accumulator at empty, which is one
 line of proof.
 
-**Parameter modifiers follow use, not meaning.** A parameter that appears only in
-the *type* gets `-`; one that is used more than once in the **proof body** needs
-`+`. `reverse_go_spec`'s `acc` looks erased — the type mentions it twice, which is
-why it is tempting to write `-acc` — but it appears in the recursive call, so it
-must be `+acc`. The rule is mechanical once you look at the body, and wrong
-every time you reason about it semantically.
+**The marks are decided by use, and the checker is the judge.** A law's binders,
+a proof def's parameters, and the binders inside a `case` pattern all carry the
+same optional marks, answering one question: how often may this proof consume
+the value? The smallest case settles how to choose them, and it is a runnable
+file (`laws/use_twice.bend`) — one law, whose proof hands its variable to two
+rewrite steps:
+
+```python
+law use_twice:
+  for +x: Nat
+  {Nat.add(Nat.add(x, 0n), 0n) == x : Nat}
+
+def use_twice(x):
+  %add_zero_r(x) : {Nat.add(_, 0n) == x : Nat}
+  %add_zero_r(x) : {_ == x : Nat}
+  {==}
+```
+
+(`add_zero_r : {a == Nat.add(a, 0n)}` sits above it — `add_zero`'s reverse
+orientation, which is the direction these rewrites want.) Three marks, three
+answers, all measured:
+
+| declared | `bend` says |
+|---|---|
+| `for x: Nat` | `expected : x` / `observed : x (consumed more than once)` |
+| `for +x: Nat` | `All terms check.` |
+| `for -x: Nat` | `expected : -x` / `observed : x (consumed more than once)` |
+
+So the working rule is the one the checker teaches, not one you can reason out
+in advance: write nothing first, and where it says `consumed more than once`,
+add a `+` — the message names the value. And `-` (erased) is not a short form
+of `+`: it says the value disappears at run time and may only flow through
+erased positions. This chapter's own proofs show the verdict is not obvious
+from the shape — `reverse_go_spec`'s accumulator checks as `-acc`, while
+`rowrev_spec`'s and `inner`'s are refused with `expected : -acc / observed :
+acc` — which is exactly why the last word belongs to the compiler.
+
+Two more measured details, both time-savers. **The marks cannot be copied
+between proofs:** in `LIFE_ANIM_PROOF.bend`, two of the four
+`case SCon{+h, +t}` cases check fine with their marks removed; the other two
+stop with `expected : t / observed : t (consumed more than once)`, because
+those proofs consume the tail more than once. And **a pattern binder cannot be
+marked erased at all:** `case SCon{-h, -t}` is a parse error
+(`expected : a term`), not a quantity complaint.
 
 ## Reading a failed proof
 
@@ -160,7 +203,7 @@ Every one of these is a change to the **implementation** `life_anim.bend`:
 
 The second entry is the one to look at twice. **The bug that was found by eye,
 after it had already shipped into a working animation, is now caught at compile
-time** — by a law whose proof takes 0.09 seconds.
+time** — by a law whose proof takes 0.06 seconds.
 
 That is the whole claim of this part of the book, and it is worth stating without
 inflation: the law does not make the renderer correct. It makes *one specific
