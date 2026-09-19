@@ -1,12 +1,12 @@
 import Base
 
 # ============================================================
-# 生命游戏：fork-join 的粒度实验
-# 64x64 = 4096 = 2^12 个格子，每代都要 join 一次（下一代依赖上一代）。
-# 变量：(a) 线程数  (b) 每个叶子任务算多少格子  blk
-#   2^d * blk = w*h  —— blk 越大，任务越少越粗
-# 编译：bend life_par.bend -o life_par
-# 运行：./life_par --threads 8
+# Life: a fork-join granularity experiment
+# 64x64 = 4096 = 2^12 cells, and every generation joins once (the next needs the last).
+# Variables: (a) thread count  (b) cells per leaf task, blk
+#   2^d * blk = w*h  -- larger blk means fewer, coarser tasks
+# Build: bend life_par.bend -o life_par
+# Run: ./life_par --threads 8
 # ============================================================
 
 def nth(+xs: List<&2, Nat>, +i: Nat) -> Nat:
@@ -20,7 +20,7 @@ def nth(+xs: List<&2, Nat>, +i: Nat) -> Nat:
         case 1n+p:
           nth(t, p)
 
-# 坐标 → 值。注意这是一次 O(y*w+x) 的链表行走 —— 见文末记账。
+# coordinate -> value. Note this is an O(y*w+x) list walk -- see the accounting at the end.
 def at(+g: List<&2, Nat>, +w: Nat, +h: Nat, +x: Nat, +y: Nat) -> Nat:
   nth(g, Nat.add(Nat.mul(Nat.mod(y, h), w), Nat.mod(x, w)))
 
@@ -47,7 +47,7 @@ def cellnext(+g: List<&2, Nat>, +w: Nat, +h: Nat, +k: Nat) -> Nat:
   +y = Nat.div(k, w)
   rule(at(g, w, h, x, y), nb(g, w, h, x, y))
 
-# ---------- 叶子：串行算连续 n 个格子 ----------
+# ---------- the leaf: n consecutive cells, serially ----------
 def block(+g: List<&2, Nat>, +w: Nat, +h: Nat, +n: Nat, +k: Nat) -> List<&2, Nat>:
   match n:
     case 0n:
@@ -55,7 +55,7 @@ def block(+g: List<&2, Nat>, +w: Nat, +h: Nat, +n: Nat, +k: Nat) -> List<&2, Nat
     case 1n+p:
       Con{cellnext(g, w, h, k), block(g, w, h, p, Nat.add(k, 1n))}
 
-# ---------- 种子 ----------
+# ---------- the seed ----------
 def hit(+x: Nat, +y: Nat, +a: Nat, +b: Nat) -> Bool:
   Bool.and(Nat.is_eq(x, a), Nat.is_eq(y, b))
 
@@ -84,7 +84,7 @@ def count(+g: List<&2, Nat>, +acc: Nat) -> Nat:
     case Con{h, t}:
       count(t, Nat.add(acc, h))
 
-# ---------- 并行：2^d 个叶子，每个叶子一个任务 ----------
+# ---------- parallel: 2^d leaves, one task each ----------
 def app(+xs: List<&2, Nat>, +ys: List<&2, Nat>) -> List<&2, Nat>:
   match xs:
     case Nil{}:
@@ -92,10 +92,10 @@ def app(+xs: List<&2, Nat>, +ys: List<&2, Nat>) -> List<&2, Nat>:
     case Con{h, t}:
       Con{h, app(t, ys)}
 
-# 深度 d 的 fork-join 树：叶子串行算 blk 个连续格子，join 处把两半拼起来。
-# 覆盖 2^d * blk 个格子。这就是待证明的那个函数。
-# 深度 d 的树覆盖多少个格子。和树本身是同一次递归，所以不用乘法，
-# 也就没有分配律要证 —— 左半边覆盖 cells_in(p, blk) 个。
+# A fork-join tree of depth d: each leaf runs blk consecutive cells serially, and a
+# join pastes the two halves together -- 2^d * blk cells covered. That is the function
+# the proofs are about: how many cells a tree of depth d covers. It is the same
+# recursion as the tree, so no multiplication -- and no distributivity to prove: the
 def cells_in(+d: Nat, +blk: Nat) -> Nat:
   match d:
     case 0n:
@@ -121,7 +121,7 @@ def evolve_par(+gens: Nat, +g: List<&2, Nat>, +d: Nat, +w: Nat, +h: Nat, +blk: N
     case 1n+q:
       evolve_par(q, step_par(d, g, w, h, blk), d, w, h, blk)
 
-# ---------- 基准 ----------
+# ---------- benchmarks ----------
 def run_par(+w: Nat, +h: Nat, +gens: Nat, +d: Nat, +blk: Nat) -> Nat:
   count(evolve_par(gens, seed(w, Nat.mul(w, h), 0n), d, w, h, blk), 0n)
 
@@ -147,8 +147,8 @@ def main() -> IO(Unit):
     report("blk=16 ( 256 tasks)  live=", b, Nat.sub(t2, t1))
     report("blk=64 (  64 tasks)  live=", c, Nat.sub(t3, t2))
 
-    # 同一个朴素算法，完全不 fork（d=0，一个 block 覆盖整个网格），
-    # 用来量 O(n^2) 的缩放，以及和 life_row 的 O(n) 对照
+    # The same naive algorithm with no forking at all (d=0, one block for the whole
+    # grid), to measure the O(n^2) scaling and contrast it with life_row's O(n).
     IO.print("\nnaive, no fork (d=0, blk=w*h)\n")
     t4 : Nat <- IO.now()
     +s32 : Nat = run_par(32n, 32n, 16n, 0n, 1024n)

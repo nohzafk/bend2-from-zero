@@ -1,15 +1,15 @@
 import Base
 
 # ============================================================
-# 生命游戏：按行滑动窗口 —— O(n)，不是 O(n²)
-# 每格每代只做 O(1) 次读取：
-#   第一遍  纵向求和   s[x] = prev[x] + cur[x] + next[x]
-#   第二遍  横向窗口   new[x] = rule(cur[x], s[x-1] + s[x] + s[x+1] - cur[x])
-# 网格 = 行链表；每一行是一遍走完，不需要任何下标查找。
-# 编译：bend life_row.bend -o life_row
+# Life: a row-window sweep -- O(n), not O(n^2)
+# Each cell does O(1) reads per generation:
+#   pass 1  vertical sum      s[x] = prev[x] + cur[x] + next[x]
+#   pass 2  horizontal window new[x] = rule(cur[x], s[x-1] + s[x] + s[x+1] - cur[x])
+# The grid is a list of rows; each row is one pass, with no index lookup at all.
+# Build: bend life_row.bend -o life_row
 # ============================================================
 
-# ---------- 链表小工具 ----------
+# ---------- list helpers ----------
 def app(+xs: List<&2, Nat>, +ys: List<&2, Nat>) -> List<&2, Nat>:
   match xs:
     case Nil{}:
@@ -24,7 +24,7 @@ def rev(+xs: List<&2, Nat>, +acc: List<&2, Nat>) -> List<&2, Nat>:
     case Con{h, t}:
       rev(t, Con{h, acc})
 
-# 行内循环左移一格： s[1],...,s[w-1],s[0]
+# rotate a row one step left:  s[1],...,s[w-1],s[0]
 def rot_l(+xs: List<&2, Nat>) -> List<&2, Nat>:
   match xs:
     case Nil{}:
@@ -32,7 +32,7 @@ def rot_l(+xs: List<&2, Nat>) -> List<&2, Nat>:
     case Con{h, t}:
       app(t, Con{h, Nil{}})
 
-# 行内循环右移一格： s[w-1],s[0],...,s[w-2]
+# rotate a row one step right: s[w-1],s[0],...,s[w-2]
 def rot_r(+xs: List<&2, Nat>) -> List<&2, Nat>:
   rev(rot_l(rev(xs, Nil{})), Nil{})
 
@@ -40,7 +40,7 @@ def rule(+alive: Nat, +n: Nat) -> Nat:
   Bool.pick(Nat, Nat.is_eq(n, 3n), 1n,
     Bool.pick(Nat, Nat.is_eq(n, 2n), alive, 0n))
 
-# ---------- 网格 = 行的链表 ----------
+# ---------- the grid = a list of rows ----------
 type Rows is Data:
   RNil{}
   RCons{row: List<&2, Nat>, tail: Rows}
@@ -59,7 +59,7 @@ def rows_rev(+a: Rows, +acc: Rows) -> Rows:
     case RCons{r, t}:
       rows_rev(t, RCons{r, acc})
 
-# 行链表循环左移一格： r1,...,r(h-1),r0
+# rotate the row list one step left: r1,...,r(h-1),r0
 def rows_rot1(+a: Rows) -> Rows:
   match a:
     case RNil{}:
@@ -67,11 +67,11 @@ def rows_rot1(+a: Rows) -> Rows:
     case RCons{r, t}:
       rows_app(t, RCons{r, RNil{}})
 
-# 反向旋转，用两次反转换掉 O(h) 次旋转
+# the other direction: two reversals instead of O(h) single rotations
 def rows_rotm1(+a: Rows) -> Rows:
   rows_rev(rows_rot1(rows_rev(a, RNil{})), RNil{})
 
-# ---------- 第一遍：三行逐列纵向求和 ----------
+# ---------- pass 1: three rows summed column by column ----------
 def colsum(
   +p: List<&2, Nat>, +c: List<&2, Nat>, +n: List<&2, Nat>, +acc: List<&2, Nat>
 ) -> List<&2, Nat>:
@@ -89,8 +89,8 @@ def colsum(
             case Con{hn, tn}:
               colsum(tp, tc, tn, Con{Nat.add(hp, Nat.add(hc, hn)), acc})
 
-# ---------- 第二遍：横向三格窗口 ----------
-# sl = s 右移一格 (s[x-1])，sr = s 左移一格 (s[x+1])
+# ---------- pass 2: the horizontal three-cell window ----------
+# sl = s shifted right one (s[x-1]), sr = s shifted left one (s[x+1])
 def rowstep(
   +sl: List<&2, Nat>, +s: List<&2, Nat>, +sr: List<&2, Nat>, +c: List<&2, Nat>,
   +acc: List<&2, Nat>
@@ -119,7 +119,7 @@ def newrow(+p: List<&2, Nat>, +c: List<&2, Nat>, +n: List<&2, Nat>) -> List<&2, 
   +s = colsum(p, c, n, Nil{})
   rowstep(rot_r(s), s, rot_l(s), c, Nil{})
 
-# ---------- 一整代：三个错开的行链表并排走 ----------
+# ---------- one generation: three staggered row lists walking together ----------
 def zip3(+P: Rows, +C: Rows, +N: Rows) -> Rows:
   match P:
     case RNil{}:
@@ -145,7 +145,7 @@ def evolve(+gens: Nat, +a: Rows) -> Rows:
     case 1n+q:
       evolve(q, gen(a))
 
-# ---------- 初始图案：一个滑翔机 ----------
+# ---------- the seed: one glider ----------
 def hit(+x: Nat, +y: Nat, +a: Nat, +b: Nat) -> Bool:
   Bool.and(Nat.is_eq(x, a), Nat.is_eq(y, b))
 
@@ -174,7 +174,7 @@ def mkgrid(+w: Nat, +h: Nat, +y: Nat) -> Rows:
     case 1n+p:
       RCons{mkrow(w, w, Nat.mul(y, w)), mkgrid(w, p, Nat.add(y, 1n))}
 
-# ---------- 活细胞数 ----------
+# ---------- live cell count ----------
 def count(+g: List<&2, Nat>, +acc: Nat) -> Nat:
   match g:
     case Nil{}:

@@ -1,14 +1,14 @@
 import Base
 
 # ============================================================
-# 生命游戏：终端动画
-# 引擎就是 life_row.bend 的那套按行滑动窗口（O(n)），
-# 外面套一层 do IO：每代写一帧、睡一下、再算下一代。
-# 跑：bend life_anim.bend
-# 改动画长度 / 速度：看文件底部的 GENS 和 SLEEP_MS
+# Life: a terminal animation
+# The engine is life_row.bend's row-window sweep (O(n)),
+# wrapped in a do IO that writes a frame, sleeps, and computes the next one.
+# Run: bend life_anim.bend
+# To change the length or the speed: GENS and SLEEP_MS, at the bottom of the file
 # ============================================================
 
-# ---------- 链表小工具 ----------
+# ---------- list helpers ----------
 def app(+xs: List<&2, Nat>, +ys: List<&2, Nat>) -> List<&2, Nat>:
   match xs:
     case Nil{}:
@@ -37,7 +37,7 @@ def rule(+alive: Nat, +n: Nat) -> Nat:
   Bool.pick(Nat, Nat.is_eq(n, 3n), 1n,
     Bool.pick(Nat, Nat.is_eq(n, 2n), alive, 0n))
 
-# ---------- 网格 = 行的链表 ----------
+# ---------- the grid = a list of rows ----------
 type Rows is Data:
   RNil{}
   RCons{row: List<&2, Nat>, tail: Rows}
@@ -66,7 +66,7 @@ def rows_rot1(+a: Rows) -> Rows:
 def rows_rotm1(+a: Rows) -> Rows:
   rows_rev(rows_rot1(rows_rev(a, RNil{})), RNil{})
 
-# ---------- 第一遍：三行逐列纵向求和 ----------
+# ---------- pass 1: three rows summed column by column ----------
 def colsum(
   +p: List<&2, Nat>, +c: List<&2, Nat>, +n: List<&2, Nat>, +acc: List<&2, Nat>
 ) -> List<&2, Nat>:
@@ -84,7 +84,7 @@ def colsum(
             case Con{hn, tn}:
               colsum(tp, tc, tn, Con{Nat.add(hp, Nat.add(hc, hn)), acc})
 
-# ---------- 第二遍：横向三格窗口 ----------
+# ---------- pass 2: the horizontal three-cell window ----------
 def rowstep(
   +sl: List<&2, Nat>, +s: List<&2, Nat>, +sr: List<&2, Nat>, +c: List<&2, Nat>,
   +acc: List<&2, Nat>
@@ -131,15 +131,15 @@ def zip3(+P: Rows, +C: Rows, +N: Rows) -> Rows:
 def gen(+a: Rows) -> Rows:
   zip3(rows_rotm1(a), a, rows_rot1(a))
 
-# ---------- 渲染 ----------
-# 一个格子 → 两个字符。终端字符大约高:宽 = 2:1，双宽才不会把滑翔机拉长。
-# ⚠️ 整套写法最后只做一次 String.reverse，而它翻的是「字符」不是「格子」——
-# 所以每个格子必须是回文。"██" / "  " 都是；哪天换成 "▐█" 这种，
-# 每行就会被翻个个儿（这个坑我已经踩过一次）。
+# ---------- rendering ----------
+# One cell -> two characters. A terminal cell is about 2:1 tall:wide, so widening
+# it keeps the glider from stretching. WARNING: the scheme does one String.reverse
+# at the end, and it reverses CHARACTERS, not cells -- so every cell must be a
+# palindrome. "██" / "  " are; swap in something like "▐█" and every row mirrors.
 def cell(+v: Nat) -> String:
   Bool.pick(String, Nat.is_eq(v, 1n), "██", "  ")
 
-# 一行倒着攒：行首被压到最里层，这里不 reverse
+# A row is built backwards: the row head ends up innermost, so no reverse here
 def rowrev(+r: List<&2, Nat>, +acc: String) -> String:
   match r:
     case Nil{}:
@@ -147,7 +147,7 @@ def rowrev(+r: List<&2, Nat>, +acc: String) -> String:
     case Con{h, t}:
       rowrev(t, String.append(cell(h), acc))
 
-# 网格也倒着攒：整屏倒过来
+# The grid is built backwards too: the whole frame comes out upside down
 def framerev(+rs: Rows, +acc: String) -> String:
   match rs:
     case RNil{}:
@@ -155,17 +155,17 @@ def framerev(+rs: Rows, +acc: String) -> String:
     case RCons{r, t}:
       framerev(t, String.append("\n", String.append(rowrev(r, SNil{}), acc)))
 
-# 一次 reverse 同时把「行的顺序」和「每行格子的顺序」翻回来。
-# 每步 String.append 的代价只看左边那个短串，所以整体 O(帧长)。
-# \u{1B}[H = 光标回左上角；不整屏清，就不闪。
+# One reverse fixes both the row order and the cell order inside each row.
+# Each String.append costs only the short left side, so the whole thing is O(frame).
+# \u{1B}[H = cursor to the top-left; no full clear means no flicker.
 def frame(+rs: Rows) -> String:
   String.append("\u{1B}[H", String.reverse(framerev(rs, SNil{})))
 
-# ---------- 初始图案：三种行为各一个 ----------
+# ---------- the seed: one pattern for each of the three behaviours ----------
 def on(+x: Nat, +y: Nat, +ax: Nat, +ay: Nat) -> Bool:
   Bool.and(Nat.is_eq(x, ax), Nat.is_eq(y, ay))
 
-# 滑翔机 —— 会走
+# glider -- it moves
 def glider(+x: Nat, +y: Nat) -> Bool:
   Bool.or(on(x, y, 2n, 2n),
   Bool.or(on(x, y, 3n, 3n),
@@ -173,7 +173,7 @@ def glider(+x: Nat, +y: Nat) -> Bool:
   Bool.or(on(x, y, 2n, 4n),
           on(x, y, 3n, 4n)))))
 
-# 闪烁器 —— 原地周期 2
+# blinker -- period 2, in place
 def blinker(+x: Nat, +y: Nat, +w: Nat) -> Bool:
   +bx = Nat.sub(w, 8n)
   Bool.and(Nat.is_eq(y, 3n),
@@ -181,7 +181,7 @@ def blinker(+x: Nat, +y: Nat, +w: Nat) -> Bool:
   Bool.or(Nat.is_eq(x, Nat.add(bx, 1n)),
           Nat.is_eq(x, Nat.add(bx, 2n)))))
 
-# 方块 —— 静止不动
+# block -- still life
 def block(+x: Nat, +y: Nat, +w: Nat, +h: Nat) -> Bool:
   +bx = Nat.sub(w, 8n)
   +by = Nat.sub(h, 6n)
@@ -207,8 +207,8 @@ def mkgrid(+n: Nat, +y: Nat, +w: Nat, +h: Nat) -> Rows:
     case 1n+p:
       RCons{mkrow(w, 0n, y, w, h), mkgrid(p, Nat.add(y, 1n), w, h)}
 
-# ---------- 动画 ----------
-# 缩小的参数排最左 = left
+# ---------- the animation ----------
+# the shrinking argument goes leftmost = left
 def loop(+left: Nat, +k: Nat, +rs: Rows) -> IO(Unit):
   match left:
     case 0n:

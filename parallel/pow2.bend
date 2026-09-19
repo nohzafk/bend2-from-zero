@@ -1,6 +1,6 @@
 import Base
 
-# 一个在并行调用上分治的例子：pow2(n) = 2^n
+# A divide-and-conquer example written as parallel calls: pow2(n) = 2^n
 def pow2(+n: Nat) -> U32:
   match n:
     case 0n:
