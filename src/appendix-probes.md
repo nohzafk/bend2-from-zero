@@ -16,20 +16,20 @@ cd basics && bend hello_bad.bend
 
 | probe | what it does wrong | what Bend says |
 |---|---|---|
-| [`basics/hello_bad.bend`](../basics/hello_bad.bend) | writes the return type `IO<Unit>` instead of `IO(Unit)` | `a declared datatype (unknown: IO)` |
-| [`basics/hello_arg.bend`](../basics/hello_arg.bend) | passes a bare `42` where a `String` is wanted | `expected : String` / `observed : U32` |
-| [`basics/term_bad.bend`](../basics/term_bad.bend) | a recursion that cannot be shown to shrink | `expected : a decreasing self-call ...` / `observed : loop` |
-| [`basics/term_order.bend`](../basics/term_order.bend) | shrinks the right argument, not the leftmost | `expected : a decreasing self-call ...` / `observed : evolve` |
-| [`affinity/affine_bad.bend`](../affinity/affine_bad.bend) | uses `x` twice | `expected : x` / `observed : x (consumed more than once)` |
-| [`affinity/t9_listonly.bend`](../affinity/t9_listonly.bend) | `List<U32>` (not `List<&2, U32>`) used twice | `expected : xs` / `observed : xs (consumed more than once)` |
-| [`affinity/t4_arrplus.bend`](../affinity/t4_arrplus.bend) | puts `+` on an `Array`, which is `Type` | `expected : Data` / `observed : Type` |
-| [`affinity/t5_closure.bend`](../affinity/t5_closure.bend) | calls a closure twice | `expected : f` / `observed : f (consumed more than once)` |
-| [`affinity/t6_closureplus.bend`](../affinity/t6_closureplus.bend) | puts `+` on a closure | `expected : Data` / `observed : Type` |
-| [`affinity/t11_templatemiss.bend`](../affinity/t11_templatemiss.bend) | omits `~` at the *call site* of a `~f` parameter | `expected : -f` / `observed : f (consumed more than once)` |
-| [`arrays/exp_arr.bend`](../arrays/exp_arr.bend) | annotates an array read in place: `a[5] : U32` | `expected : a term` / `observed : ':'` |
-| [`arrays/exp_arr2.bend`](../arrays/exp_arr2.bend) | destructures an array read: `(a2, v) = a[5]` | `a match cannot scrutinize a computed value: give it its own def` |
-| [`arrays/a_fail.bend`](../arrays/a_fail.bend) | binds the write first, then destructures the binder | `a match cannot scrutinize a local binder: give it its own def` |
-| [`arrays/d_write.bend`](../arrays/d_write.bend) | treats a write as a pair, like a read | `expected : Sigma<&1, &1, Array<U32>, _ => U32>` / `observed : Array<U32>` |
+| [`basics/hello_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend) | writes the return type `IO<Unit>` instead of `IO(Unit)` | `a declared datatype (unknown: IO)` |
+| [`basics/hello_arg.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_arg.bend) | passes a bare `42` where a `String` is wanted | `expected : String` / `observed : U32` |
+| [`basics/term_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/term_bad.bend) | a recursion that cannot be shown to shrink | `expected : a decreasing self-call ...` / `observed : loop` |
+| [`basics/term_order.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/term_order.bend) | shrinks the right argument, not the leftmost | `expected : a decreasing self-call ...` / `observed : evolve` |
+| [`affinity/affine_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/affine_bad.bend) | uses `x` twice | `expected : x` / `observed : x (consumed more than once)` |
+| [`affinity/t9_listonly.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t9_listonly.bend) | `List<U32>` (not `List<&2, U32>`) used twice | `expected : xs` / `observed : xs (consumed more than once)` |
+| [`affinity/t4_arrplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t4_arrplus.bend) | puts `+` on an `Array`, which is `Type` | `expected : Data` / `observed : Type` |
+| [`affinity/t5_closure.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t5_closure.bend) | calls a closure twice | `expected : f` / `observed : f (consumed more than once)` |
+| [`affinity/t6_closureplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t6_closureplus.bend) | puts `+` on a closure | `expected : Data` / `observed : Type` |
+| [`affinity/t11_templatemiss.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_templatemiss.bend) | omits `~` at the *call site* of a `~f` parameter | `expected : -f` / `observed : f (consumed more than once)` |
+| [`arrays/exp_arr.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/exp_arr.bend) | annotates an array read in place: `a[5] : U32` | `expected : a term` / `observed : ':'` |
+| [`arrays/exp_arr2.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/exp_arr2.bend) | destructures an array read: `(a2, v) = a[5]` | `a match cannot scrutinize a computed value: give it its own def` |
+| [`arrays/a_fail.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/a_fail.bend) | binds the write first, then destructures the binder | `a match cannot scrutinize a local binder: give it its own def` |
+| [`arrays/d_write.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/d_write.bend) | treats a write as a pair, like a read | `expected : Sigma<&1, &1, Array<U32>, _ => U32>` / `observed : Array<U32>` |
 
 Two of these are worth singling out, because they are the cases where the error
 message is *less* helpful than Bend's usual standard:
@@ -48,8 +48,8 @@ The most instructive category. Nothing here fails — which is the problem.
 
 | probe | what it does | what you get |
 |---|---|---|
-| [`basics/pat_bad.bend`](../basics/pat_bad.bend) | `case 1n+p` used to mean "equal to 1" | prints **`1`** — it does not |
-| [`basics/esc_bad.bend`](../basics/esc_bad.bend) | `\033` meant as the ESC byte | prints **` 33`** — a space, then `33` |
+| [`basics/pat_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/pat_bad.bend) | `case 1n+p` used to mean "equal to 1" | prints **`1`** — it does not |
+| [`basics/esc_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/esc_bad.bend) | `\033` meant as the ESC byte | prints **` 33`** — a space, then `33` |
 
 **`pat_bad.bend`.** Bend's `Nat` patterns are `0n` and `1n+p`, where the second
 means *"at least 1"*, not *"exactly 1"*. The obvious way to write a three-way

@@ -43,9 +43,12 @@ gpu/*
 gpu/mandelbrot/*
 !gpu/mandelbrot/*.bend
 !gpu/mandelbrot/*.md
+# main.c is generated, but the book quotes and links it, so it ships
+!gpu/mandelbrot/*.c
 gpu/queens/*
 !gpu/queens/*.bend
 !gpu/queens/*.md
+!gpu/queens/*.c
 
 # Python bytecode from tools/drift
 __pycache__/

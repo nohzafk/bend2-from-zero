@@ -139,7 +139,7 @@ The rule:
 
 The compiler points at the signature line and never mentions the brackets. The
 same mistake cost this book's author a bisection session, and it is preserved
-in the repository as [`basics/hello_bad.bend`](../basics/hello_bad.bend).
+in the repository as [`basics/hello_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend).
 
 ### `42` is not a `Nat`
 
@@ -173,7 +173,7 @@ IO.print(Nat.show(7n + 5n))  # 12
 So there is no silent widening, no "it's just a number". Every numeric literal
 in Bend announces its type in the source, and mixing them is an error — not a
 conversion. This file is kept as
-[`basics/hello_arg.bend`](../basics/hello_arg.bend).
+[`basics/hello_arg.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_arg.bend).
 
 ## Why you have to write all this out
 
@@ -198,9 +198,9 @@ end are where it is paid out in full.
 
 | | |
 |---|---|
-| [`basics/hello.bend`](../basics/hello.bend) | the program above |
-| [`basics/hello_bad.bend`](../basics/hello_bad.bend) | ❌ `IO<Unit>` in the signature |
-| [`basics/hello_arg.bend`](../basics/hello_arg.bend) | ❌ `IO.print(42)` |
+| [`basics/hello.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello.bend) | the program above |
+| [`basics/hello_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend) | ❌ `IO<Unit>` in the signature |
+| [`basics/hello_arg.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_arg.bend) | ❌ `IO.print(42)` |
 
 Next: [numbers and patterns](basics-numbers.md) — where Bend's most load-bearing
 syntax, the `n` suffix on a `match` pattern, makes a promise about termination.

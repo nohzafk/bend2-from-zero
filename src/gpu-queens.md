@@ -112,8 +112,8 @@ expected checksum `774553824`) reachable.
 
 | | |
 |---|---|
-| [`gpu/queens/main.bend`](../gpu/queens/main.bend) | the source, comments included |
-| [`gpu/queens/main.c`](../gpu/queens/main.c) | 3,866 lines of generated C |
+| [`gpu/queens/main.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/queens/main.bend) | the source, comments included |
+| [`gpu/queens/main.c`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/queens/main.c) | 3,866 lines of generated C |
 
 ```sh
 bend main.bend -o gpu            # -> gpu and gpu.gpu

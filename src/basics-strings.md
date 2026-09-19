@@ -74,7 +74,7 @@ $ bend esc_bad.bend | xxd
 followed by the two literal characters `3` and `3`. The program compiles, runs,
 and emits something that is not the escape you wanted.
 
-Kept as [`basics/esc_bad.bend`](../basics/esc_bad.bend). This one is worth
+Kept as [`basics/esc_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/esc_bad.bend). This one is worth
 remembering in the abstract, because the shape recurs: Bend's error messages are
 excellent right up until you write something *legal but unintended*, and then
 there is no message at all.
@@ -129,8 +129,8 @@ def String.reverse(s: String) -> String:
 
 | | |
 |---|---|
-| [`basics/exp_str.bend`](../basics/exp_str.bend) | `\n` and `\t` in action |
-| [`basics/esc_bad.bend`](../basics/esc_bad.bend) | ⚠️ compiles, runs, emits the wrong bytes |
+| [`basics/exp_str.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/exp_str.bend) | `\n` and `\t` in action |
+| [`basics/esc_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/esc_bad.bend) | ⚠️ compiles, runs, emits the wrong bytes |
 
 ---
 

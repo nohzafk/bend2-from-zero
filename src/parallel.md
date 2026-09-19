@@ -107,8 +107,8 @@ because every number in the rest of this book comes from a compiled binary.
 
 | | |
 |---|---|
-| [`parallel/pow2_26.bend`](../parallel/pow2_26.bend) | 2^26, the table above |
-| [`parallel/pow2.bend`](../parallel/pow2.bend) | 2^22 |
+| [`parallel/pow2_26.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/parallel/pow2_26.bend) | 2^26, the table above |
+| [`parallel/pow2.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/parallel/pow2.bend) | 2^22 |
 
 ```sh
 bend pow2_26.bend -o pow2_26

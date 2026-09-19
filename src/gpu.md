@@ -136,9 +136,9 @@ clang -O2 main.c -o cpu -lm
 
 | | |
 |---|---|
-| [`gpu/gpu_floor.bend`](../gpu/gpu_floor.bend) | one `!` call that does nothing — the entry cost |
-| [`gpu/gpu_twice.bend`](../gpu/gpu_twice.bend) | two calls, to show the cost is per process |
-| [`gpu/pow2_gpu.bend`](../gpu/pow2_gpu.bend) | the smallest `!` example |
+| [`gpu/gpu_floor.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/gpu_floor.bend) | one `!` call that does nothing — the entry cost |
+| [`gpu/gpu_twice.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/gpu_twice.bend) | two calls, to show the cost is per process |
+| [`gpu/pow2_gpu.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/pow2_gpu.bend) | the smallest `!` example |
 
 Next: the two workloads, one at a time — [why the GPU loses at
 n-queens](gpu-queens.md), and [why it wins at mandelbrot](gpu-mandelbrot.md).

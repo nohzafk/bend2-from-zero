@@ -152,13 +152,13 @@ against the same name.
 
 | | | |
 |---|---|---|
-| [`arrays/e_post1.bend`](../arrays/e_post1.bend) | ✅ | print the pair, see the pair |
-| [`arrays/b_ok.bend`](../arrays/b_ok.bend) | ✅ | destructure in a parameter |
-| [`arrays/c_base.bend`](../arrays/c_base.bend) | ✅ | `Pair.fst` / `Pair.snd` |
-| [`arrays/exp_arr.bend`](../arrays/exp_arr.bend) | ❌ | `a[5] : U32` |
-| [`arrays/exp_arr2.bend`](../arrays/exp_arr2.bend) | ❌ | destructure a computed value |
-| [`arrays/a_fail.bend`](../arrays/a_fail.bend) | ❌ | destructure a local binder |
-| [`arrays/d_write.bend`](../arrays/d_write.bend) | ❌ | the wrong half of a write |
+| [`arrays/e_post1.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/e_post1.bend) | ✅ | print the pair, see the pair |
+| [`arrays/b_ok.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/b_ok.bend) | ✅ | destructure in a parameter |
+| [`arrays/c_base.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/c_base.bend) | ✅ | `Pair.fst` / `Pair.snd` |
+| [`arrays/exp_arr.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/exp_arr.bend) | ❌ | `a[5] : U32` |
+| [`arrays/exp_arr2.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/exp_arr2.bend) | ❌ | destructure a computed value |
+| [`arrays/a_fail.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/a_fail.bend) | ❌ | destructure a local binder |
+| [`arrays/d_write.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/d_write.bend) | ❌ | the wrong half of a write |
 
 ---
 

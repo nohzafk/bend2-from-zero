@@ -190,7 +190,7 @@ a function pointer, not a reference-counted box. Inlined, and free.
 > Location: twice~0
 > ```
 >
-> Kept as [`affinity/t11_templatemiss.bend`](../affinity/t11_templatemiss.bend).
+> Kept as [`affinity/t11_templatemiss.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_templatemiss.bend).
 > `Location: twice~0` is the only hint that this is a specialized copy — and it
 > is not much of a hint unless you already know what `~` is.
 
@@ -205,14 +205,14 @@ like a wall turns out to be the reason the thing is fast.
 
 | | | |
 |---|---|---|
-| [`affinity/t2_plus.bend`](../affinity/t2_plus.bend) | ✅ | `+` on a `Data` type |
-| [`affinity/t4_arrplus.bend`](../affinity/t4_arrplus.bend) | ❌ | `+` on an `Array` |
-| [`affinity/t5_closure.bend`](../affinity/t5_closure.bend) | ❌ | a closure called twice |
-| [`affinity/t6_closureplus.bend`](../affinity/t6_closureplus.bend) | ❌ | `+` on a closure — same error |
-| [`affinity/t8_listplus.bend`](../affinity/t8_listplus.bend) | ✅ | `+` on a list |
-| [`affinity/t9_listonly.bend`](../affinity/t9_listonly.bend) | ❌ | the same list, without `+` |
-| [`affinity/t10_template.bend`](../affinity/t10_template.bend) | ✅ | `~f`, called twice |
-| [`affinity/t11_templatemiss.bend`](../affinity/t11_templatemiss.bend) | ❌ | the same call without `~` |
+| [`affinity/t2_plus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t2_plus.bend) | ✅ | `+` on a `Data` type |
+| [`affinity/t4_arrplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t4_arrplus.bend) | ❌ | `+` on an `Array` |
+| [`affinity/t5_closure.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t5_closure.bend) | ❌ | a closure called twice |
+| [`affinity/t6_closureplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t6_closureplus.bend) | ❌ | `+` on a closure — same error |
+| [`affinity/t8_listplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t8_listplus.bend) | ✅ | `+` on a list |
+| [`affinity/t9_listonly.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t9_listonly.bend) | ❌ | the same list, without `+` |
+| [`affinity/t10_template.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t10_template.bend) | ✅ | `~f`, called twice |
+| [`affinity/t11_templatemiss.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_templatemiss.bend) | ❌ | the same call without `~` |
 
 Next: [arrays](arrays.md) — where the two kinds collide, and a read hands you
 back more than you asked for.

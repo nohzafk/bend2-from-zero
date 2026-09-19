@@ -52,7 +52,7 @@ second case caught the `2n` before the third case was ever considered, and Bend
 does not warn you that the third case is unreachable.
 
 This file is kept in the repository as
-[`basics/pat_bad.bend`](../basics/pat_bad.bend), and it is the most dangerous
+[`basics/pat_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/pat_bad.bend), and it is the most dangerous
 kind of example in this book: not one that fails loudly, but one that passes.
 
 When you want to branch on the *value* of a number — "is this equal to 1?" —
@@ -181,10 +181,10 @@ wants.
 
 | | |
 |---|---|
-| [`basics/exp_mod.bend`](../basics/exp_mod.bend) | structural recursion with an accumulator |
-| [`basics/term_bad.bend`](../basics/term_bad.bend) | ❌ a recursion that cannot be shown to shrink |
-| [`basics/term_order.bend`](../basics/term_order.bend) | ❌ the shrinking argument is not leftmost |
-| [`basics/pat_bad.bend`](../basics/pat_bad.bend) | ⚠️ compiles, runs, and lies |
+| [`basics/exp_mod.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/exp_mod.bend) | structural recursion with an accumulator |
+| [`basics/term_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/term_bad.bend) | ❌ a recursion that cannot be shown to shrink |
+| [`basics/term_order.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/term_order.bend) | ❌ the shrinking argument is not leftmost |
+| [`basics/pat_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/pat_bad.bend) | ⚠️ compiles, runs, and lies |
 
 Next: [lists](basics-lists.md), where a one-line function turns out to be the
 reason the second half of this book exists.

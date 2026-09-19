@@ -15,7 +15,7 @@ The grid is a flat `List<&2, Nat>` of length `w × h`, holding 0 or 1. Coordinat
 become an index with `y*w + x`, and wrapping is done with `Nat.mod`, so the world
 is a torus — walk off the right edge and you arrive at the left.
 
-The whole program is [here](../life/life.bend), 120 lines. Four of them are the
+The whole program is [here](https://github.com/nohzafk/bend2-from-zero/blob/main/life/life.bend), 120 lines. Four of them are the
 interesting part:
 
 ```python

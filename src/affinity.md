@@ -171,9 +171,9 @@ readers will have met "affine" before:
 
 | | | |
 |---|---|---|
-| [`affinity/affine_bad.bend`](../affinity/affine_bad.bend) | ❌ | used twice |
-| [`affinity/t1_drop.bend`](../affinity/t1_drop.bend) | ✅ | never used at all |
-| [`affinity/t7_paths.bend`](../affinity/t7_paths.bend) | ✅ | twice in the source, once per path |
+| [`affinity/affine_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/affine_bad.bend) | ❌ | used twice |
+| [`affinity/t1_drop.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t1_drop.bend) | ✅ | never used at all |
+| [`affinity/t7_paths.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t7_paths.bend) | ✅ | twice in the source, once per path |
 
 Next: [copies, kinds and the `+` mark](kinds-and-copies.md) — what `+` really
 costs, and why it is refused for some types and not others.

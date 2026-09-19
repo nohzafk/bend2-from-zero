@@ -103,8 +103,8 @@ checking a rebuild — it finishes quickly and still verifies.
 
 | | |
 |---|---|
-| [`gpu/mandelbrot/main.bend`](../gpu/mandelbrot/main.bend) | the source |
-| [`gpu/mandelbrot/main.c`](../gpu/mandelbrot/main.c) | 4,174 lines of generated C, one file for both targets |
+| [`gpu/mandelbrot/main.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/mandelbrot/main.bend) | the source |
+| [`gpu/mandelbrot/main.c`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/mandelbrot/main.c) | 4,174 lines of generated C, one file for both targets |
 
 ```sh
 bend main.bend -o gpu            # the GPU path, plus a .gpu Metal kernel

@@ -25,11 +25,16 @@ Every ❌ and ⚠️ in the book corresponds to a **probe file in this repo that
 runs**. The error text is pasted output, not something written by hand, so you can
 reproduce each one yourself.
 
-`src/` contains symlinks into the topic directories. That is forced: mdBook only
-copies non-markdown files that are *inside* `src/`, so `[hello_bad.bend](../basics/hello_bad.bend)`
-would be a **dead link** in the rendered HTML. With the symlink, mdBook walks in and
-carries the `.bend` files into `book/` — the links work, and the HTML book becomes
-self-contained.
+`src/` holds only the chapters. Links to probe files point at the file's page on
+GitHub — `[hello_bad.bend](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend)` —
+because the GitHub Pages host serves a bare `.bend` (or `.c`) file as a download,
+while a `blob/` URL opens it as a view. The chapters' `{{#include}}` directives
+read the files straight from the topic directories.
+
+`tools/book-links.py` checks the built book: every relative link must resolve
+under `book/`, and every GitHub link must name a file that exists and is tracked
+in this repository (an untracked file is as good as missing on the published
+site).
 
 ## Setup
 
