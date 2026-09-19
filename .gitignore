@@ -46,3 +46,6 @@ gpu/mandelbrot/*
 gpu/queens/*
 !gpu/queens/*.bend
 !gpu/queens/*.md
+
+# Python bytecode from tools/drift
+__pycache__/

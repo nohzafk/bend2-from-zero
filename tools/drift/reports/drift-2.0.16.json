@@ -1,0 +1,1371 @@
+{
+ "meta": {
+  "date": "2026-09-19 10:23 UTC",
+  "bend_version": "2.0.16",
+  "bend_path": "/Users/randall/.bend/bin/bend",
+  "bend_sha": "da9bc51449f04a65bf633351fb754cd6f883f5f5d9ab0c4e947f5c6f19eb7386",
+  "machine": "Randalls-MacBook-Pro.local",
+  "cpu": "Apple M3 Max",
+  "cores": "14",
+  "perf_cores": "10",
+  "macos": "27.0",
+  "repo": "/Users/randall/projects/bend2-from-zero",
+  "commit": "9faee16",
+  "dirty": 6,
+  "load_start": "2.82/2.81/2.79",
+  "caffeinate": "yes",
+  "load_end": "3.74/3.17/2.93",
+  "elapsed_s": 112.2
+ },
+ "results": [
+  {
+   "name": "basics/hello_bad",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "basics",
+   "file": "hello_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- message  : a declared datatype (unknown: IO)\nLocation: main\n4 | # Writing IO<Unit> there does not compile. See src/basics-hello.md.\n5>| def main() -> IO<Unit>:\n6 |   do IO<Unit>:\n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/hello_arg",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "basics",
+   "file": "hello_arg.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : String\n- observed : U32\nLocation: main\n6 |   do IO<Unit>:\n7>|     IO.print(42)\n8 | \n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/term_bad",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "basics",
+   "file": "term_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : a decreasing self-call (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : loop\nContext:\n- p : Nat\nLocation: loop\n10 |     case 1n+p:\n11>|       loop(Nat.add(p, 1n))\n12 | \n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/term_order",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "basics",
+   "file": "term_order.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : a decreasing self-call (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : evolve\nContext:\n- g : Nat\n- q : Nat\nLocation: evolve\n14 |     case 1n+q:\n15>|       evolve(step(g), q)\n16 | \n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/affine_bad",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "affine_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : x\n- observed : x (consumed more than once)\nLocation: main\n3 | def main() -> U32:\n4>|   x = {3 : U32}\n5 |   (x + x : U32)\n",
+     "secs": 0.056,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t9_listonly",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t9_listonly.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : xs\n- observed : xs (consumed more than once)\nLocation: main\n2 | def main() -> Nat:\n3>|   xs = {[1, 2, 3] : List<U32>}\n4 |   Nat.add(List.length(&1, U32, xs), List.length(&1, U32, xs))\n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t4_arrplus",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t4_arrplus.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : Data\n- observed : Type\nLocation: main\n3 | def main() -> U32:\n4>|   +a = [0 : U32*4n]\n5 |   b = a[0]\n",
+     "secs": 0.058,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t5_closure",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t5_closure.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : f\n- observed : f (consumed more than once)\nLocation: main\n2 | def main() -> U32:\n3>|   f = {x => (x + 1 : U32) : U32 -> U32}\n4 |   (f(1) + f(2) : U32)\n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t6_closureplus",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t6_closureplus.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : Data\n- observed : Type\nLocation: main\n3 | def main() -> U32:\n4>|   +f = {x => (x + 1 : U32) : U32 -> U32}\n5 |   (f(1) + f(2) : U32)\n",
+     "secs": 0.058,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t11_templatemiss",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t11_templatemiss.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : -f\n- observed : f (consumed more than once)\nLocation: twice~0\n10 | # closure and is really about the missing ~. Compare t10_template.bend.\n11>| def twice(~f: U32 -> U32, x: U32) -> U32:\n12 |   f(f(x))\n",
+     "secs": 0.056,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t3_arr",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t3_arr.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a local binder: give it its own def)\nLocation:\n4 |   a1 = a[5] <- 42\n5>|   p = a1[0]\n6 |   (a2, b) = p\n",
+     "secs": 0.039,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/exp_arr",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "exp_arr.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : a term\n- observed : ':'\nLocation:\n7 |     a[5] <- 42\n8>|     IO.print(U32.show(a[5] : U32))\n9 | \n",
+     "secs": 0.039,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/exp_arr2",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "exp_arr2.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a computed value: give it its own def)\nLocation:\n6 |     a[5] <- 42\n7>|     (a2, v) = a[5]\n8 |     IO.print(U32.show(v))\n",
+     "secs": 0.039,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/a_fail",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "a_fail.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a local binder: give it its own def)\nLocation:\n3 |   a = [0 : U32*4n]\n4>|   p = a[5] <- 42\n5 |   (a2, b) = p\n",
+     "secs": 0.038,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/d_write",
+   "group": "probes-bad",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "d_write.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error:\n- expected : Sigma<&1, &1, Array<U32>, _ => U32>\n- observed : Array<U32>\nContext:\n- a : Array<U32>\n- a : Array<U32>\nLocation: main\n5 |   a[5] <- 42\n6>|   Pair.snd(Array<U32>, U32, a[9] <- 7)    # write idx 9, look at the second half\n7 | \n",
+     "secs": 0.056,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/hello",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "basics",
+   "file": "hello.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "hello, bend 2\n",
+     "err": "",
+     "secs": 0.06,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/exp_str",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "basics",
+   "file": "exp_str.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "a\nb\ttab\n",
+     "err": "",
+     "secs": 0.06,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/exp_mod",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "basics",
+   "file": "exp_mod.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "1n\n",
+     "err": "",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/exp_list",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "basics",
+   "file": "exp_list.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "2\n",
+     "err": "",
+     "secs": 0.062,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/pat_bad",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "basics",
+   "file": "pat_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "1\n",
+     "err": "",
+     "secs": 0.061,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "basics/esc_bad",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "basics",
+   "file": "esc_bad.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "\u000033\n",
+     "err": "",
+     "secs": 0.06,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t1_drop",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t1_drop.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "7\n",
+     "err": "",
+     "secs": 0.059,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t2_plus",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t2_plus.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "6\n",
+     "err": "",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t7_paths",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t7_paths.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "11\n",
+     "err": "",
+     "secs": 0.058,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t8_listplus",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t8_listplus.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "6n\n",
+     "err": "",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "affinity/t10_template",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "affinity",
+   "file": "t10_template.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "42\n",
+     "err": "All terms check, with 1 unsafe annotation.\n",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/b_ok",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "b_ok.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "43\n",
+     "err": "",
+     "secs": 0.06,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/c_base",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "c_base.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "42\n",
+     "err": "",
+     "secs": 0.061,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/e_post1",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "e_post1.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "([0, 0, 0, 0, 0, 42, 0, 0], 42)\n",
+     "err": "",
+     "secs": 0.059,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "arrays/f_post3",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "arrays",
+   "file": "f_post3.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "42\n",
+     "err": "",
+     "secs": 0.061,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "parallel",
+   "file": "pow2.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "4194304\n",
+     "err": "",
+     "secs": 0.12,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/life",
+   "group": "probes-ok",
+   "mode": "run",
+   "dir": "life",
+   "file": "life.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "generation 0\n\n.#......\n..#.....\n###.....\n........\n........\n........\n........\n........\n\ngeneration 1\n\n........\n#.#.....\n.##.....\n.#......\n........\n........\n........\n........\n\ngeneration 2\n\n........\n..#.....\n#.#.....\n.##.....\n........\n........\n........\n........\n\ngeneration 4\n\n........\n..#.....\n...#....\n.###....\n........\n........\n........\n........\n\n\n",
+     "err": "",
+     "secs": 0.082,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/LIFE_PAR_PROOF",
+   "group": "proofs",
+   "mode": "run",
+   "dir": "life",
+   "file": "LIFE_PAR_PROOF.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.074,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.075,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.073,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/LIFE_ANIM_PROOF",
+   "group": "proofs",
+   "mode": "run",
+   "dir": "life",
+   "file": "LIFE_ANIM_PROOF.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.069,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.069,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.068,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/LIFE_PAR_LAWS",
+   "group": "proofs",
+   "mode": "run",
+   "dir": "life",
+   "file": "LIFE_PAR_LAWS.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.\n",
+     "secs": 0.068,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/LIFE_ANIM_LAWS",
+   "group": "proofs",
+   "mode": "run",
+   "dir": "life",
+   "file": "LIFE_ANIM_LAWS.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 1,
+     "out": "",
+     "err": "Error: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.\n",
+     "secs": 0.059,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @1t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.26,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.545,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.253,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.241,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @2t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.132,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.13,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.131,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @4t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.075,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.076,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.073,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @8t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.049,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.049,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.049,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "parallel/pow2_26 @14t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "parallel",
+   "file": "pow2_26.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.046,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.046,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.046,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/gpu_floor",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu",
+   "file": "gpu_floor.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.568,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.078,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.085,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "4\n",
+     "err": "",
+     "secs": 0.083,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/pow2_gpu",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu",
+   "file": "pow2_gpu.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.567,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.09,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.099,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "67108864\n",
+     "err": "",
+     "secs": 0.093,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/gpu_twice",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu",
+   "file": "gpu_twice.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.869,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "33554432\n67108864\n",
+     "err": "",
+     "secs": 0.092,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "33554432\n67108864\n",
+     "err": "",
+     "secs": 0.107,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "33554432\n67108864\n",
+     "err": "",
+     "secs": 0.09,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/mandelbrot cpu @1t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/mandelbrot",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.098,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 5.807,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 5.611,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 5.615,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/mandelbrot cpu @10t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/mandelbrot",
+   "file": "main.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.749,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.753,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.748,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/mandelbrot gpu",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu/mandelbrot",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.836,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.101,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.116,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "3101455856\n",
+     "err": "",
+     "secs": 0.109,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/queens cpu @1t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/queens",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.103,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 6.779,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 6.601,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 6.608,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/queens cpu @10t",
+   "group": "bench",
+   "mode": "c_cpu",
+   "dir": "gpu/queens",
+   "file": "main.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 0.904,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 0.894,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 0.903,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gpu/queens gpu",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "gpu/queens",
+   "file": "main.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.763,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 1.736,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 1.743,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "2063750025\n",
+     "err": "",
+     "secs": 1.648,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/life_row @1t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "life",
+   "file": "life_row.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.476,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=5\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=73\n\n256x256  live=5  ms=316\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "err": "",
+     "secs": 0.639,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=5\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=72\n\n256x256  live=5  ms=315\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "err": "",
+     "secs": 0.43,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/life_par @1t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "life",
+   "file": "life_par.bend",
+   "problems": [],
+   "compile": {
+    "rc": 0,
+    "out": "",
+    "err": "",
+    "secs": 0.412,
+    "timeout": false
+   },
+   "runs": [
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1842\n\nblk=16 ( 256 tasks)  live=5  ms=2114\n\nblk=64 (  64 tasks)  live=5  ms=2079\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=521\n\n  64x64 16gen  live=5  ms=8316\n\n",
+     "err": "",
+     "secs": 15.085,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1842\n\nblk=16 ( 256 tasks)  live=5  ms=2112\n\nblk=64 (  64 tasks)  live=5  ms=2079\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=521\n\n  64x64 16gen  live=5  ms=8326\n\n",
+     "err": "",
+     "secs": 14.9,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "life/life_par @10t",
+   "group": "bench",
+   "mode": "compile",
+   "dir": "life",
+   "file": "life_par.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=767\n\nblk=16 ( 256 tasks)  live=5  ms=757\n\nblk=64 (  64 tasks)  live=5  ms=1042\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=528\n\n  64x64 16gen  live=5  ms=8082\n\n",
+     "err": "",
+     "secs": 11.195,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=756\n\nblk=16 ( 256 tasks)  live=5  ms=724\n\nblk=64 (  64 tasks)  live=5  ms=1071\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=529\n\n  64x64 16gen  live=5  ms=8084\n\n",
+     "err": "",
+     "secs": 11.183,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "hub/nat.bend",
+   "group": "hub",
+   "mode": "run",
+   "dir": "hub",
+   "file": "nat.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "hub/string.bend",
+   "group": "hub",
+   "mode": "run",
+   "dir": "hub",
+   "file": "string.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.057,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "hub/list.bend",
+   "group": "hub",
+   "mode": "run",
+   "dir": "hub",
+   "file": "list.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.058,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "hub/example.bend",
+   "group": "hub",
+   "mode": "run",
+   "dir": "hub",
+   "file": "example.bend",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "All terms check.\n",
+     "err": "",
+     "secs": 0.06,
+     "timeout": false
+    }
+   ]
+  },
+  {
+   "name": "gate/matrix",
+   "group": "gate",
+   "mode": "script",
+   "dir": "tools/drift",
+   "file": "gate_matrix.sh",
+   "problems": [],
+   "compile": null,
+   "runs": [
+    {
+     "rc": 0,
+     "out": "t1_ok rc=0 out=All terms check. err=\nt2_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt3_todo rc=1 out= err=Error: 1 TODO found.\nt4_noimport rc=1 out= err=bend: PROOF.bend must import ./LAWS.bend (see bend --help)\nt5_vacuous rc=0 out=All terms check. err=\nt6_nearby_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt7_straydef rc=1 out= err=Error:\n",
+     "err": "",
+     "secs": 0.5,
+     "timeout": false
+    }
+   ]
+  }
+ ]
+}
