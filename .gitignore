@@ -49,3 +49,30 @@ gpu/queens/*
 
 # Python bytecode from tools/drift
 __pycache__/
+
+# fx/ — effects probes. Same whitelist idea as the dirs above: only sources,
+# builds ignored. The custom-effect dir also keeps .c and .js (the host files).
+fx/*
+!fx/*.md
+!fx/io
+!fx/custom
+!fx/file
+!fx/tcp
+!fx/lane
+fx/io/*
+!fx/io/*.bend
+!fx/io/*.md
+fx/custom/*
+!fx/custom/*.bend
+!fx/custom/*.c
+!fx/custom/*.js
+!fx/custom/*.md
+fx/file/*
+!fx/file/*.bend
+!fx/file/*.md
+fx/tcp/*
+!fx/tcp/*.bend
+!fx/tcp/*.md
+fx/lane/*
+!fx/lane/*.bend
+!fx/lane/*.md
