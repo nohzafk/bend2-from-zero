@@ -34,10 +34,16 @@
 - [Is it actually parallel?](life-parallel.md)
 - [Making it move](life-anim.md)
 
+# Effects: the world outside
+
+- [Effects, and the event loop](effects.md)
+- [Writing an effect](effects-2.md)
+
 # Laws: turning a belief into a compiler check
 
 - [Your first law and proof](laws-1.md)
 - [A second law, and the wall underneath](laws-2.md)
+- [The gate, and its edges](laws-3.md)
 
 # Appendices
 

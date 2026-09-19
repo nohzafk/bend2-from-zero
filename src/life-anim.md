@@ -162,4 +162,4 @@ smoother.
 To change the length or speed, two numbers at the end of `life_anim.bend`:
 `loop(320n, ...)` and `IO.sleep(70)`.
 
-Next: [turning a belief into a compiler check](laws-1.md).
+Next: [Effects, and the event loop](effects.md).
