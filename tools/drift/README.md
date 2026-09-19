@@ -1,14 +1,23 @@
 # drift — re-run every claim in this repo
 
-The book is written against **Bend 2.0.5**; the machine runs whatever
-`bend update` last installed. This directory answers "what moved?": it runs
-every probe and measurement the book makes a claim about, with the current
-bend, and writes a report.
+The book is written against **Bend 2.0.16**, and Bend moves fast. This directory
+answers "what still holds?": it runs every probe and measurement the book makes
+a claim about, with the bend on this machine, and writes a report with a `book`
+column — what the text claims — next to what the binary actually does.
 
 - `manifest.py` — the checks: one entry per probe / measurement, plus the
   claim (the book's text, or the current source's behaviour).
 - `run_drift.py` — executes them, compares, writes
   `reports/drift-<version>.{md,json}`.
+- `../check-quotes.py` — the other half of the same idea, for the quotes that
+  are not a probe: every compiler error the book pastes must still be produced
+  by a real run, line numbers included. Not wired into `run_drift.py` because
+  it has its own natural place — a failing step in the Pages workflow.
+
+```sh
+python3 tools/check-quotes.py                    # every quoted error
+python3 tools/check-quotes.py --bend /path/to/bend
+```
 
 ```sh
 python3 tools/drift/run_drift.py                 # everything (~5 min)

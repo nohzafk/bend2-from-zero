@@ -48,6 +48,26 @@ jobs:
       - name: Check the book's links
         run: python3 tools/book-links.py
 
+      # The other promise the book makes, and the one nothing else enforces:
+      # that every compiler error in it is pasted from a real run. Line numbers
+      # rot silently -- add a comment line to a probe and the quote points at the
+      # wrong line while every other check still passes.
+      #
+      # It needs a bend, so the release is pinned and checksummed the same way
+      # mdbook is, and for the same reason: bump it deliberately, together with
+      # the book, so a failure means the text drifted rather than that upstream
+      # shipped a release overnight.
+      - name: Check the book's quoted errors
+        env:
+          BEND_VER: "2.0.16"
+          BEND_SHA_LINUX_X64: "496ff13a312221c3dc0dde4077368ced42c0f3eadcb61c2d43de5caddf0e50b4"
+        run: |
+          curl -sSL -o "$RUNNER_TEMP/bend.tgz" \
+            "https://github.com/bendlang/bend/releases/download/v${BEND_VER}/bend-${BEND_VER}-linux-x64.tar.gz"
+          echo "${BEND_SHA_LINUX_X64}  $RUNNER_TEMP/bend.tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/bend.tgz" -C "$RUNNER_TEMP"
+          python3 tools/check-quotes.py --bend "$RUNNER_TEMP/bend/bin/bend"
+
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

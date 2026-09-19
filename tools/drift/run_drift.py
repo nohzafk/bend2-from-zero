@@ -248,7 +248,7 @@ def write_reports(meta, results, outdir, label):
     L.append(f"- caffeinate running: {meta['caffeinate']}")
     L.append("")
     L.append("Verdict is against **manifest.py** (the recorded claim); the "
-             "`book` column is what the 2.0.5-written book says, for context.\n")
+             "`book` column is what the book quotes, for context.\n")
 
     for group in ["probes-bad", "probes-ok", "proofs", "hub", "gate", "fx", "bench"]:
         rows = [r for r in results if r["check"]["group"] == group]
@@ -256,7 +256,7 @@ def write_reports(meta, results, outdir, label):
             continue
         L.append(f"## {group}\n")
         if group == "bench":
-            L.append("| check | book (2.0.5) | now | verdict |")
+            L.append("| check | book | now | verdict |")
             L.append("|---|---|---|---|")
             for r in rows:
                 c = r["check"]
@@ -264,7 +264,7 @@ def write_reports(meta, results, outdir, label):
                 v = "OK" if not r["problems"] else "**FAIL**: " + "; ".join(r["problems"])
                 L.append(f"| {c['name']} | {c['book']} | {timing} | {v} |")
         else:
-            L.append("| check | book (2.0.5) | now | verdict |")
+            L.append("| check | book | now | verdict |")
             L.append("|---|---|---|---|")
             for r in rows:
                 c = r["check"]

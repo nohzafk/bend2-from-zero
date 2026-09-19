@@ -121,13 +121,11 @@ CHECKS = [
       expect_out=["42"], expect_err=["All terms check, with 1 unsafe annotation."],
       book="42",
       source="source",
-      note="CHANGED(2.0.16, intended -- see CHANGELOG): a def that is a"
-           " template instance counts as unsafe, so a file with a template"
-           " prints 'All terms check, with N unsafe annotations.' on stderr"
-           " 'until the checker verifies template expansion itself'.  2.0.5's"
-           " cli_report counted only @unsafe and printed nothing when running a"
-           " file with a main.  The template does NOT skip any check; this is a"
-           " disclosure, not a soundness hole."),
+      note="A def that is a template instance counts as unsafe (intended,"
+           " per the CHANGELOG), so a file with a template prints 'All terms"
+           " check, with N unsafe annotations.' on stderr 'until the checker"
+           " verifies template expansion itself'.  The template does NOT skip"
+           " any check; this is a disclosure, not a soundness hole."),
     C("arrays/b_ok", "probes-ok", "arrays", "b_ok.bend", "run",
       expect_out=["43"], book="43"),
     C("arrays/c_base", "probes-ok", "arrays", "c_base.bend", "run",
@@ -162,8 +160,7 @@ CHECKS = [
       book="open claim; running it alone is '1 TODO found'"),
 
     # -------------------------------------------------------------- bench
-    # Book: appendix-measurements.md (re-run 2026-09-18 on Bend 2.0.5) and
-    # the topic READMEs.  Compiled builds only; first run of a fresh binary
+    # Book: appendix-measurements.md and the topic READMEs.  Compiled builds only; first run of a fresh binary
     # is discarded (it is ~0.35 s slower for cold-start reasons, see README).
     C("parallel/pow2_26 @1t", "bench", "parallel", "pow2_26.bend", "compile",
       args=["--threads", "1"], runs=3, expect_out=["67108864"], timeout_s=120,
@@ -184,7 +181,7 @@ CHECKS = [
       runs=3, expect_out=["4"], expect_err_exact_empty=True, timeout_s=120,
       book="0.08-0.09 s",
       source="source",
-      note=".gpu semantics (same design in 2.0.5's comp.ts and in 2.0.16):"
+      note=".gpu semantics:"
            " `bend -o X` writes X.gpu beside X; a launch LOADS it when present"
            " (silent), and prints 'compiling the GPU program (missing or stale)'"
            " and recompiles only when the file is absent or empty.  A run never"
@@ -215,10 +212,9 @@ CHECKS = [
     C("gpu/queens gpu", "bench", "gpu/queens", "main.bend", "compile",
       runs=3, expect_out=["2063750025"], timeout_s=300, book="1.34-1.41 s",
       source="source",
-      note="Re-measured 2026-09-19: ~1.7 s (median) here, and the same ~1.7 s"
-           " from the Sep-18 2.0.5-built binary (gpu/queens/gpu) interleaved on"
-           " the same machine -- so this is NOT a 2.0.5->2.0.16 regression."
-           "  queens-gpu is the only workload whose GPU compute is not hidden"
+      note="Measured 2026-09-19: ~1.7 s (median) here, above the book's"
+           " 1.34-1.41 s.  queens-gpu is the only workload whose GPU compute is"
+           " not hidden"
            " under the ~85 ms entry fee (mandelbrot's real work is ~30 ms), so"
            " it is the only one that can show a GPU-state difference; the"
            " difference is environment (GUI/GPU contention), per the book's own"
