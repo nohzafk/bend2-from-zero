@@ -202,3 +202,5 @@ induction.**
 ```python
 {{#include ../life/LIFE_ANIM_PROOF.bend}}
 ```
+
+Next: [the gate, and its edges](laws-3.md).
