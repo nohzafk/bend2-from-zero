@@ -7,15 +7,29 @@ numbers a quote carries are part of no expectation there. So a probe file can
 gain a comment line, the quote can keep the old line number, and every check
 still passes while the book points at the wrong line.
 
-How it decides what a quote came from: it does not guess. It runs the files the
-book references, and asks which of them actually produce those lines. A quote
-that no real run produces is the failure.
+How it decides what a quote came from: it does not guess. It runs files and asks
+which of them actually produce those lines. A quote that no real run produces is
+the failure.
 
 That matters because the naive approach -- "the file in the `{{#include}}`
 above the quote" -- is wrong exactly where it is most needed: the two error
 quotes in the first chapter are inline examples, not includes.
 
+What it runs, cheapest first:
+
+  1. the file the chapter includes immediately above the quote;
+  2. the other files that chapter references, plus every probe `manifest.py`
+     already declares as failing to compile. A quoted error has to come from a
+     file that errors, and the manifest is the list of those. Both sets are
+     short and fast.
+  3. `--wide`: everything the book references. A diagnostic, off by default --
+     `gpu/queens` and `gpu/mandelbrot` do not finish inside any sane timeout in
+     run mode, so scanning everything costs two full timeouts before it can say
+     anything. Step 2 covers the real cases, so this is for when step 2's answer
+     is "nothing", which is itself worth knowing.
+
     python3 tools/check-quotes.py            # from the repo root
+    python3 tools/check-quotes.py --wide     # search the whole book
 
 Exit 0 when every quote is produced by a real run, 1 otherwise. Sits next to
 book-links.py in the Pages workflow.
@@ -34,6 +48,7 @@ INCLUDE = re.compile(r"^\{\{#include\s+(\S+?)\s*\}\}$")
 MARKER = re.compile(r"^\s*(\d+)>?\|")
 FENCE = re.compile(r"^```")
 BLOB = re.compile(r"blob/main/([A-Za-z0-9_./-]+\.bend)")
+BARE = re.compile(r"\b([A-Za-z0-9_]+/[A-Za-z0-9_]+\.bend)\b")
 
 # Quotes that cannot come from a file, with the reason. Keep this short and
 # specific: every entry is a quote nothing verifies any more.
@@ -78,27 +93,49 @@ def quotes_in(chapter: pathlib.Path):
             last_include = None  # a quote only follows its include directly
 
 
-def candidates(root: pathlib.Path):
-    """Every .bend file the book references, in a stable order."""
-    src = root / "src"
+def referenced_by(text: str):
+    """Every .bend path a chapter mentions, in a stable order."""
     found = set()
-    for md in src.glob("*.md"):
-        text = md.read_text(encoding="utf-8")
-        for m in re.finditer(r"\{\{#include\s+(\S+?)\s*\}\}", text):
-            found.add(m.group(1).replace("../", ""))
-        for m in BLOB.finditer(text):
+    for m in re.finditer(r"\{\{#include\s+(\S+?)\s*\}\}", text):
+        found.add(m.group(1).replace("../", ""))
+    for rx in (BLOB, BARE):
+        for m in rx.finditer(text):
             found.add(m.group(1))
+    return sorted(found)
+
+
+def erroring_probes(root: pathlib.Path):
+    """The files manifest.py declares as not compiling -- the only ones a quoted
+    compiler error can come from."""
+    sys.path.insert(0, str(root / "tools" / "drift"))
+    try:
+        import manifest  # noqa: E402
+    except Exception as exc:  # pragma: no cover - manifest is ours
+        print(f"note: could not read manifest.py ({exc}); step 2 is chapter-scoped only")
+        return []
     out = []
-    for rel in sorted(found):
-        if not rel.endswith(".bend"):
+    for c in manifest.CHECKS:
+        if c.get("group") != "probes-bad":
             continue
-        p = (root / rel)
-        if p.exists() and "bend/" not in rel:
+        p = root / c["dir"] / c["file"]
+        if p.exists():
+            out.append(p)
+    return out
+
+
+def existing(root: pathlib.Path, rels):
+    out = []
+    for rel in rels:
+        if not rel.endswith(".bend") or rel.startswith("bend/"):
+            continue
+        p = root / rel
+        if p.exists():
             out.append(p)
     return out
 
 
 def run(probe: pathlib.Path, bend: str, root: pathlib.Path, timeout: int):
+    """The marker lines a run of this file produces, or None if it timed out."""
     env = dict(os.environ, BEND_NO_TELEMETRY="1")
     try:
         r = subprocess.run([bend, str(probe)], capture_output=True, text=True,
@@ -120,7 +157,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=".")
     ap.add_argument("--bend", default=shutil.which("bend") or os.path.expanduser("~/.bend/bin/bend"))
-    ap.add_argument("--timeout", type=int, default=180)
+    ap.add_argument("--timeout", type=int, default=120)
+    ap.add_argument("--wide", action="store_true",
+                    help="also search every file the book references (slow)")
     args = ap.parse_args()
 
     root = pathlib.Path(args.root).resolve()
@@ -129,56 +168,82 @@ def main() -> int:
         print(f"no src/ under {root}", file=sys.stderr)
         return 2
 
+    declared_files = erroring_probes(root)
     cache: dict[pathlib.Path, list] = {}
+    timed_out: set = set()
 
     def output_of(probe: pathlib.Path):
         if probe not in cache:
-            cache[probe] = run(probe, args.bend, root, args.timeout) or []
+            got = run(probe, args.bend, root, args.timeout)
+            if got is None:
+                timed_out.add(probe)
+                cache[probe] = []
+            else:
+                cache[probe] = got
         return cache[probe]
 
-    quotes = []
-    for chapter in sorted(src.glob("*.md")):
-        for line_no, inc, markers in quotes_in(chapter):
-            quotes.append((chapter, line_no, inc, markers))
-
-    all_candidates = None
+    wide = None
     checked = declared = failed = 0
     problems = []
 
-    for chapter, line_no, inc, markers in quotes:
+    for chapter in sorted(src.glob("*.md")):
         rel = str(chapter.relative_to(root))
         if rel in DECLARED:
-            declared += 1
-            print(f"  decl  {rel}:{line_no}  ({DECLARED[rel]})")
+            for line_no, _, _markers in quotes_in(chapter):
+                declared += 1
+                print(f"  decl  {rel}:{line_no}  ({DECLARED[rel]})")
             continue
 
-        # fast path: the file the chapter includes right before the quote
-        if inc and (root / inc).exists() and contains(output_of(root / inc), markers):
-            checked += 1
-            print(f"  ok    {rel}:{line_no}  {inc}")
-            continue
+        chapter_files = existing(root, referenced_by(chapter.read_text(encoding="utf-8")))
 
-        # otherwise: ask every file the book references
-        if all_candidates is None:
-            all_candidates = candidates(root)
-            print(f"  (scanning {len(all_candidates)} referenced files)")
-        hits = [p for p in all_candidates if contains(output_of(p), markers)]
+        for line_no, inc, markers in quotes_in(chapter):
+            where = f"{rel}:{line_no}"
 
-        if hits:
-            checked += 1
-            names = ", ".join(str(h.relative_to(root)) for h in hits)
-            note = "" if (inc and str(root / inc) in [str(h) for h in hits]) else "  (not the include above)"
-            print(f"  ok    {rel}:{line_no}  {names}{note}")
-        else:
-            failed += 1
-            problems.append(
-                f"{rel}:{line_no}: no referenced file produces this quote\n"
-                + "".join(f"        {m}\n" for m in markers)
-            )
+            # step 1: the include directly above the quote
+            if inc and (root / inc).exists():
+                probe = root / inc
+                if contains(output_of(probe), markers):
+                    checked += 1
+                    print(f"  ok    {where}  {inc}")
+                    continue
+
+            # step 2: this chapter's files, plus the probes that error at all
+            pool = chapter_files + [p for p in declared_files if p not in chapter_files]
+            hits = [p for p in pool if contains(output_of(p), markers)]
+            if hits:
+                checked += 1
+                names = ", ".join(str(h.relative_to(root)) for h in hits)
+                print(f"  ok    {where}  {names}")
+                continue
+
+            # step 3: everything, only on request
+            if args.wide:
+                if wide is None:
+                    all_rels = set()
+                    for md in src.glob("*.md"):
+                        all_rels.update(referenced_by(md.read_text(encoding="utf-8")))
+                    wide = existing(root, sorted(all_rels))
+                    print(f"  (widening to all {len(wide)} referenced files)")
+                hits = [p for p in wide if contains(output_of(p), markers)]
+            if hits:
+                checked += 1
+                names = ", ".join(str(h.relative_to(root)) for h in hits)
+                print(f"  ok    {where}  {names}  (not referenced by this chapter)")
+            else:
+                failed += 1
+                hint = "" if args.wide else "  (re-run with --wide to search the whole book)"
+                problems.append(
+                    f"{where}: no file this chapter references produces this quote{hint}\n"
+                    + "".join(f"        {m}\n" for m in markers)
+                )
 
     print()
     for p in problems:
         print("FAIL " + p)
+    if timed_out:
+        print(f"note: {len(timed_out)} file(s) exceeded {args.timeout}s and were treated as "
+              f"producing nothing: {', '.join(sorted(str(p.relative_to(root)) for p in timed_out))}")
+        print()
     print(f"{checked} quote(s) verified, {declared} declared, {failed} failing")
     return 1 if failed else 0
 
