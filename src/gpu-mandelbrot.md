@@ -173,7 +173,10 @@ nothing about the measurement depends on which clang invocation you used.
 
 ---
 
-That closes the performance half of the book. The last part takes the same
-machinery — affinity, kinds, the fork — and points it at a different question:
-not *how fast*, but [how do you know it is right](laws-1.md), without reading
-the code.
+That closes the performance half of the book. What is left is a worked example
+— Conway's Life, built slowly enough to see every piece of the machinery,
+affinity, kinds and the fork included, earn its place — and then the same
+machinery pointed at a different question: not *how fast*, but [how do you
+know it is right](laws-1.md), without reading the code.
+
+Next: [Life the obvious way, and the trap in it](life-naive.md).

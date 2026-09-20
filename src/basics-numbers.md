@@ -192,5 +192,6 @@ wants.
 | [`basics/term_order.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/term_order.bend) | ❌ the shrinking argument is not leftmost |
 | [`basics/pat_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/pat_bad.bend) | ⚠️ compiles, runs, and lies |
 
-Next: [lists](basics-lists.md), where a one-line function turns out to be the
-reason the second half of this book exists.
+Next: [types, quantities, and the two brackets](basics-types.md) — the first
+`type` declaration in the book. Then [lists](basics-lists.md), where a one-line
+function turns out to be the reason the second half of this book exists.
