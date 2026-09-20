@@ -1,9 +1,9 @@
 import Base
 
-# ❌ A bare parameter is a quantity, not a type. `a` stands for
-# `-a: Quant` -- a number like &2 that travels with the value and is
-# erased at runtime. A field must be typed with a real type, which is
-# why the element type gets its own parameter, `A`.
+# ❌ `Cell`'s field is typed `a`, the header's quantity parameter, instead
+# of the element type `A`. A count of uses cannot type a field; the
+# chapter takes the compiler's answer apart just below. `exp_chain.bend`
+# is this same declaration with the field fixed.
 
 type Chain<a, -A: Kind(a)> is Kind(a):
   End{}

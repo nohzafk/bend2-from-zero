@@ -141,18 +141,10 @@ a permission: the declaration has to carry it. So there is no such thing as
 a plain `type Tree<a>:` in Bend — the line you would write in any other
 language is a syntax error here.
 
-## A parameter cannot be a field
+## The first parameter is a quantity
 
-Now parameterise it. The spelling any other language would accept is:
-
-```python
-type Chain<a, -A: Kind(a)> is Kind(a):
-  End{}
-  Cell{head: a, tail: Chain<a, A>}
-```
-
-— and the natural first attempt, typing the field with the parameter
-itself, is refused:
+Parameterise the type, and the natural first mistake is to type the field with
+the parameter itself:
 
 ```python
 {{#include ../basics/type_quantity_field.bend}}
@@ -169,20 +161,34 @@ Location: Cell
 10>|   Cell{head: a, tail: Chain<a, A>}
 ```
 
-The error is worth more than it looks. `a : Quant` — a bare parameter is
-not a type at all. The guide states the rule in one line: **a bare `a` in
-a parameter list is short for `-a: Quant`**. It is a *quantity* — the same
-`-` mark as the affinity chapter, meaning erased: a small value that rides
-along with the data, telling the checker how often the thing may be used,
-and is deleted before anything runs. The three quantities have names:
+The line worth keeping is `a : Quant`. The guide states the rule in one line:
+**a bare `a` in a parameter list is short for `-a: Quant`** — so `a` is not a
+type, it is a **quantity**: a number saying how many times a value may be used.
+The `-` is the affinity chapter's erased mark, because a quantity exists for the
+checker and is gone before anything runs. There are three of them:
 
 ```
-&0   never used      &1   at most once      &2   freely copyable
+&0   zero uses              nothing may use the value
+&1   at most once           the affine default -- what `Type` means
+&2   as often as you like   copyable -- what `Data` means
 ```
 
-A field must be typed with a real type — something the checker can look
-at. The *element type* therefore has to be its own parameter, and that is
-what `A` is.
+Two of those you have been reading as words: `Type` is short for `Kind(&1)` and
+`Data` for `Kind(&2)`. So the `is Data` clause above was `&2` all along, and
+every `List<&2, Nat>` in the lists chapter was a list of things that may be
+copied. The three are ordered, and combining two keeps the smaller — that is the
+`<&>` in the ladder below.
+
+`&0` is the bottom of the same scale, and a mark to read rather than one to
+write: the guide names it in a comment and in its grammar table and never uses
+it, and `base.bend` contains no `&0` at all. The two you will write are `&1` and
+`&2`, and mostly in the shorthand — `List<Nat>` for `List<&1, Nat>`,
+`+List<U32>` for `List<&2, U32>`.
+
+Which leaves the error itself. A quantity is a number, and a field carries a
+type: `head: a` asks the checker to treat a number as data. So the element type
+gets a parameter of its own, `A`, and `Kind(a)` states which kind of type it is
+allowed to be.
 
 ## The element type is its own parameter
 
