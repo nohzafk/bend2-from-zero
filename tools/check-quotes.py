@@ -123,6 +123,10 @@ RANGE_PINS = {
         "400b94705df43c5f6506ecba640db11ae91b24f74d58e39a5e5f7f56dcbabcfa",
     "life/life_row.bend":
         "b4d2c45662b38b2e52fede77ffe662a970dd6331d659b6b71ee9ca300acb01a9",
+    "life/life_par.bend":
+        "8e6b26f55ccddb398a80714451fbdc58277ee4243ec249c870c8681031d8f32d",
+    "life/life_rowpar.bend":
+        "2ca7b570d9e3d067c8b8652fafa5512234cc8d6d55be36d514c5ab4805ab948b",
 }
 
 

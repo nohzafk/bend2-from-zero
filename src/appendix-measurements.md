@@ -211,12 +211,12 @@ computes; `2^d × blk = 4096`.
 
 | threads | blk=1 (4096 tasks) | blk=16 (256) | blk=64 (64) |
 |---|---|---|---|
-| 1 | 1,795 ms | 2,065 | 2,025 |
-| 10 | 690 ms | **684** | 1,045 |
+| 1 | 1,735 ms | 1,958 | 1,936 |
+| 10 | 676 ms | **628** | 986 |
 
 Three things to read here.
 
-**The speedup is only about 2.6–3× on ten cores.** That is not the scheduler
+**The speedup is only about 2–3× on ten cores.** That is not the scheduler
 failing; it is the shape of this program. Each generation must finish before the
 next can start, so there is a join barrier every generation, and there are only
 four generations.
@@ -240,6 +240,52 @@ serial by construction — and they are most of it. `/usr/bin/time -p` on
 three fork-join cases inside that same process go from 5.7 s to 2.3 s. The two
 serial cases account for the difference: 8.4 s of the fourteen, and 8.2 s of the
 ten and a half.
+
+## 10. Life — the row engine under the same fork-join tree
+
+```sh
+cd life && bend life_rowpar.bend -o life_rowpar
+./life_rowpar --threads 1
+./life_rowpar --threads 4
+./life_rowpar --threads 10
+```
+
+`life_rowpar.bend` hangs the same fork-join tree over the row engine, one
+level up: the leaf is a run of consecutive output rows (`rows3`), the join is
+`rows_app`, `blk` is **rows per leaf**. The clock wraps `evolve` only — the
+grid is built and the cells counted outside it — so these figures are not
+comparable with `life_row`'s whole-process numbers in section 7, which
+include both.
+
+Two to three runs per cell, 2026-09-20. The ten-thread tree cells are the
+noisiest numbers in this appendix: a further run moved them by up to 30%.
+
+256×256, 64 generations:
+
+| threads | the walk (`d=0`) | tree, 4 leaves |
+|---|---|---|
+| 1 | 272-295 ms | 369 ms |
+| 4 | 291-293 ms | **210 ms** |
+| 10 | 297-305 ms | 258-328 ms |
+
+512×512, 64 generations:
+
+| threads | the walk (`d=0`) | tree, 4 leaves | tree, 8 leaves |
+|---|---|---|---|
+| 1 | 1,439-1,443 ms | 1,945-1,948 ms | 2,277-2,285 ms |
+| 4 | 1,559-1,560 ms | **1,127-1,157 ms** | 1,270-1,280 ms |
+| 10 | 1,525-1,581 ms | 1,088-1,428 ms | 1,221-1,574 ms |
+
+`/usr/bin/time -p` over the whole six-benchmark run: `--threads 1` reads
+real 8.90 / user 8.88; `--threads 4` real 5.90 / user 9.22; `--threads 10`
+real 6.00 / user 9.47. The forks are real at both thread counts; four threads
+is the better deal.
+
+The finding is the shape, not the digits: the O(n) engine's work is uniform,
+so the same tree that buys 3.1× on the naive engine buys a stable 1.4× here —
+but only up to four cores. Four leaves per generation cap the width, finer
+leaves cost more than they return, and the algorithm fix has already removed
+almost everything the cores could multiply.
 
 ## The disciplines, collected
 

@@ -1,4 +1,4 @@
-# life — the Game of Life, four implementations and two proved laws
+# life — the Game of Life, five implementations and two proved laws
 
 One program throughout (a toroidal grid from 8×8 up to 256×256, holding a glider).
 **This directory is the most valuable comparison in the repo:** it demonstrates both
@@ -11,6 +11,7 @@ are not the same kind of fact.
 | `life.bend` | naive serial; each cell looks up its neighbours by index | **O(n²)** |
 | `life_par.bend` | the same, plus fork-join, with a granularity knob | O(n²) |
 | `life_row.bend` | row-wise sliding window, no index lookup | **O(n)** |
+| `life_rowpar.bend` | the row engine under the same fork-join tree, forked over rows | O(n) |
 | `life_anim.bend` | a terminal animation built on `life_row`'s engine | O(n) |
 | `LIFE_PAR_LAWS.bend` | the law: `life_par`'s tree == the same serial loop (hand-written) | — |
 | `LIFE_PAR_PROOF.bend` | the proof of that law (`bend` on it is the gate) | — |
@@ -121,6 +122,23 @@ algorithm; it does not choose the algorithm.**
 
 (The divisor sits on the timer's 1 ms resolution, so across sessions this ratio reads
 anywhere from about 1,600× to 2,000×. The order of magnitude is the finding.)
+
+### The cores on the O(n) engine
+
+`life_rowpar.bend` hangs the same fork-join tree over the row engine, one
+level up: leaves are runs of consecutive output rows, `blk` is **rows per
+leaf**, and the clock wraps `evolve` only (the grid is built and counted
+outside it). Measured 2026-09-20, two to three runs per cell:
+
+| board | walk, 1 thread | walk, 4 threads | tree, 4 leaves, 4 threads | tree, 4 leaves, 1 thread |
+|---|---|---|---|---|
+| 256×256, 64 gens | 272-295 ms | 291-293 ms | **210 ms** | 369 ms |
+| 512×512, 64 gens | 1,439-1,443 ms | 1,559-1,560 ms | **1,127-1,157 ms** | 1,945-1,948 ms |
+
+Four cores: a stable 1.4× over the walk. Ten cores buy nothing over four —
+four leaves per generation cap the width, and finer trees (8/16 leaves)
+never win: the fork, the drop walks and the joins are real work, about a
+third on one thread. Full tables: the *Life in O(n), by rows* chapter.
 
 ## Laws and proofs — `LIFE_PAR_LAWS.bend` / `LIFE_PAR_PROOF.bend`
 
@@ -393,6 +411,9 @@ bend life_par.bend -o life_par      # parallelism needs a native build
 
 bend life_row.bend -o life_row
 ./life_row --threads 1
+
+bend life_rowpar.bend -o life_rowpar
+./life_rowpar --threads 4
 
 bend LIFE_PAR_PROOF.bend                # proof gate: prints All terms check.
 bend LIFE_ANIM_PROOF.bend               # the same, for the animation

@@ -2,7 +2,7 @@
 
 The last chapters left two claims dangling.
 
-The first is from [Is it actually parallel?](life-parallel.md). We said the
+The first is from [Life on ten cores](life-parallel.md). We said the
 fork-join tree computes the same cells as the sequential loop. Our evidence was
 running both and counting live cells — `live=5` every time. That is evidence
 about the handful of grids we happened to try. It is not a statement about the

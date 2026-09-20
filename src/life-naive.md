@@ -103,14 +103,17 @@ running.
 So this chapter's code is not a mistake. It is what the type system leaves you
 when you need random access to something reusable.
 
-## The escape route
+## Two roads out
 
 The trap is not "lists are slow". It is that **we are indexing at all**.
 
 Every cell reads its eight neighbours, and neighbours are exactly the cells
 adjacent in the layout. If the grid were walked in order, carrying the rows we
-need instead of jumping to them, no index would ever be computed. That is the
-next chapter, and it is worth about a factor of 1600.
+need instead of jumping to them, no index would ever be computed.
+
+There are two roads out of the trap, and they are not equal. One is cheap
+to try: keep the engine, throw cores at it. The other changes the work
+itself. The cheap road is next.
 
 ## The whole file
 
@@ -122,4 +125,4 @@ next chapter, and it is worth about a factor of 1600.
 bend life.bend        # the interpreter is enough; this one prints, it does not benchmark
 ```
 
-Next: the same game in O(n).
+Next: the obvious engine on ten cores.

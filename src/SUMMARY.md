@@ -34,8 +34,8 @@
 # Worked example: Conway's Life
 
 - [Life the obvious way, and the trap in it](life-naive.md)
+- [Life on ten cores](life-parallel.md)
 - [Life in O(n), by rows](life-rows.md)
-- [Is it actually parallel?](life-parallel.md)
 - [A bug that type-checks](life-anim.md)
 
 # Effects: the world outside
