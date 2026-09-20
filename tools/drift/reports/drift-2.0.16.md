@@ -1,10 +1,10 @@
 # Drift report — bend 2.0.16 (2.0.16)
 
-- date: 2026-09-19 23:23 UTC
+- date: 2026-09-20 00:49 UTC
 - machine: Apple M3 Max, 14 cores (10 performance), macOS 27.0
 - bend binary: `/Users/randall/.bend/bin/bend` sha256 `da9bc51449f04a65…`
-- repo: `/Users/randall/projects/bend2-from-zero` at `516d3da` (dirty: 11 files)
-- load average at start/end: 2.90/3.05/3.05 / 4.50/3.66/3.29
+- repo: `/Users/randall/projects/bend2-from-zero` at `8cb12ce` (clean)
+- load average at start/end: 3.94/3.14/2.95 / 5.16/3.76/3.21
 - caffeinate running: yes
 
 Verdict is against **manifest.py** (the recorded claim); the `book` column is what the book quotes, for context.
@@ -28,6 +28,10 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | arrays/exp_arr2 | a match cannot scrutinize a computed value: give it its own def | `Error:` | OK |
 | arrays/a_fail | a match cannot scrutinize a local binder: give it its own def | `Error:` | OK |
 | arrays/d_write | expected : Sigma<&1, &1, Array<U32>, _ => U32> / observed : Array<U32> | `Error:` | OK |
+| basics/type_is_missing | expected : 'is' / observed : ':' | `Error:` | OK |
+| basics/type_field_affine | expected : r / observed : r (consumed more than once) | `Error:` | OK |
+| basics/type_quantity_field | expected : Kind(a) / observed : Quant | `Error:` | OK |
+| basics/do_list_bind | expected : a defined name / observed : List.bind | `Error:` | OK |
 | laws/fill_rettype_bad |  | `Error:` | OK |
 | laws/add_zero_bad |  | `Error:` | OK |
 
@@ -39,6 +43,8 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | basics/exp_str | a <newline> b<TAB>tab | `a` | OK |
 | basics/exp_mod | 1n (9 mod 4) | `1n` | OK |
 | basics/exp_list | 2 | `2` | OK |
+| basics/exp_type | 25 | `25` | OK |
+| basics/exp_chain | 2 | `2` | OK |
 | basics/pat_bad | prints 1 -- it does not (deceptive on purpose) | `1` | OK |
 | basics/esc_bad | bytes 00 33 33 (NUL + literal '33') -- not ESC | `\033` | OK |
 | affinity/t1_drop | 7 -- unused is fine, affine != linear | `7` | OK |
@@ -85,7 +91,7 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | check | book | now | verdict |
 |---|---|---|---|
 | fx/io/deadlock |  | `bend: deadlock: every computation waits on a channel` | OK |
-| fx/io/sleep_par |  | `total ms=711` | OK |
+| fx/io/sleep_par |  | `total ms=709` | OK |
 | fx/io/join_reuse_bad |  | `Error:` | OK |
 | fx/io/join_twice |  | `first join=41` | OK |
 | fx/io/match_in_do_bad |  | `Error:` | OK |
@@ -98,10 +104,10 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | fx/io/chan_fifo |  | `four sends done` | OK |
 | fx/io/spawn |  | `main done` | OK |
 | fx/io/args |  | `argc=3` | OK |
-| fx/custom/clock |  | `ms since boot: 57` | OK |
+| fx/custom/clock |  | `ms since boot: 54` | OK |
 | fx/custom/shout_repeat |  | `HELLO, BEND` | OK |
 | fx/custom/utf8 |  | `héllo·世界héllo·世界` | OK |
-| fx/custom/delay |  | `t0=58 d_builtin=306 d_custom=302` | OK |
+| fx/custom/delay |  | `t0=56 d_builtin=307 d_custom=302` | OK |
 | fx/custom/busy |  | `tick 300` | OK |
 | fx/custom/misnamed_host |  | `TypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefi` | OK |
 | fx/custom/missing_registration |  | `bend: an alien request` | OK |
@@ -118,23 +124,23 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 
 | check | book | now | verdict |
 |---|---|---|---|
-| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.22s (runs after first: 0.23 / 0.22) | OK |
-| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.13s (runs after first: 0.13 / 0.13) | OK |
+| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.22s (runs after first: 0.22 / 0.22); first run 0.39s (cold)  | OK |
+| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.12s (runs after first: 0.13 / 0.12) | OK |
 | parallel/pow2_26 @4t | 0.07 s | settled 0.07s (runs after first: 0.07 / 0.07) | OK |
-| parallel/pow2_26 @8t | 0.04 s | settled 0.05s (runs after first: 0.05 / 0.05) | OK |
-| parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.04s (runs after first: 0.05 / 0.04) | OK |
-| gpu/gpu_floor | 0.08-0.09 s | settled 0.08s (runs after first: 0.09 / 0.08) | OK |
-| gpu/pow2_gpu | 0.09-0.10 s | settled 0.09s (runs after first: 0.10 / 0.09) | OK |
+| parallel/pow2_26 @8t | 0.04 s | settled 0.04s (runs after first: 0.04 / 0.04) | OK |
+| parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.04s (runs after first: 0.04 / 0.04) | OK |
+| gpu/gpu_floor | 0.08-0.09 s | settled 0.07s (runs after first: 0.08 / 0.07) | OK |
+| gpu/pow2_gpu | 0.09-0.10 s | settled 0.08s (runs after first: 0.09 / 0.08) | OK |
 | gpu/gpu_twice | 0.09 s | settled 0.09s (runs after first: 0.10 / 0.09) | OK |
-| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.16s (runs after first: 5.16 / 5.19) | OK |
-| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.73s (runs after first: 0.73 / 0.73) | OK |
-| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.11s (runs after first: 0.11 / 0.11) | OK |
-| gpu/queens cpu @1t | 6.02-6.19 s | settled 6.41s (runs after first: 6.41 / 6.44) | OK |
-| gpu/queens cpu @10t | 0.85 s | settled 0.87s (runs after first: 0.87 / 0.87) | OK |
-| gpu/queens gpu | 1.34-1.41 s | settled 1.30s (runs after first: 1.30 / 1.35) | OK |
-| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.42s (runs after first: 0.42) | OK |
-| life/life_par @1t | 1t: 1795 / 2065 / 2025 ms | settled 14.56s (runs after first: 14.56) | OK |
-| life/life_par @10t | 10t: 690 / 684 / 1045 ms | settled 10.84s (runs after first: 10.84) | OK |
+| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.01s (runs after first: 5.01 / 5.02) | OK |
+| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.72s (runs after first: 0.72 / 0.73) | OK |
+| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.10s (runs after first: 0.10 / 0.10) | OK |
+| gpu/queens cpu @1t | 6.02-6.19 s | settled 6.12s (runs after first: 6.22 / 6.12) | OK |
+| gpu/queens cpu @10t | 0.85 s | settled 0.86s (runs after first: 0.87 / 0.86) | OK |
+| gpu/queens gpu | 1.34-1.41 s | settled 1.77s (runs after first: 1.77 / 1.77) | OK |
+| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.41s (runs after first: 0.41) | OK |
+| life/life_par @1t | 1t: 1795 / 2065 / 2025 ms | settled 14.39s (runs after first: 14.39) | OK |
+| life/life_par @10t | 10t: 690 / 684 / 1045 ms | settled 10.54s (runs after first: 10.54) | OK |
 
 ## bench raw stdout (last run of each)
 
@@ -171,53 +177,57 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 -- life/life_row @1t --
 row-window Life, 64 generations -- O(n)?
 
-  32x32  live=5  ms=4
+  32x32  live=5  ms=5
 
-  64x64  live=5  ms=17
+  64x64  live=5  ms=16
 
 128x128  live=5  ms=69
 
-256x256  live=5  ms=305
+256x256  live=5  ms=301
 
 
 64x64, 16 generations -- head to head with the naive version
 
-  64x64  live=5  ms=5
+  64x64  live=5  ms=4
 -- life/life_par @1t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=1797
+blk=1  (4096 tasks)  live=5  ms=1789
 
-blk=16 ( 256 tasks)  live=5  ms=2062
+blk=16 ( 256 tasks)  live=5  ms=2041
 
-blk=64 (  64 tasks)  live=5  ms=2049
+blk=64 (  64 tasks)  live=5  ms=2012
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=504
+  32x32 16gen  live=5  ms=503
 
-  64x64 16gen  live=5  ms=8125
+  64x64 16gen  live=5  ms=8030
 -- life/life_par @10t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=695
+blk=1  (4096 tasks)  live=5  ms=650
 
-blk=16 ( 256 tasks)  live=5  ms=651
+blk=16 ( 256 tasks)  live=5  ms=619
 
-blk=64 (  64 tasks)  live=5  ms=1050
+blk=64 (  64 tasks)  live=5  ms=968
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=514
+  32x32 16gen  live=5  ms=507
 
-  64x64 16gen  live=5  ms=7910
+  64x64 16gen  live=5  ms=7778
 ```
 
 ## Annotations
 
 - **affinity/t3_arr** — error wrapper: 'a parameter or field scrutinee (...)'; message core matches arrays/a_fail
+- **basics/type_quantity_field** — a field typed with the header's quantity parameter instead of the element type; the book quotes the compiler's `a : Quant` context line
+- **basics/do_list_bind** — a do-block with a bind, in a family that has no .bind -- the error names the missing def, not the brackets
+- **basics/exp_type** — a type with no parameters, and one field marked + because the body uses it twice
+- **basics/exp_chain** — the smallest parameterised type that checks: a quantity parameter plus an element type.  The same declaration with `head: a` is basics/type_quantity_field.bend.
 - **basics/pat_bad** — WARNING-probe: compiles and lies by design.  f(2n) should be 2, prints 1.
 - **basics/esc_bad** — WARNING-probe: emits wrong bytes by design.  \033 is \0 then '33'.
 - **affinity/t10_template** — A def that is a template instance counts as unsafe (intended, per the CHANGELOG), so a file with a template prints 'All terms check, with N unsafe annotations.' on stderr 'until the checker verifies template expansion itself'.  The template does NOT skip any check; this is a disclosure, not a soundness hole.
