@@ -115,6 +115,32 @@ neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]
 
 Nine cells, three arithmetic operations.
 
+### What that saves
+
+The identity is half of it. What it buys is the reason this chapter exists.
+
+A list in Bend is a chain, and `nth` walks it — the previous chapter's numbers
+show a per-cell cost that grew with the grid: the grid grew fourfold, and so did
+the cost of reaching one cell, eight walks per cell, each starting from the head.
+Count what this version does instead. `colsum` visits every cell once and adds
+it. `rowstep` visits every cell once, and does three additions and a subtraction
+there. A cell therefore costs a constant number of list steps rather than a walk
+to its position:
+
+```
+naive    n cells x 8 walks of up to n steps    ->  O(n^2)
+this     n cells x a constant number of steps  ->  O(n)
+```
+
+The rotations that the next two sections build are what that costs, and they are
+the honest part of the trade. Each one traverses a whole row, so a generation pays
+O(w) per row — O(n) across the grid, the same order as the pass it enables.
+Buying an O(n) pass with an O(n) pass is a good trade. The alternative was an O(n)
+walk *inside* every cell, once per neighbour, which is what made the naive version
+quadratic.
+
+The flat `ns` column in the results below is the measurement of exactly this.
+
 ### Worked example
 
 On a real 17-wide board, so the whole row is visible at once:
