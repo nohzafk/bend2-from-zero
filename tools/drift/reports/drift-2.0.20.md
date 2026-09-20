@@ -1,10 +1,10 @@
-# Drift report — bend 2.0.16 (2.0.16)
+# Drift report — bend 2.0.20 (2.0.20)
 
-- date: 2026-09-20 11:25 UTC
+- date: 2026-09-20 13:01 UTC
 - machine: Apple M3 Max, 14 cores (10 performance), macOS 27.0
-- bend binary: `/Users/randall/.bend/bin/bend` sha256 `da9bc51449f04a65…`
-- repo: `/Users/randall/projects/bend2-from-zero` at `1963230` (clean)
-- load average at start/end: 1.96/2.35/2.29 / 2.20/2.42/2.33
+- bend binary: `/Users/randall/.bend/bin/bend` sha256 `4f5465102e2bbac3…`
+- repo: `/Users/randall/projects/bend2-from-zero` at `b5be1b9` (clean)
+- load average at start/end: 2.57/2.31/2.21 / 2.32/2.34/2.23
 - caffeinate running: yes
 
 Verdict is against **manifest.py** (the recorded claim); the `book` column is what the book quotes, for context.
@@ -22,7 +22,6 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | affinity/t4_arrplus | expected : Data / observed : Type | `Error:` | OK |
 | affinity/t5_closure | expected : f / observed : f (consumed more than once) | `Error:` | OK |
 | affinity/t6_closureplus | expected : Data / observed : Type (same error as the array) | `Error:` | OK |
-| affinity/t11_templatemiss | expected : -f / observed : f (consumed more than once) | `Error:` | OK |
 | affinity/t3_arr | fails on purpose (error not quoted in the affinity README) | `Error:` | OK |
 | arrays/exp_arr | expected : a term / observed : ':' | `Error:` | OK |
 | arrays/exp_arr2 | a match cannot scrutinize a computed value: give it its own def | `Error:` | OK |
@@ -40,6 +39,7 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 
 | check | book | now | verdict |
 |---|---|---|---|
+| affinity/t11_template_implicit | 42 -- the call-site ~ is optional; the compiler specializes either way | `42` | OK |
 | basics/hello | hello, bend 2 | `hello, bend 2` | OK |
 | basics/exp_str | a <newline> b<TAB>tab | `a` | OK |
 | basics/exp_mod | 1n (9 mod 4) | `1n` | OK |
@@ -107,12 +107,12 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | fx/io/chan_fifo |  | `four sends done` | OK |
 | fx/io/spawn |  | `main done` | OK |
 | fx/io/args |  | `argc=3` | OK |
-| fx/custom/clock |  | `ms since boot: 53` | OK |
+| fx/custom/clock |  | `ms since boot: 66` | OK |
 | fx/custom/shout_repeat |  | `HELLO, BEND` | OK |
 | fx/custom/utf8 |  | `héllo·世界héllo·世界` | OK |
-| fx/custom/delay |  | `t0=55 d_builtin=308 d_custom=301` | OK |
+| fx/custom/delay |  | `t0=71 d_builtin=307 d_custom=303` | OK |
 | fx/custom/busy |  | `tick 300` | OK |
-| fx/custom/misnamed_host |  | `TypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefi` | OK |
+| fx/custom/misnamed_host |  | `All terms check, but 2 defs rely on unsafe or foreign code:` | OK |
 | fx/custom/missing_registration |  | `bend: an alien request` | OK |
 | fx/file/roundtrip |  | `size=11` | OK |
 | fx/file/position |  | `chunk: [hello]` | OK |
@@ -127,26 +127,26 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 
 | check | book | now | verdict |
 |---|---|---|---|
-| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.25s (runs after first: 0.25 / 0.26) | OK |
-| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.14s (runs after first: 0.14 / 0.14) | OK |
-| parallel/pow2_26 @4t | 0.07 s | settled 0.08s (runs after first: 0.08 / 0.09) | OK |
-| parallel/pow2_26 @8t | 0.04 s | settled 0.07s (runs after first: 0.07 / 0.07) | OK |
-| parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.05s (runs after first: 0.05 / 0.05) | OK |
-| gpu/gpu_floor | 0.08-0.09 s | settled 0.08s (runs after first: 0.08 / 0.08) | OK |
-| gpu/pow2_gpu | 0.09-0.10 s | settled 0.09s (runs after first: 0.09 / 0.09) | OK |
-| gpu/gpu_twice | 0.09 s | settled 0.09s (runs after first: 0.09 / 0.09) | OK |
-| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.48s (runs after first: 5.57 / 5.48) | OK |
-| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.73s (runs after first: 0.74 / 0.73) | OK |
-| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.10s (runs after first: 0.11 / 0.10) | OK |
-| gpu/queens cpu @1t | 6.02-6.19 s | settled 6.36s (runs after first: 6.40 / 6.36) | OK |
-| gpu/queens cpu @10t | 0.85 s | settled 0.88s (runs after first: 0.88 / 0.88) | OK |
-| gpu/queens gpu | 1.34-1.41 s | settled 1.67s (runs after first: 1.71 / 1.67) | OK |
-| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.43s (runs after first: 0.43) | OK |
-| life/life_par @1t | 1t: 1,735 / 1,958 / 1,936 ms | settled 14.43s (runs after first: 14.43) | OK |
-| life/life_par @10t | 10t: 676 / 628 / 986 ms | settled 10.57s (runs after first: 10.57) | OK |
-| life/life_rowpar @1t | 1t: walk 272-295 / 1,439-1,443 ms; 4-leaf tree 369 / 1,945-1,948 ms | settled 9.45s (runs after first: 9.45) | OK |
-| life/life_rowpar @4t | 4t: 4-leaf tree 210 / 1,127-1,157 ms (1.4x over the walk) | settled 6.18s (runs after first: 6.18) | OK |
-| life/life_rowpar @10t | 10t: 258-328 / 1,088-1,428 ms (no reliable gain over 4t) | settled 6.82s (runs after first: 6.82) | OK |
+| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.20s (runs after first: 0.20 / 0.21); first run 0.55s (cold)  | OK |
+| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.10s (runs after first: 0.10 / 0.11) | OK |
+| parallel/pow2_26 @4t | 0.07 s | settled 0.06s (runs after first: 0.06 / 0.06) | OK |
+| parallel/pow2_26 @8t | 0.04 s | settled 0.03s (runs after first: 0.04 / 0.03) | OK |
+| parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.03s (runs after first: 0.03 / 0.03) | OK |
+| gpu/gpu_floor | 0.08-0.09 s | settled 0.07s (runs after first: 0.07 / 0.07) | OK |
+| gpu/pow2_gpu | 0.09-0.10 s | settled 0.08s (runs after first: 0.08 / 0.08) | OK |
+| gpu/gpu_twice | 0.09 s | settled 0.08s (runs after first: 0.09 / 0.08) | OK |
+| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.00s (runs after first: 5.00 / 5.00) | OK |
+| gpu/mandelbrot cpu @10t | 0.72 s | settled 0.71s (runs after first: 0.71 / 0.71) | OK |
+| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.09s (runs after first: 0.10 / 0.09) | OK |
+| gpu/queens cpu @1t | 6.02-6.19 s | settled 5.91s (runs after first: 5.91 / 5.91) | OK |
+| gpu/queens cpu @10t | 0.85 s | settled 0.86s (runs after first: 0.86 / 0.86) | OK |
+| gpu/queens gpu | 1.34-1.41 s | settled 1.66s (runs after first: 1.66 / 1.78) | OK |
+| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.38s (runs after first: 0.38); first run 0.59s (cold)  | OK |
+| life/life_par @1t | 1t: 1,735 / 1,958 / 1,936 ms | settled 13.63s (runs after first: 13.63) | OK |
+| life/life_par @10t | 10t: 676 / 628 / 986 ms | settled 10.50s (runs after first: 10.50) | OK |
+| life/life_rowpar @1t | 1t: walk 272-295 / 1,439-1,443 ms; 4-leaf tree 369 / 1,945-1,948 ms | settled 8.91s (runs after first: 8.91) | OK |
+| life/life_rowpar @4t | 4t: 4-leaf tree 210 / 1,127-1,157 ms (1.4x over the walk) | settled 5.90s (runs after first: 5.90) | OK |
+| life/life_rowpar @10t | 10t: 258-328 / 1,088-1,428 ms (no reliable gain over 4t) | settled 6.68s (runs after first: 6.68) | OK |
 
 ## bench raw stdout (last run of each)
 
@@ -185,11 +185,11 @@ row-window Life, 64 generations -- O(n)?
 
   32x32  live=5  ms=4
 
-  64x64  live=5  ms=18
+  64x64  live=5  ms=16
 
-128x128  live=5  ms=71
+128x128  live=5  ms=67
 
-256x256  live=5  ms=316
+256x256  live=5  ms=287
 
 
 64x64, 16 generations -- head to head with the naive version
@@ -198,75 +198,75 @@ row-window Life, 64 generations -- O(n)?
 -- life/life_par @1t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=1831
+blk=1  (4096 tasks)  live=5  ms=1732
 
-blk=16 ( 256 tasks)  live=5  ms=2070
+blk=16 ( 256 tasks)  live=5  ms=1936
 
-blk=64 (  64 tasks)  live=5  ms=2003
+blk=64 (  64 tasks)  live=5  ms=1891
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=509
+  32x32 16gen  live=5  ms=474
 
-  64x64 16gen  live=5  ms=7992
+  64x64 16gen  live=5  ms=7591
 -- life/life_par @10t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=672
+blk=1  (4096 tasks)  live=5  ms=663
 
-blk=16 ( 256 tasks)  live=5  ms=632
+blk=16 ( 256 tasks)  live=5  ms=651
 
-blk=64 (  64 tasks)  live=5  ms=976
+blk=64 (  64 tasks)  live=5  ms=958
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=515
+  32x32 16gen  live=5  ms=505
 
-  64x64 16gen  live=5  ms=7759
+  64x64 16gen  live=5  ms=7721
 -- life/life_rowpar @1t --
 row-window Life, forked over rows -- the clock wraps evolve only
 
 256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=292
 
-256x256 d=2 blk=64  (4 leaves)  live=5  ms=398
+256x256 d=2 blk=64  (4 leaves)  live=5  ms=386
 
-512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1551
+512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1485
 
-512x512 d=2 blk=128 (4 leaves)  live=5  ms=2096
+512x512 d=2 blk=128 (4 leaves)  live=5  ms=1967
 
-512x512 d=3 blk=64  (8 leaves)  live=5  ms=2428
+512x512 d=3 blk=64  (8 leaves)  live=5  ms=2270
 
-512x512 d=4 blk=32  (16 leaves)  live=5  ms=2641
+512x512 d=4 blk=32  (16 leaves)  live=5  ms=2478
 -- life/life_rowpar @4t --
 row-window Life, forked over rows -- the clock wraps evolve only
 
-256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=311
+256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312
 
-256x256 d=2 blk=64  (4 leaves)  live=5  ms=218
+256x256 d=2 blk=64  (4 leaves)  live=5  ms=209
 
-512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1704
+512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1614
 
-512x512 d=2 blk=128 (4 leaves)  live=5  ms=1192
+512x512 d=2 blk=128 (4 leaves)  live=5  ms=1126
 
-512x512 d=3 blk=64  (8 leaves)  live=5  ms=1320
+512x512 d=3 blk=64  (8 leaves)  live=5  ms=1274
 
-512x512 d=4 blk=32  (16 leaves)  live=5  ms=1383
+512x512 d=4 blk=32  (16 leaves)  live=5  ms=1328
 -- life/life_rowpar @10t --
 row-window Life, forked over rows -- the clock wraps evolve only
 
-256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=314
+256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312
 
-256x256 d=2 blk=64  (4 leaves)  live=5  ms=329
+256x256 d=2 blk=64  (4 leaves)  live=5  ms=319
 
-512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1672
+512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1635
 
-512x512 d=2 blk=128 (4 leaves)  live=5  ms=1609
+512x512 d=2 blk=128 (4 leaves)  live=5  ms=1582
 
-512x512 d=3 blk=64  (8 leaves)  live=5  ms=1495
+512x512 d=3 blk=64  (8 leaves)  live=5  ms=1426
 
-512x512 d=4 blk=32  (16 leaves)  live=5  ms=1356
+512x512 d=4 blk=32  (16 leaves)  live=5  ms=1365
 ```
 
 ## Annotations
@@ -280,7 +280,7 @@ row-window Life, forked over rows -- the clock wraps evolve only
 - **basics/exp_chain** — the smallest parameterised type that checks: a quantity parameter plus an element type.  The same declaration with `head: a` is basics/type_quantity_field.bend.
 - **basics/pat_bad** — WARNING-probe: compiles and lies by design.  f(2n) should be 2, prints 1.
 - **basics/esc_bad** — WARNING-probe: emits wrong bytes by design.  \033 is \0 then '33'.
-- **affinity/t10_template** — A def that is a template instance counts as unsafe (intended, per the CHANGELOG), so a file with a template prints 'All terms check, with N unsafe annotations.' on stderr 'until the checker verifies template expansion itself'.  The template does NOT skip any check; this is a disclosure, not a soundness hole.
+- **affinity/t10_template** — 2.0.20: a template instance no longer appears in the checker's unsafe disclosure, so stderr is empty here.
 - **arrays/e_post1** — book README prints it without spaces; the actual normalizer output has spaces after commas.  Formatting only.
 - **gpu/gpu_floor** — .gpu semantics: `bend -o X` writes X.gpu beside X; a launch LOADS it when present (silent), and prints 'compiling the GPU program (missing or stale)' and recompiles only when the file is absent or empty.  A run never writes the kernel back on Metal -- with X.gpu absent, every run notes and recompiles (~0.08 s either way; Metal's OS cache feeds the recompile).  A .gpu from a different program loaded silently and still computed correctly (the kernel source is embedded in the host binary).  The papercut of 2026-09-18 described an X.gpu-less binary, so its 'prints every run' is correct for that setup only.
 - **gpu/queens gpu** — Measured 2026-09-19: ~1.7 s (median) here, above the book's 1.34-1.41 s.  queens-gpu is the only workload whose GPU compute is not hidden under the ~85 ms entry fee (mandelbrot's real work is ~30 ms), so it is the only one that can show a GPU-state difference; the difference is environment (GUI/GPU contention), per the book's own warning to record a parallel number with the machine's state.

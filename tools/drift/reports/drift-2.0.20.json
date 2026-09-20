@@ -1,20 +1,20 @@
 {
  "meta": {
-  "date": "2026-09-20 11:25 UTC",
-  "bend_version": "2.0.16",
+  "date": "2026-09-20 13:01 UTC",
+  "bend_version": "2.0.20",
   "bend_path": "/Users/randall/.bend/bin/bend",
-  "bend_sha": "da9bc51449f04a65bf633351fb754cd6f883f5f5d9ab0c4e947f5c6f19eb7386",
+  "bend_sha": "4f5465102e2bbac30292ec47e23c6062504e71632d8688d4d8ea244be9a399e0",
   "machine": "Randalls-MacBook-Pro.local",
   "cpu": "Apple M3 Max",
   "cores": "14",
   "perf_cores": "10",
   "macos": "27.0",
   "repo": "/Users/randall/projects/bend2-from-zero",
-  "commit": "1963230",
-  "load_start": "1.96/2.35/2.29",
+  "commit": "b5be1b9",
+  "load_start": "2.57/2.31/2.21",
   "caffeinate": "yes",
-  "load_end": "2.20/2.42/2.33",
-  "elapsed_s": 157.9
+  "load_end": "2.32/2.34/2.23",
+  "elapsed_s": 152.6
  },
  "results": [
   {
@@ -48,7 +48,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : String\n- observed : U32\nLocation: main\n6 |   do IO<Unit>:\n7>|     IO.print(42)\n8 | \n",
-     "secs": 0.053,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -66,7 +66,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a decreasing self-call (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : loop\nContext:\n- p : Nat\nLocation: loop\n10 |     case 1n+p:\n11>|       loop(Nat.add(p, 1n))\n12 | \n",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -84,7 +84,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a decreasing self-call (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : evolve\nContext:\n- g : Nat\n- q : Nat\nLocation: evolve\n14 |     case 1n+q:\n15>|       evolve(step(g), q)\n16 | \n",
-     "secs": 0.055,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -102,7 +102,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : x\n- observed : x (consumed more than once)\nLocation: main\n3 | def main() -> U32:\n4>|   x = {3 : U32}\n5 |   (x + x : U32)\n",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -120,7 +120,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : xs\n- observed : xs (consumed more than once)\nLocation: main\n2 | def main() -> Nat:\n3>|   xs = {[1, 2, 3] : List<U32>}\n4 |   Nat.add(List.length(&1, U32, xs), List.length(&1, U32, xs))\n",
-     "secs": 0.056,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -156,7 +156,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : f\n- observed : f (consumed more than once)\nLocation: main\n2 | def main() -> U32:\n3>|   f = {x => (x + 1 : U32) : U32 -> U32}\n4 |   (f(1) + f(2) : U32)\n",
-     "secs": 0.054,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -180,19 +180,19 @@
    ]
   },
   {
-   "name": "affinity/t11_templatemiss",
-   "group": "probes-bad",
+   "name": "affinity/t11_template_implicit",
+   "group": "probes-ok",
    "mode": "run",
    "dir": "affinity",
-   "file": "t11_templatemiss.bend",
+   "file": "t11_template_implicit.bend",
    "problems": [],
    "compile": null,
    "runs": [
     {
-     "rc": 1,
-     "out": "",
-     "err": "Error:\n- expected : -f\n- observed : f (consumed more than once)\nLocation: twice~0\n10 | # closure and is really about the missing ~. Compare t10_template.bend.\n11>| def twice(~f: U32 -> U32, x: U32) -> U32:\n12 |   f(f(x))\n",
-     "secs": 0.056,
+     "rc": 0,
+     "out": "42\n",
+     "err": "",
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -210,7 +210,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a local binder: give it its own def)\nLocation:\n4 |   a1 = a[5] <- 42\n5>|   p = a1[0]\n6 |   (a2, b) = p\n",
-     "secs": 0.038,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -228,7 +228,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a term\n- observed : ':'\nLocation:\n7 |     a[5] <- 42\n8>|     IO.print(U32.show(a[5] : U32))\n9 | \n",
-     "secs": 0.037,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -246,7 +246,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a computed value: give it its own def)\nLocation:\n6 |     a[5] <- 42\n7>|     (a2, v) = a[5]\n8 |     IO.print(U32.show(v))\n",
-     "secs": 0.037,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -264,7 +264,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- message  : a parameter or field scrutinee (a match cannot scrutinize a local binder: give it its own def)\nLocation:\n3 |   a = [0 : U32*4n]\n4>|   p = a[5] <- 42\n5 |   (a2, b) = p\n",
-     "secs": 0.037,
+     "secs": 0.034,
      "timeout": false
     }
    ]
@@ -282,7 +282,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Sigma<&1, &1, Array<U32>, _ => U32>\n- observed : Array<U32>\nContext:\n- a : Array<U32>\n- a : Array<U32>\nLocation: main\n5 |   a[5] <- 42\n6>|   Pair.snd(Array<U32>, U32, a[9] <- 7)    # write idx 9, look at the second half\n7 | \n",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -300,7 +300,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : 'is'\n- observed : ':'\nLocation:\n6 | \n7>| type Tree<a>:\n8 |   Leaf{value: a}\n",
-     "secs": 0.037,
+     "secs": 0.035,
      "timeout": false
     }
    ]
@@ -317,8 +317,8 @@
     {
      "rc": 1,
      "out": "",
-     "err": "Error:\n- expected : r\n- observed : r (consumed more than once)\nLocation: area\n13 |   match x:\n14>|     case Circle{r}:  r * r\n15 |     case Square{s}:  s * s\n",
-     "secs": 0.055,
+     "err": "Error:\n- expected : r\n- observed : r (consumed more than once)\nLocation: area\n13 |   match x:\n14>|     case Circle{r}:  (r * r : Nat)\n15 |     case Square{s}:  (s * s : Nat)\n",
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -336,7 +336,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Kind(a)\n- observed : Quant\nContext:\n- a : Quant\n- A : Kind(a)\nLocation: Cell\n 9 |   End{}\n10>|   Cell{head: a, tail: Chain<a, A>}\n11 | \n",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -354,7 +354,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a defined name\n- observed : List.bind\nLocation: main\n 8 |   do List<Unit>:\n 9>|     x : U32 <- IO.now()\n10 |     return x\n",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -372,7 +372,7 @@
      "rc": 0,
      "out": "hello, bend 2\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -390,7 +390,7 @@
      "rc": 0,
      "out": "a\nb\ttab\n",
      "err": "",
-     "secs": 0.059,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -408,7 +408,7 @@
      "rc": 0,
      "out": "1n\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.054,
      "timeout": false
     }
    ]
@@ -426,7 +426,7 @@
      "rc": 0,
      "out": "2\n",
      "err": "",
-     "secs": 0.059,
+     "secs": 0.06,
      "timeout": false
     }
    ]
@@ -444,7 +444,7 @@
      "rc": 0,
      "out": "25\n",
      "err": "",
-     "secs": 0.061,
+     "secs": 0.059,
      "timeout": false
     }
    ]
@@ -461,8 +461,8 @@
     {
      "rc": 0,
      "out": "Some(42)\n",
-     "err": "All terms check, with 1 unsafe annotation.\n",
-     "secs": 0.062,
+     "err": "",
+     "secs": 0.061,
      "timeout": false
     }
    ]
@@ -479,8 +479,8 @@
     {
      "rc": 0,
      "out": "None\n",
-     "err": "All terms check, with 1 unsafe annotation.\n",
-     "secs": 0.066,
+     "err": "",
+     "secs": 0.062,
      "timeout": false
     }
    ]
@@ -498,7 +498,7 @@
      "rc": 0,
      "out": "2\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.061,
      "timeout": false
     }
    ]
@@ -516,7 +516,7 @@
      "rc": 0,
      "out": "1\n",
      "err": "",
-     "secs": 0.061,
+     "secs": 0.059,
      "timeout": false
     }
    ]
@@ -552,7 +552,7 @@
      "rc": 0,
      "out": "7\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -570,7 +570,7 @@
      "rc": 0,
      "out": "6\n",
      "err": "",
-     "secs": 0.056,
+     "secs": 0.059,
      "timeout": false
     }
    ]
@@ -623,8 +623,8 @@
     {
      "rc": 0,
      "out": "42\n",
-     "err": "All terms check, with 1 unsafe annotation.\n",
-     "secs": 0.056,
+     "err": "",
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -642,7 +642,7 @@
      "rc": 0,
      "out": "43\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -660,7 +660,7 @@
      "rc": 0,
      "out": "42\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -678,7 +678,7 @@
      "rc": 0,
      "out": "([0, 0, 0, 0, 0, 42, 0, 0], 42)\n",
      "err": "",
-     "secs": 0.06,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -696,7 +696,7 @@
      "rc": 0,
      "out": "42\n",
      "err": "",
-     "secs": 0.059,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -714,7 +714,7 @@
      "rc": 0,
      "out": "4194304\n",
      "err": "",
-     "secs": 0.119,
+     "secs": 0.112,
      "timeout": false
     }
    ]
@@ -732,7 +732,7 @@
      "rc": 0,
      "out": "generation 0\n\n.#......\n..#.....\n###.....\n........\n........\n........\n........\n........\n\ngeneration 1\n\n........\n#.#.....\n.##.....\n.#......\n........\n........\n........\n........\n\ngeneration 2\n\n........\n..#.....\n#.#.....\n.##.....\n........\n........\n........\n........\n\ngeneration 4\n\n........\n..#.....\n...#....\n.###....\n........\n........\n........\n........\n\n\n",
      "err": "",
-     "secs": 0.084,
+     "secs": 0.083,
      "timeout": false
     }
    ]
@@ -750,21 +750,21 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.074,
+     "secs": 0.073,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.072,
+     "secs": 0.073,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.074,
+     "secs": 0.075,
      "timeout": false
     }
    ]
@@ -782,7 +782,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.067,
+     "secs": 0.066,
      "timeout": false
     },
     {
@@ -832,7 +832,7 @@
      "rc": 1,
      "out": "",
      "err": "Error: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.\n",
-     "secs": 0.057,
+     "secs": 0.058,
      "timeout": false
     }
    ]
@@ -848,7 +848,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.249,
+    "secs": 0.241,
     "timeout": false
    },
    "runs": [
@@ -856,21 +856,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.3,
+     "secs": 0.552,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.248,
+     "secs": 0.205,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.261,
+     "secs": 0.206,
      "timeout": false
     }
    ]
@@ -888,21 +888,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.142,
+     "secs": 0.107,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.139,
+     "secs": 0.105,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.14,
+     "secs": 0.111,
      "timeout": false
     }
    ]
@@ -920,21 +920,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.076,
+     "secs": 0.061,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.084,
+     "secs": 0.061,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.085,
+     "secs": 0.062,
      "timeout": false
     }
    ]
@@ -952,21 +952,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.049,
+     "secs": 0.034,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.07,
+     "secs": 0.035,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.068,
+     "secs": 0.033,
      "timeout": false
     }
    ]
@@ -984,21 +984,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.049,
+     "secs": 0.032,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.047,
+     "secs": 0.032,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.05,
+     "secs": 0.031,
      "timeout": false
     }
    ]
@@ -1014,7 +1014,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.444,
+    "secs": 0.63,
     "timeout": false
    },
    "runs": [
@@ -1022,21 +1022,21 @@
      "rc": 0,
      "out": "4\n",
      "err": "",
-     "secs": 0.077,
+     "secs": 0.069,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "4\n",
      "err": "",
-     "secs": 0.079,
+     "secs": 0.074,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "4\n",
      "err": "",
-     "secs": 0.076,
+     "secs": 0.07,
      "timeout": false
     }
    ]
@@ -1052,7 +1052,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.433,
+    "secs": 0.618,
     "timeout": false
    },
    "runs": [
@@ -1060,21 +1060,21 @@
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.089,
+     "secs": 0.081,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.092,
+     "secs": 0.08,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "67108864\n",
      "err": "",
-     "secs": 0.092,
+     "secs": 0.076,
      "timeout": false
     }
    ]
@@ -1090,17 +1090,10 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.496,
+    "secs": 0.617,
     "timeout": false
    },
    "runs": [
-    {
-     "rc": 0,
-     "out": "33554432\n67108864\n",
-     "err": "",
-     "secs": 0.092,
-     "timeout": false
-    },
     {
      "rc": 0,
      "out": "33554432\n67108864\n",
@@ -1112,7 +1105,14 @@
      "rc": 0,
      "out": "33554432\n67108864\n",
      "err": "",
-     "secs": 0.086,
+     "secs": 0.085,
+     "timeout": false
+    },
+    {
+     "rc": 0,
+     "out": "33554432\n67108864\n",
+     "err": "",
+     "secs": 0.081,
      "timeout": false
     }
    ]
@@ -1128,7 +1128,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.098,
+    "secs": 0.102,
     "timeout": false
    },
    "runs": [
@@ -1136,21 +1136,21 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.546,
+     "secs": 5.199,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.569,
+     "secs": 4.999,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 5.481,
+     "secs": 5.001,
      "timeout": false
     }
    ]
@@ -1168,21 +1168,21 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.735,
+     "secs": 0.714,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.739,
+     "secs": 0.714,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.731,
+     "secs": 0.714,
      "timeout": false
     }
    ]
@@ -1198,7 +1198,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.671,
+    "secs": 0.799,
     "timeout": false
    },
    "runs": [
@@ -1206,21 +1206,21 @@
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.097,
+     "secs": 0.093,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.107,
+     "secs": 0.095,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "3101455856\n",
      "err": "",
-     "secs": 0.097,
+     "secs": 0.091,
      "timeout": false
     }
    ]
@@ -1236,7 +1236,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.102,
+    "secs": 0.101,
     "timeout": false
    },
    "runs": [
@@ -1244,21 +1244,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 6.32,
+     "secs": 6.11,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 6.401,
+     "secs": 5.909,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 6.359,
+     "secs": 5.908,
      "timeout": false
     }
    ]
@@ -1276,21 +1276,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.879,
+     "secs": 0.859,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.881,
+     "secs": 0.857,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 0.882,
+     "secs": 0.856,
      "timeout": false
     }
    ]
@@ -1306,7 +1306,7 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.643,
+    "secs": 0.747,
     "timeout": false
    },
    "runs": [
@@ -1314,21 +1314,21 @@
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.326,
+     "secs": 1.676,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.71,
+     "secs": 1.657,
      "timeout": false
     },
     {
      "rc": 0,
      "out": "2063750025\n",
      "err": "",
-     "secs": 1.67,
+     "secs": 1.779,
      "timeout": false
     }
    ]
@@ -1344,22 +1344,22 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.467,
+    "secs": 0.456,
     "timeout": false
    },
    "runs": [
     {
      "rc": 0,
-     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=5\n\n  64x64  live=5  ms=17\n\n128x128  live=5  ms=72\n\n256x256  live=5  ms=314\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=9\n\n  64x64  live=5  ms=31\n\n128x128  live=5  ms=73\n\n256x256  live=5  ms=289\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
      "err": "",
-     "secs": 0.49,
+     "secs": 0.591,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=4\n\n  64x64  live=5  ms=18\n\n128x128  live=5  ms=71\n\n256x256  live=5  ms=316\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
+     "out": "row-window Life, 64 generations -- O(n)?\n\n  32x32  live=5  ms=4\n\n  64x64  live=5  ms=16\n\n128x128  live=5  ms=67\n\n256x256  live=5  ms=287\n\n\n64x64, 16 generations -- head to head with the naive version\n\n  64x64  live=5  ms=5\n\n",
      "err": "",
-     "secs": 0.43,
+     "secs": 0.381,
      "timeout": false
     }
    ]
@@ -1375,22 +1375,22 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.419,
+    "secs": 0.391,
     "timeout": false
    },
    "runs": [
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1836\n\nblk=16 ( 256 tasks)  live=5  ms=2070\n\nblk=64 (  64 tasks)  live=5  ms=2033\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=519\n\n  64x64 16gen  live=5  ms=8221\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1748\n\nblk=16 ( 256 tasks)  live=5  ms=1947\n\nblk=64 (  64 tasks)  live=5  ms=1921\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=481\n\n  64x64 16gen  live=5  ms=7597\n\n",
      "err": "",
-     "secs": 14.745,
+     "secs": 13.873,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1831\n\nblk=16 ( 256 tasks)  live=5  ms=2070\n\nblk=64 (  64 tasks)  live=5  ms=2003\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=509\n\n  64x64 16gen  live=5  ms=7992\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=1732\n\nblk=16 ( 256 tasks)  live=5  ms=1936\n\nblk=64 (  64 tasks)  live=5  ms=1891\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=474\n\n  64x64 16gen  live=5  ms=7591\n\n",
      "err": "",
-     "secs": 14.425,
+     "secs": 13.628,
      "timeout": false
     }
    ]
@@ -1406,16 +1406,16 @@
    "runs": [
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=661\n\nblk=16 ( 256 tasks)  live=5  ms=634\n\nblk=64 (  64 tasks)  live=5  ms=980\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=507\n\n  64x64 16gen  live=5  ms=7775\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=659\n\nblk=16 ( 256 tasks)  live=5  ms=622\n\nblk=64 (  64 tasks)  live=5  ms=956\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=494\n\n  64x64 16gen  live=5  ms=7631\n\n",
      "err": "",
-     "secs": 10.58,
+     "secs": 10.366,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=672\n\nblk=16 ( 256 tasks)  live=5  ms=632\n\nblk=64 (  64 tasks)  live=5  ms=976\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=515\n\n  64x64 16gen  live=5  ms=7759\n\n",
+     "out": "64x64, 4 generations\n\nblk=1  (4096 tasks)  live=5  ms=663\n\nblk=16 ( 256 tasks)  live=5  ms=651\n\nblk=64 (  64 tasks)  live=5  ms=958\n\n\nnaive, no fork (d=0, blk=w*h)\n\n  32x32 16gen  live=5  ms=505\n\n  64x64 16gen  live=5  ms=7721\n\n",
      "err": "",
-     "secs": 10.574,
+     "secs": 10.504,
      "timeout": false
     }
    ]
@@ -1431,22 +1431,22 @@
     "rc": 0,
     "out": "",
     "err": "",
-    "secs": 0.483,
+    "secs": 0.47,
     "timeout": false
    },
    "runs": [
     {
      "rc": 0,
-     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=307\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=397\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1544\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=2075\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=2420\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=2652\n\n",
+     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=326\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=379\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1464\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1948\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=2277\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=2491\n\n",
      "err": "",
-     "secs": 9.655,
+     "secs": 9.181,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=292\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=398\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1551\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=2096\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=2428\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=2641\n\n",
+     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=292\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=386\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1485\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1967\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=2270\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=2478\n\n",
      "err": "",
-     "secs": 9.451,
+     "secs": 8.909,
      "timeout": false
     }
    ]
@@ -1462,16 +1462,16 @@
    "runs": [
     {
      "rc": 0,
-     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=215\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1680\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1207\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1331\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1372\n\n",
+     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=311\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=212\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1653\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1131\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1261\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1336\n\n",
      "err": "",
-     "secs": 6.167,
+     "secs": 5.937,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=311\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=218\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1704\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1192\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1320\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1383\n\n",
+     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=209\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1614\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1126\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1274\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1328\n\n",
      "err": "",
-     "secs": 6.18,
+     "secs": 5.898,
      "timeout": false
     }
    ]
@@ -1487,16 +1487,16 @@
    "runs": [
     {
      "rc": 0,
-     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=319\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1691\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1169\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1258\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1352\n\n",
+     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=313\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=317\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1619\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1182\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1228\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1315\n\n",
      "err": "",
-     "secs": 6.148,
+     "secs": 6.01,
      "timeout": false
     },
     {
      "rc": 0,
-     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=314\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=329\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1672\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1609\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1495\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1356\n\n",
+     "out": "row-window Life, forked over rows -- the clock wraps evolve only\n\n256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312\n\n256x256 d=2 blk=64  (4 leaves)  live=5  ms=319\n\n512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1635\n\n512x512 d=2 blk=128 (4 leaves)  live=5  ms=1582\n\n512x512 d=3 blk=64  (8 leaves)  live=5  ms=1426\n\n512x512 d=4 blk=32  (16 leaves)  live=5  ms=1365\n\n",
      "err": "",
-     "secs": 6.822,
+     "secs": 6.677,
      "timeout": false
     }
    ]
@@ -1584,9 +1584,9 @@
    "runs": [
     {
      "rc": 0,
-     "out": "t1_ok rc=0 out=All terms check. err=\nt2_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt3_todo rc=1 out= err=Error: 1 TODO found.\nt4_noimport rc=1 out= err=bend: PROOF.bend must import ./LAWS.bend (see bend --help)\nt5_vacuous rc=0 out=All terms check. err=\nt6_nearby_unsafe rc=0 out=All terms check, with 1 unsafe annotation. err=\nt7_straydef rc=1 out= err=Error:\n",
+     "out": "t1_ok rc=0 out=All terms check. err=\nt2_unsafe rc=0 out=All terms check, but 1 def relies on unsafe or foreign code: err=\nt3_todo rc=1 out= err=Error: 1 TODO found.\nt4_noimport rc=1 out= err=bend: PROOF.bend must import ./LAWS.bend (see bend --help)\nt5_vacuous rc=0 out=All terms check. err=\nt6_nearby_unsafe rc=0 out=All terms check, but 1 def relies on unsafe or foreign code: err=\nt7_straydef rc=1 out= err=Error:\n",
      "err": "",
-     "secs": 0.478,
+     "secs": 0.49,
      "timeout": false
     }
    ]
@@ -1622,7 +1622,7 @@
      "rc": 0,
      "out": "All terms check.\n",
      "err": "",
-     "secs": 0.055,
+     "secs": 0.056,
      "timeout": false
     }
    ]
@@ -1676,7 +1676,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : Nat.add(x, 0n)\n- observed : x\nContext:\n- x : Nat\nLocation: add_zero\n10 | def add_zero(x):\n11>|   {==}\n12 | \n",
-     "secs": 0.054,
+     "secs": 0.055,
      "timeout": false
     }
    ]
@@ -1748,7 +1748,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : ch\n- observed : ch (consumed more than once)\nLocation: main\n11 |   do IO<Unit>:\n12>|     ch : Chan(U32) <- IO.fork(U32, one())\n13 |     r1 : U32 <- IO.join(U32, ch)\n",
-     "secs": 0.092,
+     "secs": 0.091,
      "timeout": false
     }
    ]
@@ -1766,7 +1766,7 @@
      "rc": 1,
      "out": "first join=41\n",
      "err": "IO.join: the channel was closed\n",
-     "secs": 0.066,
+     "secs": 0.07,
      "timeout": false
     }
    ]
@@ -1784,7 +1784,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : a term (a match heads a def body, not a term)\n- observed : ' '\nLocation:\n 9 |     b : Bool <- Chan.send(U32, ch, 7)\n10>|     match b:\n11 |       case True{}:\n",
-     "secs": 0.037,
+     "secs": 0.036,
      "timeout": false
     }
    ]
@@ -1838,7 +1838,7 @@
      "rc": 1,
      "out": "main done\n",
      "err": "bend: deadlock: every computation waits on a channel\n",
-     "secs": 0.061,
+     "secs": 0.062,
      "timeout": false
     }
    ]
@@ -1874,7 +1874,7 @@
      "rc": 2,
      "out": "",
      "err": "No such file or directory\n",
-     "secs": 0.065,
+     "secs": 0.066,
      "timeout": false
     }
    ]
@@ -1910,7 +1910,7 @@
      "rc": 0,
      "out": "four sends done\nrecv=10\nrecv=20\nrecv=30\nrecv=40\n",
      "err": "",
-     "secs": 0.065,
+     "secs": 0.067,
      "timeout": false
     }
    ]
@@ -1946,7 +1946,7 @@
      "rc": 0,
      "out": "argc=3\n",
      "err": "",
-     "secs": 0.103,
+     "secs": 0.096,
      "timeout": false
     }
    ]
@@ -1962,9 +1962,9 @@
    "runs": [
     {
      "rc": 0,
-     "out": "ms since boot: 53\n",
-     "err": "",
-     "secs": 0.061,
+     "out": "ms since boot: 66\n",
+     "err": "All terms check, but 2 defs rely on unsafe or foreign code:\n- Clock.now\n- main\n",
+     "secs": 0.074,
      "timeout": false
     }
    ]
@@ -1981,8 +1981,8 @@
     {
      "rc": 0,
      "out": "HELLO, BEND\nababababab\nXXX\n",
-     "err": "",
-     "secs": 0.061,
+     "err": "All terms check, but 3 defs rely on unsafe or foreign code:\n- Shout.upper\n- Str.repeat2\n- main\n",
+     "secs": 0.071,
      "timeout": false
     }
    ]
@@ -1999,8 +1999,8 @@
     {
      "rc": 0,
      "out": "héllo·世界héllo·世界\nHéLLO, WöRLD\n",
-     "err": "",
-     "secs": 0.06,
+     "err": "All terms check, but 3 defs rely on unsafe or foreign code:\n- Str.repeat2\n- Shout.upper\n- main\n",
+     "secs": 0.072,
      "timeout": false
     }
    ]
@@ -2016,9 +2016,9 @@
    "runs": [
     {
      "rc": 0,
-     "out": "t0=55 d_builtin=308 d_custom=301\n",
-     "err": "",
-     "secs": 0.681,
+     "out": "t0=71 d_builtin=307 d_custom=303\n",
+     "err": "All terms check, but 3 defs rely on unsafe or foreign code:\n- Clock.now\n- Delay.ms\n- main\n",
+     "secs": 0.699,
      "timeout": false
     }
    ]
@@ -2033,16 +2033,16 @@
    "compile": {
     "rc": 0,
     "out": "",
-    "err": "",
-    "secs": 0.372,
+    "err": "All terms check, but 2 defs rely on unsafe or foreign code:\n- Busy.ms\n- main\n",
+    "secs": 0.396,
     "timeout": false
    },
    "runs": [
     {
      "rc": 0,
-     "out": "tick 300\ntick 600\ntick 900\nbusy done after 1010 ms\n",
+     "out": "tick 300\ntick 600\ntick 900\nbusy done after 1006 ms\n",
      "err": "",
-     "secs": 1.227,
+     "secs": 1.306,
      "timeout": false
     }
    ]
@@ -2059,8 +2059,8 @@
     {
      "rc": 1,
      "out": "",
-     "err": "TypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefined)\n",
-     "secs": 0.077,
+     "err": "All terms check, but 2 defs rely on unsafe or foreign code:\n- Shout.upper\n- main\nTypeError: op.run is not a function. (In 'op.run(...op.args, op.kont)', 'op.run' is undefined)\n",
+     "secs": 0.107,
      "timeout": false
     }
    ]
@@ -2075,8 +2075,8 @@
    "compile": {
     "rc": 0,
     "out": "",
-    "err": "",
-    "secs": 0.245,
+    "err": "All terms check, but 2 defs rely on unsafe or foreign code:\n- Shout.upper\n- main\n",
+    "secs": 0.243,
     "timeout": false
    },
    "runs": [
@@ -2084,7 +2084,7 @@
      "rc": 1,
      "out": "",
      "err": "bend: an alien request\n",
-     "secs": 0.085,
+     "secs": 0.174,
      "timeout": false
     }
    ]
@@ -2102,7 +2102,7 @@
      "rc": 0,
      "out": "size=11\nread back: hello, file\n",
      "err": "",
-     "secs": 0.074,
+     "secs": 0.099,
      "timeout": false
     }
    ]
@@ -2120,7 +2120,7 @@
      "rc": 0,
      "out": "chunk: [hello]\nchunk: [, fil]\nat-bytes=4\n",
      "err": "",
-     "secs": 0.075,
+     "secs": 0.079,
      "timeout": false
     }
    ]
@@ -2138,7 +2138,7 @@
      "rc": 2,
      "out": "",
      "err": "No such file or directory\n",
-     "secs": 0.067,
+     "secs": 0.071,
      "timeout": false
     }
    ]
@@ -2156,7 +2156,7 @@
      "rc": 1,
      "out": "",
      "err": "Error:\n- expected : f\n- observed : f (consumed more than once)\nLocation: main\n7 |   do IO<Unit>:\n8>|     f : File <- IO.try(File, File.open(\"out.txt\", \"r\"))\n9 |     File.close(f)\n",
-     "secs": 0.056,
+     "secs": 0.057,
      "timeout": false
     }
    ]
@@ -2174,7 +2174,7 @@
      "rc": 0,
      "out": "listening on 127.0.0.1:7811\nserver got: ping\nclient got: pong\ndone\n",
      "err": "",
-     "secs": 0.08,
+     "secs": 0.079,
      "timeout": false
     }
    ]
@@ -2192,7 +2192,7 @@
      "rc": 61,
      "out": "",
      "err": "Connection refused\n",
-     "secs": 0.066,
+     "secs": 0.067,
      "timeout": false
     }
    ]
@@ -2210,7 +2210,7 @@
      "rc": 0,
      "out": "7n\n",
      "err": "",
-     "secs": 0.055,
+     "secs": 0.056,
      "timeout": false
     }
    ]
