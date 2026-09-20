@@ -11,7 +11,11 @@ Two kinds are checked, because the book has two kinds:
 * every `github.com/nohzafk/bend2-from-zero/blob/<ref>/<path>` link must name
   a file that exists in this repository and is tracked by git — the published
   site serves what the repository holds, and an untracked file is as good as
-  missing.
+  missing;
+* a paragraph announcing what comes next (`Next:`) carries no markdown links —
+  the built pages already have prev/next arrows driven by the table of
+  contents, and a hand-written link there is a second source of chapter order
+  that drifts (it drifted three times before this rule existed).
 """
 import html
 import re
@@ -21,6 +25,21 @@ import urllib.parse
 from pathlib import Path
 
 GH_BLOB = "https://github.com/nohzafk/bend2-from-zero/blob/"
+
+
+def check_next_paragraphs(src: Path, bad: list):
+    """A `Next:` paragraph announces the next chapter in prose; no links."""
+    link = re.compile(r"\[[^\]]*\]\([^)]+\)")
+    for page in sorted(src.glob("*.md")):
+        text = page.read_text()
+        for m in re.finditer(r"^(?!#).*\bNext:", text, re.M):
+            end = text.find("\n\n", m.start())
+            para = text[m.start():end if end != -1 else len(text)]
+            hit = link.search(para)
+            if hit:
+                line = text[:m.start()].count("\n") + 1
+                bad.append((f"src/{page.name}:{line}", hit.group(0),
+                            "the next-chapter announcement is prose, not a link"))
 
 
 def main():
@@ -74,6 +93,8 @@ def main():
             if not target.exists():
                 bad.append((page.relative_to(book).as_posix(), href,
                             f"no such file: {rel}"))
+
+    check_next_paragraphs(repo / "src", bad)
 
     for page, href, why in bad:
         print(f"{page}: {href}  -- {why}")
