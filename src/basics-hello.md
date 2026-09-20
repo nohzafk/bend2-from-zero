@@ -66,9 +66,11 @@ you want to know, by looking at a function's type, whether it can touch the
 outside world. In Bend, that question has a one-word answer, and it is written
 down.
 
-`do IO<Unit>:` is a block of such actions, run in order, top to bottom. Every
-line in it produces a value of some type; the block's own value is the last
-one.
+`do IO<Unit>:` runs them, in order, top to bottom — each line's value flows
+into the next, and the block's own value is the last line's, which becomes
+`main`'s return value. That is all you need for now: the block itself is
+sugar, and [what it compiles into](do-blocks.md) is a chapter of its own
+once the language underneath is in place.
 
 ## What `IO.print` actually prints
 
@@ -139,14 +141,19 @@ The rule, and it is stranger than it looks:
   applied with **angle brackets**: `List<Nat>`, `Maybe<U32>`. The other
   direction is an error too, and that one says so plainly: `List(Nat)` gives
   `expected : a family instance (write List<..>)`.
-- inside a **`do` block** the type is written with angle brackets even when it
-  is `IO`: `do IO<Unit>:`. `do IO(Unit):` is refused with `expected : '<'`.
+- the **`do` block header** takes angle brackets by its own grammar —
+  `do IO<Unit>:` is correct even though `IO` is a function — and
+  `do IO(Unit):` is refused with `expected : '<'`.
 
 The compiler points at the signature line and never mentions the brackets — and
 for `IO<Unit>` the message is worse than unhelpful, since it blames a type that
 was never declared rather than the brackets you got wrong. The same mistake cost
 this book's author a bisection session, and it is preserved
 in the repository as [`basics/hello_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend).
+
+Chapter one is the wrong place to *learn* the rule — you meet it here as an
+error, and the [types chapter](basics-types.md) introduces both brackets
+properly, with the declarations that make the difference make sense.
 
 ### `42` is not a `Nat`
 

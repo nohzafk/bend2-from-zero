@@ -8,6 +8,16 @@ Four small programs from first contact with Bend. Each answers exactly one quest
 | `exp_str.bend` | do `\n` and `\t` escape inside a string | `a` newline `b<TAB>tab` — yes, escaping works |
 | `exp_mod.bend` | does the termination checker accept modulo written as structural recursion | ✅ returns `1n`, i.e. `9 mod 4` |
 | `exp_list.bend` | a hand-written `nth` that walks the list | `2`, i.e. `[1,2,3][1]` |
+| `exp_type.bend` | the no-parameter `type` declaration, fields marked `+` in the declaration | `25`, i.e. `5*5` |
+| `exp_chain.bend` | the smallest parameterised type that checks: `a` quantity, `A` element type | `2`, i.e. the chain's length |
+
+The ❌ files pin the three errors a reader meets before the correct shape:
+
+| File | The question | Result |
+|---|---|---|
+| `type_is_missing.bend` | can a `type` declaration leave out `is` | ❌ `expected : 'is'` — the clause is mandatory |
+| `type_field_affine.bend` | can a field be used twice without `+` in the declaration | ❌ `consumed more than once` |
+| `type_quantity_field.bend` | can a field be typed with the bare parameter `a` | ❌ `a : Quant` — `a` is a quantity, not a type |
 
 ## `exp_mod`: why this is worth trying on its own
 

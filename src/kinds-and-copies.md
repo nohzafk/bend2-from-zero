@@ -40,6 +40,11 @@ Bend is telling you that `+` is not a permission you grant. It is a property you
 
 ## Kinds: the property lives on the type
 
+The [types chapter](basics-types.md) introduced `Kind(a)` as machinery every
+parameterised type is forced to carry. This section is what the machinery is
+*for*: the kind is where the copy permission lives, and `+` is how a function
+asks for it.
+
 Types themselves are sorted into two kinds, and the kind is part of a type's
 declaration:
 
@@ -100,7 +105,8 @@ Error:
 
 ## The loose end from the lists chapter
 
-Now the signature that looked strange makes sense:
+Now the loose end — not how to read the header, which the types chapter
+covered, but why the kind has to be a parameter at all:
 
 ```python
 type List<a, -A: Kind(a)> is Kind(a)

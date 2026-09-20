@@ -6,14 +6,17 @@ each holding one value and a pointer to the rest, ending in an empty cell.
 ```python
 type List<a, -A: Kind(a)> is Kind(a):
   Nil{}
-  Con{head: a, tail: List<a, A>}
+  Con{head: A, tail: List<a, A>}
 ```
 
-Two things in that declaration are worth noticing now and will make sense in
-[copies and kinds](kinds-and-copies.md), two chapters from here. The
-`-A: Kind(a)` and the `is Kind(a)` are about **how many
-times a value of this type may be copied**, and that is the single most
-consequential thing about Bend. For this chapter, read past it.
+Every piece of that header was introduced in the [types
+chapter](basics-types.md): `a` is a quantity parameter, `A` the element
+type, `is Kind(a)` says a list is exactly as reusable as its elements.
+(The field is typed `A`, not `a` — an earlier edition of this book printed
+`head: a`, which does not compile: `a` is a quantity, and the checker
+refuses a field typed with one.) What that header *means at runtime* —
+why copyability decides anything — is the subject of
+[copies and kinds](kinds-and-copies.md), three chapters from here.
 
 There is also an infix spelling. `h <> t` builds or matches a cell, and `Base`
 uses it; `Con{h, t}` is the same thing. Both work.
@@ -47,7 +50,7 @@ is a specific rewrite that turns `O(n²)` into `O(n)` while keeping the same
 output. Keeping this chapter's `nth` in mind makes that chapter much easier to
 follow.
 
-## `List.range`, and your first sighting of a quantity
+## `List.range`, and the quantity on its return type
 
 `Base` gives you a few list functions. The useful one here is `range`, which
 produces the numbers from `0` to `n-1`:
@@ -80,7 +83,8 @@ and the second is the element type. `Base`'s own source writes it both ways,
 because inside the library the quantity is usually a parameter that is already
 in scope.
 
-You are allowed to find this signature strange. It is Bend being honest about
+You met this shape in the types chapter, on a hand-written `Chain`; here it
+is in `Base`, where you cannot avoid it. It is Bend being honest about
 something most languages hide: the *"may this be copied?"* question is part of a
 list's type, so a function that takes lists cannot ignore it. If you have ever
 wondered why Bend's type annotations feel like they leak, this is the leak.

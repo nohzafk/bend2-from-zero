@@ -15,6 +15,7 @@
 # The language
 
 - [Numbers and patterns](basics-numbers.md)
+- [Types, quantities, and the two brackets](basics-types.md)
 - [Lists](basics-lists.md)
 - [Strings and characters](basics-strings.md)
 
@@ -39,6 +40,7 @@
 
 # Effects: the world outside
 
+- [Inside a `do` block](do-blocks.md)
 - [Effects, and the event loop](effects.md)
 - [Writing an effect](effects-2.md)
 
