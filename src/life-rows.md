@@ -24,6 +24,12 @@ costs a walk down the list. So the question for this section is how to add up
 nine cells that lie in three columns and three rows, without ever naming an
 index.
 
+**One row at a time.** Take the output row you are computing and call it `y`. Its
+inputs are rows `y-1`, `y` and `y+1`, and that is all this section ever looks at.
+Every `x` below is a column in that row, and the row number `y` stays fixed from
+here to the end of the section. Doing this for every row of the grid is the
+mechanism in [rows themselves rotate](#rows-themselves-rotate), further down.
+
 The first thing to notice is how small that block is vertically.
 
 ### Three rows are enough
@@ -57,8 +63,14 @@ Two names in that line, before anything else:
 
 - **`j` is a column position** — an offset along a row, counting from `0` to
   `w-1`. This chapter is about positions along a row.
-- **`s` is a derived row** — scratch space, one row long, holding what the
-  three rows add up to.
+- **`s` is a derived row, and it belongs to `y`** — scratch space, one row long,
+  holding what those three rows add up to. It is not a row of the board: it is
+  *the* `s` for the output row you are computing, and there is one per output
+  row. The `s` in the picture below is the one for row `y`.
+
+`j` is the general name for a position in `s`. When the discussion turns to one
+particular cell, that cell's position is written `x` — the same axis, and `x` is
+just the one `j` we happen to be asking about.
 
 The line reads: at each position `j`, take the cell from each of the three rows
 and add them. One number comes out, and these three went in:
@@ -99,7 +111,11 @@ indexed; the position is simply wherever the walk has got to.
 Now look at what a 3×3 block is made of. Every cell around `(x, y)` sits in one of
 three columns — `x-1`, `x` or `x+1` — and `s[j]` already holds all of **the
 window's** column `j`, which is three cells: one from each of the three rows. So
-the three entries add up to the whole block:
+the three entries add up to the whole block.
+
+Both `s` and `cur` here are the ones belonging to the row being computed, `y`, so
+the row number does not need saying — it is the same on both sides of every line
+below. The three columns are what is being picked out:
 
 ```python
 s[x-1] + s[x] + s[x+1]    =     all nine cells of the 3×3 block
@@ -110,7 +126,7 @@ The centre is among those nine, and it appears **once**: `cur[x]` is counted in
 column. Subtract it and the eight neighbours are what is left:
 
 ```python
-neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]
+neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]      the cell at (x, y)
 ```
 
 Nine cells, three arithmetic operations.
@@ -143,7 +159,9 @@ The flat `ns` column in the results below is the measurement of exactly this.
 
 ### Worked example
 
-On a real 17-wide board, so the whole row is visible at once:
+One output row, on a real 17-wide board, so the whole thing is visible at once.
+The `prev`, `cur` and `next` lines are the three rows of the board; the `s` line
+is that row's scratch, and it is **not** a row of the board:
 
 ```
 prev (row y-1)   0 0 1 1 0 0 1 1 0 0 1 1 1 0 0 0 1
