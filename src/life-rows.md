@@ -39,20 +39,26 @@ in `y+2`. So those three rows are all the input there is, and the height of the
 board never comes up again — a cell has eight neighbours whether the grid is 17
 rows tall or 17,000.
 
-Add them position by position, into a scratch row `s`:
+Add them position by position, into a scratch row `s_y` — the scratch row of
+output row `y`:
 
 ```python
-s[x] = prev[x] + cur[x] + next[x]
+s_y[x] = prev[x] + cur[x] + next[x]
 ```
 
 - `prev`, `cur` and `next` are the three **rows** `y-1`, `y`, `y+1`. They differ in
   `y`, not in `x`; each is a `List<Nat>` of length `w`.
 - `x` is a position **along** a row, the same `x` as above. `prev[1]` and `cur[1]`
   are in different rows and the same column.
-- `s` is a `List<Nat>` of length `w` — the scratch row for this output row.
-- `s[x]` is a single `Nat`: three cells added into one number.
+- `s_y` is a `List<Nat>` of length `w` — the scratch row for this output row.
+- `s_y[x]` is a single `Nat`: three cells added into one number.
 
-**`s` is a row; `s[x]` is a number.** The `+` is ordinary addition of `Nat`s —
+The subscript is the whole point: **`s_y` is the scratch row of one output row**,
+and the code has one per call, so there is no bare `s` to speak of. The code itself
+names it `s`, because inside `newrow` there is only ever one; this chapter writes
+`s_y` because it looks at more than one.
+
+**`s_y` is a row; `s_y[x]` is a number.** The `+` is ordinary addition of `Nat`s —
 nothing here adds two lists, because there is no such operation in Bend. The three
 numbers at column `x` are added, then the same is done at column `x+1`. (A
 different `+` shows up in the code further down: the reuse mark from the affinity
@@ -68,30 +74,28 @@ cur         1    0    1    1    0    0
 next        0    0    1    0    1    1
             │    │    │    │    │    │      each column added on its own:
             ▼    ▼    ▼    ▼    ▼    ▼      0+1+0, 1+0+0, 0+1+1, ...
-s           1    1    2    1    2    1
+s_1         1    1    2    1    2    1
 ```
 
-`s[2] = prev[2] + cur[2] + next[2] = 0 + 1 + 1 = 2`. No entry can exceed 3, because
+`s_y[2] = prev[2] + cur[2] + next[2] = 0 + 1 + 1 = 2`. No entry can exceed 3, because
 three cells go into it.
 
-That `s` belongs to **one** output row. Call it `s_y` if that helps — the chapter
-writes plain `s` because only one is ever in play at a time, but there is a
-different `s` for every row, and the inputs change with the row, so every entry
-changes with it. The example above was rows 0, 1 and 2 standing as `prev`, `cur`
-and `next`, with `y = 1`. Add a fourth row and build `y = 2` too:
+The table above is the window for `y = 1` — rows 0, 1 and 2 standing as `prev`, `cur`
+and `next`. Add a fourth row and build `y = 2` as well:
 
 ```
-   row 0   0 1 0 0 1 0       y=1:  s = 1 1 2 1 2 1      rows 0+1+2
-   row 1   1 0 1 1 0 0       y=2:  s = 2 1 2 2 1 2      rows 1+2+3
+   row 0   0 1 0 0 1 0       s_1 = 1 1 2 1 2 1      from rows 0+1+2
+   row 1   1 0 1 1 0 0       s_2 = 2 1 2 2 1 2      from rows 1+2+3
    row 2   0 0 1 0 1 1
    row 3   1 1 0 1 0 1
 ```
 
-Different rows in, different numbers out, and both `s` rows are correct — each is
-the three-row window of its own row. That is why the two phases are done **for one
-fixed `y`**: build `s` for that row, then walk it. Advancing `y` rebuilds `s` from
-the next three rows, which is what [the row rotation](#rows-themselves-rotate) is
-for.
+`s_1` and `s_2` are different lists, because their inputs are different rows. Both
+are correct, each as the three-row window of its own row.
+
+Which is why the two phases are done **for one fixed `y`**: build `s_y`, then walk
+`s_y`. Advancing `y` builds the next row's scratch from the next three rows, which
+is what [the row rotation](#rows-themselves-rotate) is for.
 
 `colsum` is that line written as the walk it has to be:
 
@@ -106,7 +110,7 @@ computed; the position is wherever the walk has got to.
 
 ### Why one scratch row is enough
 
-`s` is one-dimensional: `w` numbers, and its length does not depend on `h`. It is
+`s_y` is one-dimensional: `w` numbers, and its length does not depend on `h`. It is
 enough because a 3×3 sum **factors**. The block is three columns by three rows, and
 a rectangle of cells can be summed one axis at a time, either axis first:
 
@@ -124,31 +128,31 @@ summing the columns first would need three.
 
 ### Along a row: three entries of `s`
 
-The other direction — and the same output row, and the same `s` that was just
-built. `s[x-1]`, `s[x]` and `s[x+1]` are three **columns**, in the same row of `s`,
-and each entry already holds one whole column of the block:
+The other direction — and still the same `y`, so still the same `s_y`. `s_y[x-1]`,
+`s_y[x]` and `s_y[x+1]` are three **columns**, in the same row of `s_y`, and each
+entry already holds one whole column of the block:
 
 ```
-   s[x-1]  =  prev[x-1] + cur[x-1] + next[x-1]     the block's left column
-   s[x]    =  prev[x]   + cur[x]   + next[x]       the middle column
-   s[x+1]  =  prev[x+1] + cur[x+1] + next[x+1]     the right column
+   s_y[x-1]  =  prev[x-1] + cur[x-1] + next[x-1]     the block's left column
+   s_y[x]    =  prev[x]   + cur[x]   + next[x]       the middle column
+   s_y[x+1]  =  prev[x+1] + cur[x+1] + next[x+1]     the right column
 ```
 
 A 3×3 block is three columns and nothing else, so those three entries are the whole
 block. Exactly one of the nine cells is the cell itself — `cur[x]`, which sits
-inside `s[x]` and in neither of the others — so it comes off once:
+inside `s_y[x]` and in neither of the others — so it comes off once:
 
 ```python
-s[x-1] + s[x] + s[x+1]              =   all nine cells
-s[x-1] + s[x] + s[x+1] - cur[x]     =   the eight neighbours
+s_y[x-1] + s_y[x] + s_y[x+1]              =   all nine cells
+s_y[x-1] + s_y[x] + s_y[x+1] - cur[x]     =   the eight neighbours
 ```
 
 The same example, for the cell at `x = 2`:
 
 ```
-   column 1:  prev[1]=1  cur[1]=0  next[1]=0     s[1] = 1
-   column 2:  prev[2]=0  cur[2]=1  next[2]=1     s[2] = 2     ← cur[2] is the cell
-   column 3:  prev[3]=0  cur[3]=1  next[3]=0     s[3] = 1
+   column 1:  prev[1]=1  cur[1]=0  next[1]=0     s_1[1] = 1
+   column 2:  prev[2]=0  cur[2]=1  next[2]=1     s_1[2] = 2     ← cur[2] is the cell
+   column 3:  prev[3]=0  cur[3]=1  next[3]=0     s_1[3] = 1
                                               ─────────────
                                 nine cells  =  1 + 2 + 1  =  4
                  minus the cell itself, cur[2] = 1   →   3 neighbours
@@ -167,8 +171,8 @@ and the formula above is one line of `rowstep`, which walks a row applying it:
 {{#include ../life/life_row.bend:115:118}}
 ```
 
-`hl`, `hs` and `hr` are the three heads of the three rotated `s` lists — that is
-`s[x-1]`, `s[x]` and `s[x+1]` — and `hc` is `cur[x]`.
+`hl`, `hs` and `hr` are the three heads of the three rotated `s_y` lists — that
+is `s_y[x-1]`, `s_y[x]` and `s_y[x+1]` — and `hc` is `cur[x]`.
 
 Nine cells, three additions and a subtraction, no index anywhere. And the board's
 size never entered it: eight neighbour offsets always fall in three rows and three
@@ -222,8 +226,8 @@ def rot_r(+xs: List<&2, Nat>) -> List<&2, Nat>:
 recursion. That keeps one rotation primitive to get right, and both are O(w) — a
 pass over the row, the same order as the pass we are already doing.
 
-`newrow` uses both, to put the three columns of the window side by side as three
-lists that can be walked together:
+`newrow` is one output row's worth of work: it builds `s_y` and walks it. Here is
+the whole function — the code calls the scratch row `s`, as promised above:
 
 ```python
 def newrow(+p: List<&2, Nat>, +c: List<&2, Nat>, +n: List<&2, Nat>) -> List<&2, Nat>:
