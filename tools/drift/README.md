@@ -40,3 +40,7 @@ has to remember it:
   that later runs do not.
 - **load average and machine state are recorded with the numbers** — a
   parallel speedup varies with the machine's state.
+- **the run starts only on a committed tree.** The report names the commit it
+  measured, so an uncommitted tree has nothing to name and the tool refuses
+  before measuring. Commit first, then run: the report is committed after the
+  tree it describes, which makes that commit its own parent.

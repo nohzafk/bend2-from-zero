@@ -242,8 +242,7 @@ def write_reports(meta, results, outdir, label):
     L.append(f"- machine: {meta['cpu']}, {meta['cores']} cores "
              f"({meta['perf_cores']} performance), macOS {meta['macos']}")
     L.append(f"- bend binary: `{meta['bend_path']}` sha256 `{meta['bend_sha'][:16]}…`")
-    L.append(f"- repo: `{meta['repo']}` at `{meta['commit']}`"
-             + (f" (dirty: {meta['dirty']} files)" if meta['dirty'] else " (clean)"))
+    L.append(f"- repo: `{meta['repo']}` at `{meta['commit']}` (clean)")
     L.append(f"- load average at start/end: {meta['load_start']} / {meta['load_end']}")
     L.append(f"- caffeinate running: {meta['caffeinate']}")
     L.append("")
@@ -350,6 +349,25 @@ def main():
     if not bend.exists():
         sys.exit(f"no bend binary at {bend}")
 
+    # A report names the commit whose tree it measured.  An uncommitted tree has
+    # no such commit, so its numbers could never be reproduced from the report
+    # alone -- and the failing half of a run is usually a probe that was just
+    # edited.  Refuse before spending five minutes measuring.
+    dirty = [x for x in git(repo, "status", "--porcelain").splitlines() if x]
+    if dirty:
+        print(f"refusing to run: {repo} has {len(dirty)} uncommitted change(s).",
+              file=sys.stderr)
+        for x in dirty:
+            print(f"    {x}", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("The report names the commit it measured, and this tree is not one.",
+              file=sys.stderr)
+        print("Commit or stash first, then run: the report is committed after the",
+              file=sys.stderr)
+        print("tree it describes, so the commit in its header is its own parent.",
+              file=sys.stderr)
+        return 1
+
     env = dict(os.environ, BEND_NO_TELEMETRY="1")
     env["BEND"] = str(bend)
     ver_out = sh([str(bend), "--version"], repo, env, 30)
@@ -373,7 +391,6 @@ def main():
                              text=True).stdout.strip(),
         repo=str(repo),
         commit=git(repo, "rev-parse", "--short", "HEAD"),
-        dirty=len([x for x in git(repo, "status", "--porcelain").splitlines() if x]),
         load_start=loadavg(),
         caffeinate="yes" if subprocess.run(
             ["pgrep", "caffeinate"], capture_output=True).returncode == 0 else "no",
