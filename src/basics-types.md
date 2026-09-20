@@ -296,6 +296,6 @@ here, and the single most consequential idea in the language.
 | [`basics/type_quantity_field.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/type_quantity_field.bend) | ❌ a field typed with the quantity parameter |
 | [`basics/exp_chain.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/exp_chain.bend) | the smallest checking parameterised type |
 
-Next: [lists](basics-lists.md) — the declaration you can now read in full,
+Next: lists — the declaration you can now read in full,
 and the one-line function that turns out to be the reason the second half
 of this book exists.

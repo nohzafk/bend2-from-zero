@@ -115,5 +115,5 @@ side, and the chapters on [copies](kinds-and-copies.md) and
 |---|---|
 | [`basics/exp_list.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/exp_list.bend) | walking a list, and its cost |
 
-Next: [strings and characters](basics-strings.md) — another linked list, wearing
+Next: strings and characters — another linked list, wearing
 a friendlier face, and a trap that produces the wrong bytes without complaining.

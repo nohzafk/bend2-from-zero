@@ -97,5 +97,5 @@ count.
 | [`parallel/pow2_26.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/parallel/pow2_26.bend) | 2^26, the table above |
 | [`parallel/pow2.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/parallel/pow2.bend) | 2^22 |
 
-Next: [the GPU, and the `!` mark](gpu.md) — where `!` turns out to mean the GPU
+Next: the GPU, and the `!` mark — where `!` turns out to mean the GPU
 rather than more cores, and a fixed cost turns out to decide who wins.

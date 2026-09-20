@@ -93,5 +93,5 @@ Two things to know before you invest time, both true as of Bend 2.0.16:
 Neither is a reason not to look. Both are reasons to measure rather than
 assume, which is what the rest of this book does.
 
-Next: [getting it installed](setup.md), including one trap that will cost you
+Next: getting it installed, including one trap that will cost you
 ten minutes if nobody tells you about it.

@@ -172,4 +172,4 @@ bend close_recv.bend        # ✅ send/recv/close semantics
 bend join_twice.bend        # ❌ IO.join: the channel was closed, rc 1
 ```
 
-Next: [writing an effect of your own](effects-2.md).
+Next: writing an effect of your own.

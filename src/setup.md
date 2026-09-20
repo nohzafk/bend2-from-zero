@@ -140,4 +140,4 @@ the first hint of something this book leans on constantly: **Bend almost never
 infers a type, and says so out loud.**
 
 Now that it is installed, let's write something.
-[Next: a first program](basics-hello.md).
+Next: a first program.

@@ -314,5 +314,5 @@ bend life_row.bend -o life_row
 ./life_row --threads 1
 ```
 
-Next: [the naive engine, parallelised, and why the honest answer is "it
-depends"](life-parallel.md).
+Next: the naive engine, parallelised, and why the honest answer is "it
+depends".

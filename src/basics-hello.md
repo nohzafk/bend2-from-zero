@@ -216,6 +216,6 @@ end are where it is paid out in full.
 | [`basics/hello_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_bad.bend) | ❌ `IO<Unit>` in the signature |
 | [`basics/hello_arg.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/hello_arg.bend) | ❌ `IO.print(42)` |
 
-Next: [affine values](affinity.md) — the one rule in Bend that has no
+Next: affine values — the one rule in Bend that has no
 counterpart in the language you already know, and the reason everything after
 it is shaped the way it is.

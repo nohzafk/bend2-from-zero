@@ -498,4 +498,4 @@ assert s.count(old) == 1
 {{#include ../life/LIFE_PAR_PROOF.bend}}
 ```
 
-Next: [a second law, and the wall underneath](laws-2.md).
+Next: a second law, and the wall underneath.

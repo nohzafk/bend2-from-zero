@@ -179,4 +179,4 @@ affinity, kinds and the fork included, earn its place — and then the same
 machinery pointed at a different question: not *how fast*, but [how do you
 know it is right](laws-1.md), without reading the code.
 
-Next: [Life the obvious way, and the trap in it](life-naive.md).
+Next: Life the obvious way, and the trap in it.

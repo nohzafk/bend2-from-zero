@@ -142,5 +142,5 @@ all of it — every function here consumed its arguments, and nothing complained
 The two chapters that follow are about the machinery behind that rule: the
 quantity marks that ask permission to copy, and the types that refuse it.
 
-Next: [copies, kinds and the `+` mark](kinds-and-copies.md) — where the `&2` on
+Next: copies, kinds and the `+` mark — where the `&2` on
 `List.range` finally gets its explanation.

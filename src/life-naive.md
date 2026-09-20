@@ -122,4 +122,4 @@ next chapter, and it is worth about a factor of 1600.
 bend life.bend        # the interpreter is enough; this one prints, it does not benchmark
 ```
 
-Next: [the same game in O(n)](life-rows.md).
+Next: the same game in O(n).

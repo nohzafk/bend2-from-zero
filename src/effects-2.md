@@ -177,4 +177,4 @@ bend clock.bend           # ✅ then: bend clock.bend -o clock && ./clock
 {{#include ../fx/custom/clock.js}}
 ```
 
-Next: [turning a belief into a compiler check](laws-1.md).
+Next: turning a belief into a compiler check.

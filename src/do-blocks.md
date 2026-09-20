@@ -154,4 +154,4 @@ is the next chapter's subject. The desugaring is the seam between them:
 it. With both ends in place, [effects.md](effects.md) can talk about
 timing instead of syntax.
 
-Next: [Effects, and the event loop](effects.md).
+Next: Effects, and the event loop.

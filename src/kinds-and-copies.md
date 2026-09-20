@@ -226,5 +226,5 @@ like a wall turns out to be the reason the thing is fast.
 | [`affinity/t10_template.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t10_template.bend) | ✅ | `~f`, called twice |
 | [`affinity/t11_templatemiss.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_templatemiss.bend) | ❌ | the same call without `~` |
 
-Next: [arrays](arrays.md) — where the two kinds collide, and a read hands you
+Next: arrays — where the two kinds collide, and a read hands you
 back more than you asked for.

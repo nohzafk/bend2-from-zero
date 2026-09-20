@@ -140,5 +140,5 @@ clang -O2 main.c -o cpu -lm
 | [`gpu/gpu_twice.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/gpu_twice.bend) | two calls, to show the cost is per process |
 | [`gpu/pow2_gpu.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/gpu/pow2_gpu.bend) | the smallest `!` example |
 
-Next: the two workloads, one at a time — [why the GPU loses at
-n-queens](gpu-queens.md), and [why it wins at mandelbrot](gpu-mandelbrot.md).
+Next: the two workloads, one at a time — why the GPU loses at
+n-queens, and why it wins at mandelbrot.

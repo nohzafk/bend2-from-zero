@@ -194,6 +194,6 @@ readers will have met "affine" before:
 | [`affinity/t1_drop.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t1_drop.bend) | ✅ | never used at all |
 | [`affinity/t7_paths.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t7_paths.bend) | ✅ | twice in the source, once per path |
 
-Next: [numbers and patterns](basics-numbers.md) — back to the surface of the
+Next: numbers and patterns — back to the surface of the
 language, where Bend's most load-bearing syntax, the `n` suffix on a `match`
 pattern, makes a promise about termination.

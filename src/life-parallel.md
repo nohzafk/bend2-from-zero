@@ -158,4 +158,4 @@ bend life_par.bend -o life_par
 The binary also prints the naive no-fork baseline and the row-window head-to-head,
 so the whole comparison is reproducible from one command.
 
-Next: [a bug that type-checks](life-anim.md).
+Next: a bug that type-checks.

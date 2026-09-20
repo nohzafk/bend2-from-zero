@@ -181,4 +181,4 @@ bend main.bend -o main.c
 clang -O2 main.c -o cpu -lm      # CPU only, no Metal linked
 ```
 
-Next: [the workload where the GPU wins](gpu-mandelbrot.md).
+Next: the workload where the GPU wins.
