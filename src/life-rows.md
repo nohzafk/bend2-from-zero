@@ -104,6 +104,24 @@ All three rows are matched at once, so the three lists are consumed in lockstep:
 line appends one entry — `hp + hc + hn` — per position. No position is ever
 computed; the position is wherever the walk has got to.
 
+### Why one scratch row is enough
+
+`s` is one-dimensional: `w` numbers, and its length does not depend on `h`. It is
+enough because a 3×3 sum **factors**. The block is three columns by three rows, and
+a rectangle of cells can be summed one axis at a time, either axis first:
+
+```
+   the 3×3 block   =   three columns,   each already summed down its three rows
+                   =   three rows,      each already summed along its three columns
+```
+
+The pass across rows compresses each column's three cells into one number; the pass
+along a row then adds three of those numbers. The second pass only ever wants sums,
+so nothing it needs was thrown away by the first.
+
+The order is not arbitrary: summing the rows first needs **one** scratch row,
+summing the columns first would need three.
+
 ### Along a row: three entries of `s`
 
 The other direction — and the same output row, and the same `s` that was just
