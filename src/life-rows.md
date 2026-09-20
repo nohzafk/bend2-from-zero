@@ -13,21 +13,50 @@ A cell's eight neighbours are the 3×3 block around it, minus the centre. So the
 block is what has to be computed, and there are nine cells in it.
 
 Take the three rows involved — the one above, the one at, the one below — and add
-them together position by position, producing one new row `s` of the same width as
-a row:
+them together position by position, producing one scratch row `s`:
 
-```
+```python
 s[j] = prev[j] + cur[j] + next[j]
 ```
 
-**`s[j]` holds three cells, not a whole board column.** This is the part that
-reads wrong at first, so it is worth being blunt about: on a 17×17 board the
-board's own columns are 17 cells tall, and *none of those are summed anywhere*.
-The rows of the board are 17 cells wide, and `s` has 17 entries — one per
-position along a row — but each entry is the sum of the three cells at that
-position in the three-row window.
+Two names in that line, before anything else:
 
-Why three rows and no more? Because neighbours are within one row. The
+- **`j` is a column position** — an offset along a row, from `0` to `w-1`. Not a
+  row number, and not an index into the board.
+- **`s` is a derived row**: scratch space for computing one new row. It is not the
+  board, and not a column of the board. It has `w` entries, one per column
+  position, and each entry is the sum of the three cells at that position in the
+  three-row window.
+
+So each entry of `s` is three cells collapsing into one number:
+
+```
+      prev[j]  ·      ┐
+      cur[j]   ·      ├─── add ───▶  s[j]       one number, three cells behind
+      next[j]  ·      ┘
+```
+
+and there is one such entry for every column position, so `s` is `w` long — as
+wide as a row.
+
+```
+                  j=0  j=1  j=2        j=16        (w = 17)
+   prev (row y-1)   ·    ·    ·          ·
+   cur  (row y  )   ·    ·    ·    ...   ·          three rows of w cells
+   next (row y+1)   ·    ·    ·          ·
+                    │    │    │          │
+                    ▼    ▼    ▼          ▼
+   s                ▪    ▪    ▪    ...   ▪          w cells of three each
+                  j=0  j=1  j=2        j=16
+```
+
+**On a 17×17 board `s` has 17 entries, and each entry is three cells, not
+seventeen.** This is the part that reads wrong at first, so it is worth being
+blunt about: the board's own columns are 17 cells tall, and *none of those are
+summed anywhere*. Column 0 of the board is 17 cells; `s[0]` holds three of them —
+the ones in rows `y-1`, `y` and `y+1`.
+
+Why those three rows and no more? Because neighbours are within one row. The
 neighbours of a cell in row `y` live in rows `y-1`, `y` and `y+1` and in no
 others, so the other rows of the board cannot contribute:
 
@@ -43,12 +72,23 @@ That is why the board's height never appears in what follows. It is not that the
 formula is clever enough to avoid `h`; it is that `h` was never in the question.
 A cell has eight neighbours whether the board is 17 rows tall or 17,000.
 
+`colsum` is that formula, written as the walk it has to be:
+
+```python
+{{#include ../life/life_row.bend:77:92}}
+```
+
+All three rows are matched at once, so the three lists are consumed in lockstep:
+`hp`, `hc` and `hn` are the three cells at the current position, and the recursive
+line appends exactly one entry — `hp + hc + hn` — to the accumulator. Nothing is
+indexed; the position is simply wherever the walk has got to.
+
 Now look at what a 3×3 block is made of. Every cell around `(x, y)` sits in one of
 three columns — `x-1`, `x` or `x+1` — and `s[j]` already holds all of **the
 window's** column `j`, which is three cells: one from each of the three rows. So
 the three entries add up to the whole block:
 
-```
+```python
 s[x-1] + s[x] + s[x+1]    =     all nine cells of the 3×3 block
 ```
 
@@ -56,24 +96,28 @@ The centre is among those nine, and it appears **once**: `cur[x]` is counted in
 `s[x]` and in neither of the other two, because each `s[j]` covers a different
 column. Subtract it and the eight neighbours are what is left:
 
-```
+```python
 neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]
 ```
 
-Nine cells, three arithmetic operations. Concretely, on a five-cell row:
+Nine cells, three arithmetic operations. On a real 17-wide board, so the whole
+row is visible at once:
 
 ```
-prev    1  1  0  0  1
-cur     1  0  1  0  1
-next    0  1  1  1  0
-        ----------------
-s       2  2  2  1  2      s[j] = prev[j] + cur[j] + next[j]
+prev (row y-1)   0 0 1 1 0 0 1 1 0 0 1 1 1 0 0 0 1
+cur  (row y  )   0 0 0 0 1 0 1 1 1 1 1 1 0 1 0 0 0
+next (row y+1)   1 0 1 1 1 1 1 1 1 0 1 0 1 0 1 0 0
+                 ---------------------------------
+s                1 0 2 2 2 1 3 3 2 1 3 2 2 1 1 0 1
 ```
 
-For `x = 2`: `s[1] + s[2] + s[3] - cur[2]` is `2 + 2 + 1 - 1 = 4`. Count the
-blocks by hand and you get the same: column 1 contributes `1+0+1 = 2`, column 2
-contributes `0+1+1 = 2`, column 3 contributes `0+0+1 = 1`, nine cells totalling
-5 — and the centre, `cur[2] = 1`, is not a neighbour, so 4.
+Seventeen entries in `s`, one per column position, and the largest entry is `3` —
+because three rows went into it and there is nothing else for it to hold.
+
+For `x = 2`: `s[1] + s[2] + s[3] - cur[2]` is `0 + 2 + 2 - 0 = 4`. Count the nine
+cells by hand and it agrees: column 1 is `0+0+0 = 0`, column 2 is `1+0+1 = 2`,
+column 3 is `1+0+1 = 2`, so the block totals 4 — and the centre, `cur[2] = 0`, is
+not one of its own neighbours.
 
 **So: does the board size matter?** Not to the formula, and not to the eight. The
 eight comes from the definition of a neighbour — the 3×3 block minus the centre —
