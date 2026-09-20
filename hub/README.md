@@ -1,6 +1,6 @@
 # hub — what this repo publishes to the Bend hub
 
-[hub.bend-lang.com](https://hub.bend-lang.com) has no names, no versions and
+[hub.bend-lang.org](https://hub.bend-lang.org/) has no names, no versions and
 no accounts. A package **is** its content hash: publish the same bytes twice
 and nothing happens, change anything and the hash changes — that is a new
 package. There is no in-place update and no delete; a package is fetched once

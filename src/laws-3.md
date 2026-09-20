@@ -145,32 +145,57 @@ Stated with the same care, because it is not nothing:
   re-measured while writing this chapter. None of this is bought with
   patience.
 
-## The library, arriving
+## The Bend Hub
 
-The previous chapter stopped at a wall: a law about index safety would need
-facts about arithmetic that `Base` does not state, and the wall's height was
-the work of writing them. What has changed since those chapters were written
-is small but real — the lemmas they had to write by hand are now published
-packages on the **Bend hub**, importable by content hash. The hub is Bend's
-public package store, and it is content-addressed: a package has no name and no
-version — the hash *is* its identity, computed from the files themselves — so
-the import line below names one frozen set of facts that cannot change
-afterwards:
+The previous chapter stopped at a library gap. Its index-safety law needs
+arithmetic facts that `Base` does not state. The [Bend
+Hub](https://hub.bend-lang.org/) is where Bend programs can share facts such as
+these. It is a public, content-addressed package store. It needs no account,
+and packages have no names or version numbers. A package's content hash is its
+identity.
+
+Open the Hub to browse packages or paste a hash into its search box. To use a
+package, copy its import line into a Bend file:
 
 ```python
 import 0x1ee1b5d0c2a66817bf368b849f3117fc/nat.bend as Nat
 ```
 
-Six facts about `Nat.add`: zero, successor, associativity, commutativity, and
-two of them in the reverse orientation a rewrite needs. Beside it,
-`0x89df026edd…/string.bend` carries the `String.append` and `String.reverse`
-lemmas that `life_anim`'s proof had to derive, and `0x085d89db…/list.bend` the
-`List` analogues. The wall has not moved — index safety needs `Nat.cmp` facts
-that nobody has written yet — but the tax is now paid once per ecosystem
-instead of once per proof. And a package is importable only as its hash: the
-file a proof reads cannot change afterwards, and anyone can re-check a package
-by running `bend` on it, because `All terms check.` is a claim any reader can
-re-run.
+The first `bend` run downloads the package to `~/.bend/lib`, checks its content
+against the hash, and then checks it with the rest of the program. The alias on
+the right becomes the namespace. For example, a proof can now rewrite with
+`%Nat.add_assoc(a, b, c)` instead of defining associativity again.
+
+To publish a package, check its entry file and then pass `--publish`:
+
+```sh
+bend nat.bend
+bend nat.bend --publish
+```
+
+The second command uploads the file and its imports, then prints the import
+line for the new hash. Changed content produces a new package and a new hash.
+Existing imports stay pinned to the bytes that their authors checked.
+
+### Lemmas contributed by this book
+
+The Life proofs exposed three gaps in `Base`. We extracted their reusable
+lemmas and published them to the Hub:
+
+- [`nat.bend`](https://hub.bend-lang.org/0x1ee1b5d0c2a66817bf368b849f3117fc)
+  contains six facts about `Nat.add`: zero and successor in both rewrite
+  directions, associativity, and commutativity.
+- [`string.bend`](https://hub.bend-lang.org/0x89df026edd2acf2673b5e469e037eaf1)
+  contains five facts about `String.append` and `String.reverse`.
+- [`list.bend`](https://hub.bend-lang.org/0x085d89db9ee8a21865e959816bb20e5b)
+  contains six matching facts about append, reverse, and length for `List`.
+
+The repository keeps the [package sources and publication
+log](https://github.com/nohzafk/bend2-from-zero/tree/main/hub). Anyone can open
+a package on the Hub, read its source, and run `bend` on it. A valid package
+prints `All terms check.` The original index-safety wall still stands because
+it needs `Nat.cmp` facts that these packages do not contain. The Hub does not
+remove the proof work; it lets one proof publish that work for the next one.
 
 ## The three edges
 
