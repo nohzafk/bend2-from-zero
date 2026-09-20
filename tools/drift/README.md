@@ -30,6 +30,10 @@ The `.json` keeps every run's raw stdout/stderr/rc/timing (first runs
 included); the `.md` is the human report: verdict per check, the book-vs-now
 column, and the full output of anything failing.
 
+A partial run — `--only`, `--skip` or `--quick` — writes its own name
+(`drift-2.0.16-only-probes-ok.md`), so a diagnostic sweep cannot replace the
+full report with a narrower one.
+
 Discipline, from the book's own appendix — the harness encodes it so no one
 has to remember it:
 

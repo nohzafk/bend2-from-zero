@@ -373,7 +373,22 @@ def main():
     ver_out = sh([str(bend), "--version"], repo, env, 30)
     m = re.search(r"bend (\S+)", ver_out["out"] + ver_out["err"])
     version = m.group(1) if m else "unknown"
-    label = args.label or version
+
+    # A partial run answers a narrower question than the full one, so it writes
+    # to its own name: `--only probes-ok` must not replace the report of all 98
+    # checks with a report of the 12 it actually ran.  The name is what a reader
+    # trusts when the directory has more than one report in it.
+    if args.label:
+        label = args.label
+    else:
+        marks = []
+        if args.only:
+            marks.append("only-" + args.only.replace(",", "+"))
+        if args.skip:
+            marks.append("skip-" + args.skip.replace(",", "+"))
+        if args.quick:
+            marks.append("quick")
+        label = version + ("-" + "-".join(marks) if marks else "")
 
     import hashlib
     sha = hashlib.sha256(bend.read_bytes()).hexdigest()
