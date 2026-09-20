@@ -3,7 +3,7 @@
 One program throughout (a toroidal grid from 8×8 up to 256×256, holding a glider).
 **This directory is the most valuable comparison in the repo:** it demonstrates both
 "what parallelism buys you" and "what choosing the right algorithm buys you", and those
-two numbers are two orders of magnitude apart. A 10× difference and a 1,600× difference
+two numbers are two orders of magnitude apart. A 3× difference and a 1,600× difference
 are not the same kind of fact.
 
 | File | Approach | Complexity |
@@ -73,11 +73,11 @@ halves with `app`. `2^d × blk = w×h` covers the grid, and `blk` is the granula
 
 | threads | blk=1 (4096 tasks) | blk=16 (256) | blk=64 (64) |
 |---|---|---|---|
-| 1 | 1,795 ms | 2,065 | 2,025 |
-| 10 | 690 ms | **684** | 1,045 |
-| speedup | 2.60× | **3.02×** | 1.94× |
+| 1 | 1,735 ms | 1,958 | 1,936 |
+| 10 | 676 ms | **628** | 986 |
+| speedup | 2.57× | **3.12×** | 1.96× |
 
-**About 2.6–3× on ten cores.** That is not the scheduler failing; it is the shape of
+**About 2.6–3.1× on ten cores** at the two finer settings, and only 2× at the coarsest. That is not the scheduler failing; it is the shape of
 this program. Each generation must finish before the next can start, so there is a join
 barrier every generation, and there are only four of them.
 
