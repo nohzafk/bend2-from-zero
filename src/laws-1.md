@@ -8,7 +8,7 @@ running both and counting live cells — `live=5` every time. That is evidence
 about the handful of grids we happened to try. It is not a statement about the
 code.
 
-The second is from [Making it move](life-anim.md). The renderer only works if
+The second is from [A bug that type-checks](life-anim.md). The renderer only works if
 every cell is a palindrome, and that fact lives in a comment above `cell`.
 Change `"██"` to `"▐█"` some day — the chapter's own words, "a perfectly
 reasonable thing to do" — and each row flips internally. Nothing between your

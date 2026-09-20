@@ -103,7 +103,7 @@ The first time we measured parallelism we measured it under the interpreter and 
 | `arrays/` | reading an array gives you a *pair*; how to take it apart | *Arrays: a read hands you a pair* |
 | `parallel/` | fork-join on the CPU: `a b = f(x) g(y)` | *Parallel by default: fork-join* |
 | `gpu/` | `f!(x)` and Metal; mandelbrot vs queens | *The GPU, and the `!` mark*, and the two workload chapters |
-| `life/` | Game of Life: four implementations, a terminal animation, and two complete laws with proofs | *Life the obvious way* through *Making it move*, then the *Laws* chapters |
+| `life/` | Game of Life: four implementations, a terminal animation, and two complete laws with proofs | *Life the obvious way* through *A bug that type-checks*, then the *Laws* chapters |
 
 Two files here are **unmodified copies** of files from the upstream Bend compiler —
 `gpu/mandelbrot/main.bend` and `gpu/queens/main.bend` — redistributed under
