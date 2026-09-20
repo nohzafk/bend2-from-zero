@@ -420,12 +420,13 @@ Both are plain defs, not laws, because they were *needs*, not requirements —
 the distinction from "Two containers" doing its work.
 
 This is worth naming because it recurses through everything below. **Base has
-no lemma library.** There is no `Nat.add_zero` to import; there are no standard
-facts about `Nat.add`, `Nat.mul`, `Nat.mod` or `Nat.cmp`. Every proof that
-touches arithmetic brings its own small arithmetic with it. For this law that
-was two lemmas, both easy. For the law we *did not* write — index safety — the
-same beginning leads into `Nat.cmp` and iterated induction on two variables at
-once, and that is a different order of work. We will come back to that.
+no library of the facts you need.** There is no `Nat.add_zero` to import; there
+are no standard facts about `Nat.add`, `Nat.mul`, `Nat.mod` or `Nat.cmp`. Every
+proof that touches arithmetic brings its own small arithmetic with it. For this
+law that was two lemmas, both easy. For the law we *did not* write — index
+safety — the same beginning leads into `Nat.cmp` and iterated induction on two
+variables at once, and that is a different order of work. We will come back to
+that.
 
 ## Running it
 

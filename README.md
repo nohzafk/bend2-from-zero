@@ -44,6 +44,11 @@ included) to appear in the real output. It also runs in the Pages workflow,
 against a pinned bend release, so a quote that no longer reproduces fails the
 build.
 
+`tools/base-inventory.py` checks the appendix's inventory — the size of `Base`,
+its `law` declarations, its namespaces — against an installed `base.bend`. Those
+are prose numbers, so nothing else notices when Base moves. It runs in the Pages
+workflow against the pinned bend, beside `check-quotes.py`.
+
 ## Setup
 
 ```sh

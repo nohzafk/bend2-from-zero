@@ -69,6 +69,15 @@ jobs:
           tar -xzf "$RUNNER_TEMP/bend.tgz" -C "$RUNNER_TEMP"
           python3 tools/check-quotes.py --bend "$RUNNER_TEMP/bend/bin/bend"
 
+      # The appendix's inventory is a measurement of `base.bend` -- its size, its
+      # `law` declarations, its namespaces -- and it is prose, so nothing else
+      # checks it.  It reports zero lemmas for a long time because the count
+      # grepped for a shape Base does not use.  The bend is the one above.
+      - name: Check the book's Base inventory
+        run: |
+          python3 tools/base-inventory.py --check \
+            --base "$RUNNER_TEMP/bend/bend2/base.bend"
+
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
