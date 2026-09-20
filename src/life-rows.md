@@ -7,13 +7,47 @@ indexing.
 Which raises the question of how you read a cell's neighbours without jumping to
 them. The answer is the one this chapter is named after.
 
-## The trick: add the three rows, then take a window
+## The block, without indexes
 
-A cell's eight neighbours are the 3×3 block around it, minus the centre. So the
-block is what has to be computed, and there are nine cells in it.
+Start from the target. A cell's neighbours are the eight cells around it — the
+3×3 block centred on it, minus the centre itself:
 
-Take the three rows involved — the one above, the one at, the one below — and add
-them together position by position, producing one scratch row `s`:
+```
+         x-1   x    x+1
+  y-1     ·    ·     ·
+   y      ·    ▣     ·      eight of these nine cells are neighbours
+  y+1     ·    ·     ·      ▣ is the cell itself, and is not a neighbour
+```
+
+Nine cells. The previous chapter's problem was reaching them: by index, each one
+costs a walk down the list. So the question for this section is how to add up
+nine cells that lie in three columns and three rows, without ever naming an
+index.
+
+The first thing to notice is how small that block is vertically.
+
+### Three rows are enough
+
+Every cell of the block is in row `y-1`, row `y` or row `y+1`. Nothing in row
+`y-2` is a neighbour of anything in row `y`, and neither is anything in `y+2`:
+
+```
+row y-2  ────────────────  no cell here is a neighbour of row y
+row y-1  ┐
+row y    ├─  every cell of the block is in these three rows
+row y+1  ┘
+row y+2  ────────────────  no cell here is a neighbour of row y
+```
+
+That is the whole reason the board's height never enters this chapter again. It
+is not that the trick is clever enough to avoid `h`; `h` was never in the
+question. A cell has eight neighbours whether the board is 17 rows tall or
+17,000.
+
+### Adding those three rows into one
+
+Three rows, then, and the move is to combine them before anything else. Add them
+together position by position, producing one scratch row `s`:
 
 ```python
 s[j] = prev[j] + cur[j] + next[j]
@@ -21,14 +55,13 @@ s[j] = prev[j] + cur[j] + next[j]
 
 Two names in that line, before anything else:
 
-- **`j` is a column position** — an offset along a row, from `0` to `w-1`. Not a
-  row number, and not an index into the board.
-- **`s` is a derived row**: scratch space for computing one new row. It is not the
-  board, and not a column of the board. It has `w` entries, one per column
-  position, and each entry is the sum of the three cells at that position in the
-  three-row window.
+- **`j` is a column position** — an offset along a row, counting from `0` to
+  `w-1`. This chapter is about positions along a row.
+- **`s` is a derived row** — scratch space, one row long, holding what the
+  three rows add up to.
 
-So each entry of `s` is three cells collapsing into one number:
+The line reads: at each position `j`, take the cell from each of the three rows
+and add them. One number comes out, and these three went in:
 
 ```
       prev[j]  ·      ┐
@@ -36,8 +69,8 @@ So each entry of `s` is three cells collapsing into one number:
       next[j]  ·      ┘
 ```
 
-and there is one such entry for every column position, so `s` is `w` long — as
-wide as a row.
+Do that at every position and you have a row of such numbers — as wide as a row,
+one entry per column position:
 
 ```
                   j=0  j=1  j=2        j=16        (w = 17)
@@ -50,29 +83,7 @@ wide as a row.
                   j=0  j=1  j=2        j=16
 ```
 
-**On a 17×17 board `s` has 17 entries, and each entry is three cells, not
-seventeen.** This is the part that reads wrong at first, so it is worth being
-blunt about: the board's own columns are 17 cells tall, and *none of those are
-summed anywhere*. Column 0 of the board is 17 cells; `s[0]` holds three of them —
-the ones in rows `y-1`, `y` and `y+1`.
-
-Why those three rows and no more? Because neighbours are within one row. The
-neighbours of a cell in row `y` live in rows `y-1`, `y` and `y+1` and in no
-others, so the other rows of the board cannot contribute:
-
-```
-row y-2  ────────────────  not a neighbour of anything in row y
-row y-1  ┐
-row y    ├─  the three-row window  →  s = prev + cur + next
-row y+1  ┘
-row y+2  ────────────────  not a neighbour of anything in row y
-```
-
-That is why the board's height never appears in what follows. It is not that the
-formula is clever enough to avoid `h`; it is that `h` was never in the question.
-A cell has eight neighbours whether the board is 17 rows tall or 17,000.
-
-`colsum` is that formula, written as the walk it has to be:
+`colsum` is that line, written as the walk it has to be:
 
 ```python
 {{#include ../life/life_row.bend:77:92}}
@@ -82,6 +93,8 @@ All three rows are matched at once, so the three lists are consumed in lockstep:
 `hp`, `hc` and `hn` are the three cells at the current position, and the recursive
 line appends exactly one entry — `hp + hc + hn` — to the accumulator. Nothing is
 indexed; the position is simply wherever the walk has got to.
+
+### The three-cell window
 
 Now look at what a 3×3 block is made of. Every cell around `(x, y)` sits in one of
 three columns — `x-1`, `x` or `x+1` — and `s[j]` already holds all of **the
@@ -100,8 +113,11 @@ column. Subtract it and the eight neighbours are what is left:
 neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]
 ```
 
-Nine cells, three arithmetic operations. On a real 17-wide board, so the whole
-row is visible at once:
+Nine cells, three arithmetic operations.
+
+### Worked example
+
+On a real 17-wide board, so the whole row is visible at once:
 
 ```
 prev (row y-1)   0 0 1 1 0 0 1 1 0 0 1 1 1 0 0 0 1
@@ -119,13 +135,15 @@ cells by hand and it agrees: column 1 is `0+0+0 = 0`, column 2 is `1+0+1 = 2`,
 column 3 is `1+0+1 = 2`, so the block totals 4 — and the centre, `cur[2] = 0`, is
 not one of its own neighbours.
 
-**So: does the board size matter?** Not to the formula, and not to the eight. The
-eight comes from the definition of a neighbour — the 3×3 block minus the centre —
-and every cell has exactly those eight offsets in the three-row window, whatever
-`w` and `h` are. Size enters only *where* the window's three columns fall once the
-board wraps, which is why this chapter's remaining work is rotations, not
-arithmetic. Even a board narrower than three changes nothing: the three columns
-then coincide and the equation counts the same cells on both sides.
+### Does the board size matter?
+
+Not to the formula, and not to the eight. The eight comes from the definition of
+a neighbour — the 3×3 block minus the centre — and every cell has exactly those
+eight offsets in whichever three rows the window is on, whatever `w` and `h` are.
+Size enters only *where* the window's three columns fall once the board wraps,
+which is why this chapter's remaining work is rotations, not arithmetic. Even a
+board narrower than three changes nothing: the three columns then coincide and
+the equation counts the same cells on both sides.
 
 And the whole thing is a **walk**: four lists moving together, one position at a
 time. No index is ever computed, so no list is ever traversed twice.
