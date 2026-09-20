@@ -7,27 +7,62 @@ indexing.
 Which raises the question of how you read a cell's neighbours without jumping to
 them. The answer is the one this chapter is named after.
 
-## The trick: sum the columns first
+## The trick: add the three rows, then take a window
 
-A cell's eight neighbours are the 3×3 block around it, minus the centre. So take
-the three rows involved — the one above, the one at, the one below — and sum them
-**column by column** into a single row `s`:
+A cell's eight neighbours are the 3×3 block around it, minus the centre. So the
+block is what has to be computed, and there are nine cells in it.
+
+Take the three rows involved — the one above, the one at, the one below — and add
+them together **column by column**, producing one new row `s` of the same width:
 
 ```
-s[x] = prev[x] + cur[x] + next[x]
+s[j] = prev[j] + cur[j] + next[j]
 ```
 
-Now the 3×3 block around `(x, y)` is exactly `s[x-1] + s[x] + s[x+1]`, because
-between them those three entries have visited every cell of the block once. Take
-off the centre, which got counted in `s[x]`:
+`s` is a row, not a column of the board. `s[j]` is the sum of the three cells
+stacked vertically in column `j`, and of nothing else. That is the sense in which
+the columns are summed: three cells at a time, three rows deep.
+
+Now look at what a 3×3 block is made of. Every cell around `(x, y)` sits in one of
+three columns — `x-1`, `x` or `x+1` — and `s[j]` already holds all of column `j`.
+So the three entries add up to the whole block:
+
+```
+s[x-1] + s[x] + s[x+1]    =     all nine cells of the 3×3 block
+```
+
+The centre is among those nine, and it appears **once**: `cur[x]` is counted in
+`s[x]` and in neither of the other two, because each `s[j]` covers a different
+column. Subtract it and the eight neighbours are what is left:
 
 ```
 neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]
 ```
 
-Nine cells, three additions. And the whole thing is a **walk** — three lists
-moving together, one position at a time. No index is ever computed, so no list is
-ever traversed twice.
+Nine cells, three arithmetic operations. Concretely, on a five-cell row:
+
+```
+prev    1  1  0  0  1
+cur     1  0  1  0  1
+next    0  1  1  1  0
+        ----------------
+s       2  2  2  1  2      s[j] = prev[j] + cur[j] + next[j]
+```
+
+For `x = 2`: `s[1] + s[2] + s[3] - cur[2]` is `2 + 2 + 1 - 1 = 4`. Count the
+blocks by hand and you get the same: column 1 contributes `1+0+1 = 2`, column 2
+contributes `0+1+1 = 2`, column 3 contributes `0+0+1 = 1`, nine cells totalling
+5 — and the centre, `cur[2] = 1`, is not a neighbour, so 4.
+
+**Nothing in that formula mentions the board size.** A cell has exactly eight
+neighbour offsets, and they always land in three columns and three rows, whatever
+`w` and `h` are. The size decides only *where* those columns fall once the board
+wraps — which is why this chapter's remaining work is rotations, not arithmetic.
+Even a board narrower than three changes nothing: the three columns then coincide
+and the equation counts the same cells on both sides.
+
+And the whole thing is a **walk**: four lists moving together, one position at a
+time. No index is ever computed, so no list is ever traversed twice.
 
 That is the entire optimisation. Everything below is bookkeeping to make the walk
 work at the edges and between rows.
