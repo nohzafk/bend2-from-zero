@@ -1,71 +1,20 @@
 # Types, quantities, and the two brackets
 
-Four chapters in, you have written types in every single file — `IO(Unit)`,
-`Nat`, `String` — and never declared one. This chapter is about the
-`type` declaration: what it states, what the compiler refuses to let you
-leave out, and why Bend has two kinds of bracket. It exists because the
-next chapter opens with this header, and meeting all seven of its concepts
-at once is a wall:
+Four chapters in, you have written types in every file — `IO(Unit)`, `Nat`,
+`String` — and never declared one. This chapter is the `type` declaration:
+what it states, what the compiler refuses to let you leave out, and what the
+two kinds of bracket in that declaration are doing.
+
+It exists because the next chapter's first line is this:
 
 ```python
 type List<a, -A: Kind(a)> is Kind(a):
 ```
 
-By the end of this chapter you can read every piece of that line. What is
-left for [copies and kinds](kinds-and-copies.md) is the only question it
-opens: why the language makes copyability part of a type at all.
-
-## The two brackets
-
-Type position has two kinds of bracket, and each one answers a question of
-its own.
-
-**Parentheses apply a function.** `IO` is not a datatype — it is a
-function whose input and output are types. `bend base` declares it the way
-any function is declared: `def IO(A):`. So `IO(Unit)` is a call: apply
-`IO` to `Unit`, and the result is the type of an action producing `Unit`.
-`Chan(U32)`, `Pair(U32, Bool)` read the same way — find the `def`, see its
-parameters, count the arguments.
-
-**Angle brackets instantiate a datatype.** `List`, `Maybe`, `Result` are
-declared with `type`. `List<Nat>` is not a call — there is no function
-being applied. It is the datatype `List` fixed at the element type `Nat`:
-one concrete type out of the family the declaration names. There is
-nothing to compute; the brackets only fix the parameters the declaration
-already left open.
-
-Because the two mechanisms differ, the compiler distinguishes them, and
-each wrong pairing gets its own message:
-
-```python
-List(Nat)     # expected : a family instance (write List<..>)
-              # parentheses on a datatype: nothing to apply
-IO<Unit>      # a declared datatype (unknown: IO)
-              # angle brackets on a name that is not a datatype: IO is a function
-```
-
-Both errors are read the same way: the name before the brackets tells you
-which bracket belongs there. `IO` is a `def`, so it takes `IO(Unit)`;
-`List` is a `type`, so it takes `List<Nat>`.
-
-One pair of words appears with both brackets, and the reason is a third
-mechanism, not a special case of either one. The do-block header has a
-grammar of its own, and it always takes angle brackets:
-
-```python
-def main() -> IO(Unit):     # a call: IO is a function, applied with ()
-  do IO<Unit>:              # the do-block header: its own grammar, always <>
-    IO.print("hello, bend 2")
-```
-
-In the return type, `IO(Unit)` is the function call. In the do-block
-header, `do IO<Unit>:` names the family whose `.bind` and `.pure` the
-block desugars to, with `Unit` as its last argument — the block's result
-type, what a `return` in the block produces. The header is neither a call
-nor an instantiation, which is why `do IO:` and `do IO(Unit):` are refused
-with `expected : '<'`. The desugaring behind the header — what `<-` and
-`return` actually compile to — is a chapter of its own:
-[Inside a `do` block](do-blocks.md).
+By the end of this chapter you can read every piece of that line. The one
+question it opens and this chapter does not close — why the language makes
+copyability part of a type at all — belongs to
+[copies and kinds](kinds-and-copies.md).
 
 ## Your first type
 
@@ -86,17 +35,17 @@ values the type has: a `Circle` or a `Square`. The braces are the
 constructor's **fields** — the data each value carries — and a constructor
 with no fields, like `Nil{}` in the next chapter, carries none.
 
-`is Data` is the clause this chapter will keep coming back to: it says
-**values of this type may be copied**. That is a statement about the type,
-not about a particular value, and it is mandatory — the next section shows
-the compiler refusing a declaration that leaves it out. What `Data` means
-at runtime is the copies chapter's subject; for now, read it as one word of
-vocabulary: `Data` = copyable, `Type` = not copyable.
+`is Data` is the clause this chapter keeps coming back to: it says **values
+of this type may be copied**. That is a statement about the type, not about a
+particular value, and it is mandatory — the next section shows the compiler
+refusing a declaration that leaves it out. What `Data` means at runtime is
+the copies chapter's subject; for now it is one word of vocabulary:
+`Data` = copyable, `Type` = not copyable.
 
-One more thing in that file is doing real work: the `+` in
-`Circle{+r: Nat}`. Fields are affine like everything else, and this
-`area` multiplies a field by itself — two uses. Remove the `+` from the
-declaration and the same function is refused:
+One more thing in that file is doing real work: the `+` in `Circle{+r: Nat}`.
+Fields are affine like everything else, and this `area` multiplies a field by
+itself — two uses. Remove the `+` from the declaration and the same function
+is refused:
 
 ```python
 {{#include ../basics/type_field_affine.bend}}
@@ -131,20 +80,18 @@ Location:
 7>| type Tree<a>:
 ```
 
-This is worth reading slowly, because it explains the shape of every type
-declaration you will meet in this book, including the ones that look
-decorated for no reason. The `is` clause is **where a type says how often
-its values may be used** — `is Data` for copyable, `is Type` for
-single-use, and, one section from now, `is Kind(a)` for "depends on the
-element". A checker that never searches for a type also never searches for
-a permission: the declaration has to carry it. So there is no such thing as
-a plain `type Tree<a>:` in Bend — the line you would write in any other
-language is a syntax error here.
+Read it slowly: it explains the shape of every type declaration in this
+book, including the ones that look decorated for no reason. The `is` clause is **where a type says how often its
+values may be used** — `is Data` for copyable, `is Type` for single-use, and, further down this
+chapter, `is Kind(a)` for "depends on the element". A checker
+that never searches for a type also never searches for a permission: the
+declaration has to carry it. So a bare `type Tree<a>:` is not a declaration
+in Bend at all — it does not parse.
 
 ## The first parameter is a quantity
 
-Parameterise the type, and the natural first mistake is to type the field with
-the parameter itself:
+Parameterise the type, and the natural first mistake is to type the field
+with the parameter itself:
 
 ```python
 {{#include ../basics/type_quantity_field.bend}}
@@ -161,11 +108,12 @@ Location: Cell
 10>|   Cell{head: a, tail: Chain<a, A>}
 ```
 
-The line worth keeping is `a : Quant`. The guide states the rule in one line:
-**a bare `a` in a parameter list is short for `-a: Quant`** — so `a` is not a
-type, it is a **quantity**: a number saying how many times a value may be used.
-The `-` is the affinity chapter's erased mark, because a quantity exists for the
-checker and is gone before anything runs. There are three of them:
+The line to read is `a : Quant`. The guide states the rule that produces it
+in one line: **a bare `a` in a parameter list is short for `-a: Quant`** — so
+`a` is not a type, it is a **quantity**: a number saying how many times a
+value may be used. The `-` is the affinity chapter's erased mark, because a
+quantity exists for the checker and is gone before anything runs. There are
+three of them, and you have been reading two of them as words:
 
 ```
 &0   zero uses              nothing may use the value
@@ -173,26 +121,72 @@ checker and is gone before anything runs. There are three of them:
 &2   as often as you like   copyable -- what `Data` means
 ```
 
-Two of those you have been reading as words: `Type` is short for `Kind(&1)` and
-`Data` for `Kind(&2)`. So the `is Data` clause above was `&2` all along, and
-every `List<&2, Nat>` in the lists chapter was a list of things that may be
-copied. The three are ordered, and combining two keeps the smaller — that is the
-`<&>` in the ladder below.
+`Type` is short for `Kind(&1)` and `Data` for `Kind(&2)`. So the `is Data` on
+`Shape` was `&2` all along, and every `List<&2, Nat>` in the lists chapter is
+a list whose elements may be copied. The three are ordered, and combining two
+of them keeps the smaller — that is the `<&>` in the ladder below.
 
-`&0` is the bottom of the same scale, and a mark to read rather than one to
-write: the guide names it in a comment and in its grammar table and never uses
-it, and `base.bend` contains no `&0` at all. The two you will write are `&1` and
-`&2`, and mostly in the shorthand — `List<Nat>` for `List<&1, Nat>`,
-`+List<U32>` for `List<&2, U32>`.
+`&0` is the bottom of that scale: zero uses, *nothing may use this*. It is a
+mark to read rather than one to write. `base.bend` contains no `&0` at all,
+and the guide mentions it only in a comment and in its grammar table; `&1`
+and `&2` are the two you will write, mostly in the shorthand `List<Nat>` for
+`List<&1, Nat>` and `+List<U32>` for `List<&2, U32>`.
 
-Which leaves the error itself. A quantity is a number, and a field carries a
-type: `head: a` asks the checker to treat a number as data. So the element type
-gets a parameter of its own, `A`, and `Kind(a)` states which kind of type it is
-allowed to be.
+That leaves the error itself. A quantity is a number and a field carries a
+type: `head: a` asks the checker to treat a count of uses as data. The
+element type therefore needs a parameter of its own, `A` — and `Kind(a)` is
+what states which kind of type `A` is allowed to be.
+
+## Two brackets, and the question each one answers
+
+Two lines in that error carry brackets, spelled differently: `A : Kind(a)` in
+the context, and `Cell{head: a, tail: Chain<a, A>}` below it. The name in
+front is what decides which spelling a name takes. **`Kind` is a `def`.
+`Chain` is a `type`.**
+
+**A `def` takes round brackets, because applying it is a call.** `Kind` is a
+function from a quantity to a kind, and `Kind(a)` applies it to `a`. `IO` is
+declared the same way — `bend base` shows `def IO(A):` — so `IO(Unit)` is
+`IO` applied to `Unit`, and the result is the type of an action producing
+`Unit`. `Chan(U32)`, `Pair(U32, Bool)` read the same way: find the `def`,
+count the arguments.
+
+**A `type` takes angle brackets, and there is nothing to apply.** `Chain` is
+a datatype, not a function. `Chain<a, A>` is one concrete type out of the
+family the declaration names, with the parameters the declaration left open
+fixed — there is no call, and nothing is computed. `List<Nat>`,
+`Maybe<U32>` are the same shape.
+
+Getting the pairing wrong has a message of its own for each direction:
+
+```python
+List(Nat)     # expected : a family instance (write List<..>)
+              # parentheses on a datatype: nothing to apply
+IO<Unit>      # a declared datatype (unknown: IO)
+              # angle brackets on a name that is not a datatype: IO is a function
+```
+
+Both say the same thing: look at how the name was declared.
+
+One pair of words in every program sits next to each other with both
+spellings, and both are correct:
+
+```python
+def main() -> IO(Unit):     # a call: IO is a def, applied with ()
+  do IO<Unit>:              # the header's own grammar: always <>
+```
+
+The first is the call described above. The second is not a call and not an
+instantiation: the `do` header names the family whose `.bind` and `.pure` the
+block desugars to, and it always takes `<>`. Write `do IO(Unit):` or `do IO:`
+and the checker answers `expected : '<'` — the header takes the brackets of a
+datatype even though `IO` is a `def`. For now the rule is just those two
+lines — `IO(Unit)` in a type, `do IO<Unit>` on a block — and the header gets
+a chapter to itself later: [Inside a `do` block](do-blocks.md).
 
 ## The element type is its own parameter
 
-Which makes the header readable, one piece at a time:
+Which makes the corrected header readable, one piece at a time:
 
 ```python
 type Chain<a, -A: Kind(a)> is Kind(a):
@@ -226,10 +220,10 @@ def len(a, -A: Kind(a), xs: Chain<a, A>) -> Nat:
     len(&2, Nat, xs)
 ```
 
-`&2` fills `a`, `Nat` fills `A`. You are passing a *number* and a *type*
-as arguments, before the list itself. This is not `Chain` being exotic —
-it is the minimum shape of every parameterised type in Bend, and the next
-section shows `Base` using it four times in a row.
+`&2` fills `a`, `Nat` fills `A`. You are passing a *number* and a *type* as
+arguments, before the list itself. This is not `Chain` being exotic — it is
+the minimum shape of every parameterised type in Bend, and the next section
+shows `Base` using it four times in a row.
 
 ## The ladder in `Base`
 
