@@ -20,6 +20,13 @@ reason its index was `y*w + x`. `y` is multiplied by the width because a row is
 `w` cells long; `x` is the position inside that row. Walking a row means varying
 `x`; walking a column means varying `y`.
 
+The board is one `List<Nat>` holding 0s and 1s, `w × h` long, read as `h` rows of
+`w` cells. Two consequences that the rest of the chapter leans on:
+
+- **a row is a `List<Nat>` of length `w`** (so `prev`, `cur` and `next` are rows —
+  lists, not numbers);
+- **a cell is a single `Nat`**, either `0` or `1`.
+
 A cell's neighbours are the eight cells around it:
 
 ```
@@ -60,15 +67,20 @@ position**, into a scratch row `s`:
 s[x] = prev[x] + cur[x] + next[x]
 ```
 
-Read the pieces:
+Every name in that line, with what kind of thing it is:
 
-- `x` is a column position — the same `x` as above.
-- `prev`, `cur` and `next` are the three rows, `y-1`, `y` and `y+1`.
-- `s` is the scratch row: `w` entries, one per column position, belonging to the
-  output row `y`. It is not a row of the board. There is one `s` per output row,
-  and this is the one for the row being computed.
-- `s[x]` is therefore **three cells added into one number** — the cell at column
-  `x` in each of the three rows.
+| name | what it is | type |
+|---|---|---|
+| `x` | a column position — the same `x` as above | `Nat` |
+| `prev`, `cur`, `next` | the three rows `y-1`, `y`, `y+1` of the board | `List<Nat>`, each `w` long |
+| `s` | the scratch row | `List<Nat>`, `w` long |
+| `s[x]` | one entry of the scratch row | a single `Nat` |
+
+**`s` is a row. `s[x]` is a number.** That is the whole distinction, and it is
+easy to lose: `s` is as long as a row is, so it is row-shaped, but it is not a row
+of the board and its entries are not cells. Each entry is a *count* — how many of
+the three cells in that column are alive. `s[2] = 2` says "two of the three cells
+at column 2, in rows `y-1`, `y` and `y+1`, are alive".
 
 Six columns, so the whole window fits on the page. The boards measured below are
 much bigger — 32×32 up to 256×256 — but the width changes nothing here, and six
@@ -123,6 +135,23 @@ off once:
 ```python
 neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]        # the cell at (x, y)
 ```
+
+That expression gives the neighbour count. Turning it into the cell's next state
+is the rule, and the rule is three lines:
+
+```python
+{{#include ../life/life_row.bend:39:41}}
+```
+
+and the formula above is one line of `rowstep`, the function that walks a row
+applying it:
+
+```python
+{{#include ../life/life_row.bend:115:118}}
+```
+
+`hl`, `hs` and `hr` are the three heads of the three rotated `s` lists — that is
+`s[x-1]`, `s[x]` and `s[x+1]` — and `hc` is `cur[x]`, the cell being decided.
 
 The same example, for the cell at `x = 2`:
 
@@ -214,8 +243,12 @@ def gen(+a: Rows) -> Rows:
   zip3(rows_rotm1(a), a, rows_rot1(a))
 ```
 
+```python
+{{#include ../life/life_row.bend:125:138}}
+```
+
 `zip3` walks the three staggered row lists together, one row from each per step,
-and calls `newrow`. Note what this means: **the grid is never indexed, at either
+and calls `newrow` — one `newrow` call, and therefore one `s`, per output row. Note what this means: **the grid is never indexed, at either
 level.** Not horizontally within a row, not vertically across rows. The whole
 generation is one walk of a structure that is already in the right order.
 
