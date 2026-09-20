@@ -131,4 +131,4 @@ killed the whole idea, so it was checked rather than suspected.
 To change the length or speed, two numbers at the end of `life_anim.bend`:
 `loop(320n, ...)` and `IO.sleep(70)`.
 
-Next: [Effects, and the event loop](effects.md).
+Next: [Inside a `do` block](do-blocks.md).
