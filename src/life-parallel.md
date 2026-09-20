@@ -6,8 +6,9 @@ is not: **how do you know a program is running in parallel?**
 
 You cannot tell by reading it. A parallel let that never gets scheduled and a
 parallel let that runs perfectly look identical in the source. You cannot tell
-from the wall clock either, at least not reliably, and getting this wrong is easy
-enough that this chapter's author did it twice.
+from the wall clock either. A millisecond count answers the question you asked,
+and two parts of that question are easy to ask wrong: what went into the window,
+and which implementation was running.
 
 ## The shape
 
@@ -45,35 +46,39 @@ overhead). A program that is not parallel shows `user ≈ real` at every thread
 count.
 
 This is the check to reach for, and it is cheap: `time ./binary --threads 1` and
-`time ./binary --threads 10`, then compare the two columns. Wall clock alone will
-lie to you, as the next section shows.
+`time ./binary --threads 10`, then compare the two columns. It asks one thing of
+you first — a window that contains the parallel work and nothing else — and that
+is the next section.
 
-## ❌ The trap: you can measure the wrong thing
+## What to time
 
-The first version of this benchmark ran the **serial** and **parallel** engines in
-the same process, back to back, so the reader could compare them. At 32×32 it
-reported a speedup of about 2.2×, and the parallel engine looked disappointing.
+Time only the region you are claiming is parallel. Nothing else belongs in the
+window.
 
-It was not. Look at what the wall clock was made of:
+`./life_par` is a good test of that habit, because one command runs five
+benchmarks and only three of them fork. The two `naive, no fork` cases are
+depth-zero — one leaf for the whole grid — so they cannot parallelise at all, and
+their own output says so: 7,940 ms at one thread, 7,745 ms at ten.
 
-| threads | parallel section | whole process |
-|---|---|---|
-| 1 | 493 ms | 1.012 s |
-| 4 | 211 ms | 0.731 s |
+Both readings below are of the same five benchmarks, and both are correct:
 
-The parallel section went from 493 ms to 211 ms — 2.3× on four threads, which is
-unremarkable but real. The **whole process** barely moved, because the other half
-of it was a serial baseline that does not parallelise at all and was being
-included in every reading.
+| what was timed | 1 thread | 10 threads | |
+|---|---|---|---|
+| the whole command | 14.2 s | 10.5 s | **1.35×** |
+| the three fork-join cases alone | 5.7 s | 2.3 s | **2.5×** |
 
-This is Amdahl's law doing what it does, and it is easy to walk into: a benchmark
-that measures two things reports neither. The fix is not a better benchmark, it is
-a narrower one — time only the region that is supposed to be parallel.
+That is `/usr/bin/time -p ./life_par --threads 1` against `--threads 10`. The gap
+between the two rows is the two serial cases: 8.4 s of the process, and 8.2 s of
+it at ten threads. A benchmark that measures two things reports neither, and the
+fix is not a better benchmark but a narrower one.
+
+So the rest of this chapter measures in that narrow window. `blk=1` on its own is
+2.6× at ten threads; the process it lives in is 1.35×.
 
 ## Granularity
 
-With the benchmark narrowed, here is the knob. 64×64, four generations, one
-thread and ten:
+With the window narrowed to the fork-join work, here is the knob. 64×64, four
+generations, one thread and ten:
 
 | `--threads` | `blk=1` (4096 tasks) | `blk=16` (256) | `blk=64` (64) |
 |---|---|---|---|

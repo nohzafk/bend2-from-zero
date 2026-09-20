@@ -214,7 +214,7 @@ computes; `2^d × blk = 4096`.
 | 1 | 1,795 ms | 2,065 | 2,025 |
 | 10 | 690 ms | **684** | 1,045 |
 
-Two things to read here.
+Three things to read here.
 
 **The speedup is only about 2.6–3× on ten cores.** That is not the scheduler
 failing; it is the shape of this program. Each generation must finish before the
@@ -232,6 +232,14 @@ idles; more joins means more idling.
 The lesson is about the confusion, not the numbers: **"finer granularity is
 faster" was true of one implementation, and was written down as if it were a
 property of the scheduler.** It was corrected by the rewrite.
+
+**The command's own wall clock is not the number to quote.** The same command also
+runs two `naive, no fork` cases — depth zero, one leaf for the whole grid, so
+serial by construction — and they are most of it. `/usr/bin/time -p` on
+`./life_par --threads 1` reads 14.2 s against 10.5 s on `--threads 10`, while the
+three fork-join cases inside that same process go from 5.7 s to 2.3 s. The two
+serial cases account for the difference: 8.4 s of the fourteen, and 8.2 s of the
+ten and a half.
 
 ## The disciplines, collected
 
