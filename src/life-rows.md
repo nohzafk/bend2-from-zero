@@ -8,94 +8,58 @@ the naive engine reads eight cells for every cell of the grid.
 This chapter removes the index. The neighbours of a cell are found by walking the
 three rows it can see, never by asking for a position.
 
-## Coordinates, and one row at a time
+## Two windows, in two directions
 
-The grid is `w` wide and `h` tall, and a cell is written `(x, y)`:
+The board is `h` rows of `w` cells. A cell is `(x, y)`, where **`x` counts along a
+row** (`0` to `w-1`) and **`y` counts rows** (`0` to `h-1`). This chapter builds one
+output row at a time — call it `y` — from the three rows it can see. Doing that for
+every row is [the row rotation](#rows-themselves-rotate), later on.
 
-- **`x` is a column position** — how far along a row, `0` to `w-1`.
-- **`y` is a row position** — which row of the grid, `0` to `h-1`.
+Two windows are used here, and they run in **different directions**:
 
-This is the same convention the [previous chapter](life-naive.md) used, and the
-reason its index was `y*w + x`. `y` is multiplied by the width because a row is
-`w` cells long; `x` is the position inside that row. Walking a row means varying
-`x`; walking a column means varying `y`.
+- **across rows** — `y-1`, `y`, `y+1`: three rows, at the same column;
+- **along a row** — `x-1`, `x`, `x+1`: three columns, in the same row.
 
-The board is one `List<Nat>` holding 0s and 1s, `w × h` long, read as `h` rows of
-`w` cells. Two consequences that the rest of the chapter leans on:
+The whole trick is doing them one after the other. Everything below is one of the
+two.
 
-- **a row is a `List<Nat>` of length `w`** (so `prev`, `cur` and `next` are rows —
-  lists, not numbers);
-- **a cell is a single `Nat`**, either `0` or `1`.
+### Across rows: add the three rows into one
 
-A cell's neighbours are the eight cells around it:
+A cell's neighbours are the eight cells of the 3×3 block around it:
 
 ```
            x-1   x    x+1
     y-1     ·    ·     ·
-     y      ·    ▣     ·      eight of these nine cells are neighbours
-    y+1     ·    ·     ·      ▣ is the cell itself, and is not a neighbour
+     y      ·    ▣     ·      eight of these nine are neighbours
+    y+1     ·    ·     ·      ▣ is the cell itself
 ```
 
-**This chapter computes one row at a time.** Pick the row you are producing and
-call it `y`; its inputs are rows `y-1`, `y` and `y+1`. From here to the end of the
-mechanism, `y` stays fixed and every `x` ranges over that one row. Doing it for
-every row of the grid is [the row rotation](#rows-themselves-rotate), later on.
+Nothing in row `y-2` is a neighbour of anything in row `y`, and neither is anything
+in `y+2`. So those three rows are all the input there is, and the height of the
+board never comes up again — a cell has eight neighbours whether the grid is 17
+rows tall or 17,000.
 
-### Three rows are enough
-
-Why three, and not more? Because a neighbour is never further than one row away.
-Nothing in row `y-2` touches row `y`, and neither does anything in `y+2`:
-
-```
-row y-2  ────────────────  no neighbour of row y lives here
-row y-1  ┐
-row y    ├─  every neighbour of a cell in row y is in these three rows
-row y+1  ┘
-row y+2  ────────────────  no neighbour of row y lives here
-```
-
-So the height of the board never comes up again. Not because the method is clever
-enough to avoid `h`, but because `h` was never part of the question: a cell has
-eight neighbours whether the grid is 17 rows tall or 17,000.
-
-## Adding the three rows into one
-
-Here is the move. Take the three rows and add them together **position by
-position**, into a scratch row `s`:
+Add them position by position, into a scratch row `s`:
 
 ```python
 s[x] = prev[x] + cur[x] + next[x]
 ```
 
-The `+` there is **ordinary addition of `Nat`s**. It is worth saying plainly,
-because a row of numbers over another row of numbers invites a different reading:
-there is no operation in this book — or in Bend — that adds two lists. What
-happens is that the three *numbers* at column `x` are added, and then the same is
-done at column `x+1`, and so on. One column at a time, `w` times. `s` is not
-`prev + cur + next` as a single expression; there is no such expression.
+- `prev`, `cur` and `next` are the three **rows** `y-1`, `y`, `y+1`. They differ in
+  `y`, not in `x`; each is a `List<Nat>` of length `w`.
+- `x` is a position **along** a row, the same `x` as above. `prev[1]` and `cur[1]`
+  are in different rows and the same column.
+- `s` is a `List<Nat>` of length `w` — the scratch row for this output row.
+- `s[x]` is a single `Nat`: three cells added into one number.
 
-(The same character will show up again in the code below meaning something else
-entirely — the reuse mark from the affinity chapters. That one is labelled when
-it arrives.)
-
-Every name in that line, with what kind of thing it is:
-
-| name | what it is | type |
-|---|---|---|
-| `x` | a column position — the same `x` as above | `Nat` |
-| `prev`, `cur`, `next` | the three rows `y-1`, `y`, `y+1` of the board | `List<Nat>`, each `w` long |
-| `s` | the scratch row | `List<Nat>`, `w` long |
-| `s[x]` | one entry of the scratch row | a single `Nat` |
-
-**`s` is a row. `s[x]` is a number.** That is the whole distinction, and it is
-easy to lose: `s` is as long as a row is, so it is row-shaped, but it is not a row
-of the board and its entries are not cells. Each entry is a *count* — how many of
-the three cells in that column are alive. `s[2] = 2` says "two of the three cells
-at column 2, in rows `y-1`, `y` and `y+1`, are alive".
+**`s` is a row; `s[x]` is a number.** The `+` is ordinary addition of `Nat`s —
+nothing here adds two lists, because there is no such operation in Bend. The three
+numbers at column `x` are added, then the same is done at column `x+1`. (A
+different `+` shows up in the code further down: the reuse mark from the affinity
+chapters. It is labelled where it arrives.)
 
 Six columns, so the whole window fits on the page. The boards measured below are
-much bigger — 32×32 up to 256×256 — but the width changes nothing here, and six
-columns are enough to see every step of the arithmetic.
+much bigger, but the width changes nothing here:
 
 ```
           x=0  x=1  x=2  x=3  x=4  x=5
@@ -107,11 +71,10 @@ next        0    0    1    0    1    1
 s           1    1    2    1    2    1
 ```
 
-One column at a time: `s[2] = prev[2] + cur[2] + next[2] = 0 + 1 + 1 = 2`. Every
-entry of `s` is at most 3, because three cells went into it and there is nothing
-else for it to hold.
+`s[2] = prev[2] + cur[2] + next[2] = 0 + 1 + 1 = 2`. No entry can exceed 3, because
+three cells go into it.
 
-The code that builds `s` is `colsum`, and it is this formula turned into a walk:
+`colsum` is that line written as the walk it has to be:
 
 ```python
 {{#include ../life/life_row.bend:77:92}}
@@ -119,73 +82,64 @@ The code that builds `s` is `colsum`, and it is this formula turned into a walk:
 
 All three rows are matched at once, so the three lists are consumed in lockstep:
 `hp`, `hc` and `hn` are the three cells at the current position, and the recursive
-line appends one entry — `hp + hc + hn` — to the accumulator. No position is ever
+line appends one entry — `hp + hc + hn` — per position. No position is ever
 computed; the position is wherever the walk has got to.
 
-## The neighbours are three entries of `s`
+### Along a row: three entries of `s`
 
-Now the point of building `s` at all. A 3×3 block is *three columns by three
-rows*, and each entry of `s` is *one column by three rows*:
+Now the other direction. `s[x-1]`, `s[x]` and `s[x+1]` are three **columns**, in the
+same row of `s`. And each entry of `s` already holds one whole column of the block:
 
 ```
-   s[x-1]  =  prev[x-1] + cur[x-1] + next[x-1]   the block's left column,  3 cells
-   s[x]    =  prev[x]   + cur[x]   + next[x]     the block's middle column, 3 cells
-   s[x+1]  =  prev[x+1] + cur[x+1] + next[x+1]   the block's right column,  3 cells
+   s[x-1]  =  prev[x-1] + cur[x-1] + next[x-1]     the block's left column
+   s[x]    =  prev[x]   + cur[x]   + next[x]       the middle column
+   s[x+1]  =  prev[x+1] + cur[x+1] + next[x+1]     the right column
 ```
 
-Three columns is all a 3×3 block has, so the three entries together are the whole
-block:
+A 3×3 block is three columns and nothing else, so those three entries are the whole
+block. Exactly one of the nine cells is the cell itself — `cur[x]`, which sits
+inside `s[x]` and in neither of the others — so it comes off once:
 
 ```python
-s[x-1] + s[x] + s[x+1]     =   all nine cells of the block
+s[x-1] + s[x] + s[x+1]              =   all nine cells
+s[x-1] + s[x] + s[x+1] - cur[x]     =   the eight neighbours
 ```
 
-Exactly one of those nine is the cell itself: `cur[x]` sits inside `s[x]`, and it
-appears nowhere else, because the other two entries are different columns. Take it
-off once:
+The same example, for the cell at `x = 2`:
 
-```python
-neighbours(x) = s[x-1] + s[x] + s[x+1] - cur[x]        # the cell at (x, y)
+```
+   column 1:  prev[1]=1  cur[1]=0  next[1]=0     s[1] = 1
+   column 2:  prev[2]=0  cur[2]=1  next[2]=1     s[2] = 2     ← cur[2] is the cell
+   column 3:  prev[3]=0  cur[3]=1  next[3]=0     s[3] = 1
+                                              ─────────────
+                                nine cells  =  1 + 2 + 1  =  4
+                 minus the cell itself, cur[2] = 1   →   3 neighbours
 ```
 
-That expression gives the neighbour count. Turning it into the cell's next state
-is the rule, and the rule is three lines:
+That gives the count. Turning the count into the next state is the rule, three
+lines:
 
 ```python
 {{#include ../life/life_row.bend:39:41}}
 ```
 
-and the formula above is one line of `rowstep`, the function that walks a row
-applying it:
+and the formula above is one line of `rowstep`, which walks a row applying it:
 
 ```python
 {{#include ../life/life_row.bend:115:118}}
 ```
 
 `hl`, `hs` and `hr` are the three heads of the three rotated `s` lists — that is
-`s[x-1]`, `s[x]` and `s[x+1]` — and `hc` is `cur[x]`, the cell being decided.
+`s[x-1]`, `s[x]` and `s[x+1]` — and `hc` is `cur[x]`.
 
-The same example, for the cell at `x = 2`:
-
-```
-   column 1:  prev[1]=1  cur[1]=0  next[1]=0      s[1] = 1
-   column 2:  prev[2]=0  cur[2]=1  next[2]=1      s[2] = 2     ← cur[2] is the cell itself
-   column 3:  prev[3]=0  cur[3]=1  next[3]=0      s[3] = 1
-                                                ─────────────
-                                  nine cells  =  1 + 2 + 1  =  4
-                   minus the cell itself, cur[2] = 1   →   3 neighbours
-```
-
-Nine cells, three additions and a subtraction, no index anywhere.
-
-**Does the board size matter?** Not to the arithmetic. A cell has eight neighbour
-offsets, and they always occupy three columns and three rows, whatever `w` and `h`
-are. The size only decides *where* those three columns fall once the board wraps —
-which is why the rest of this chapter is about rotations rather than arithmetic.
+Nine cells, three additions and a subtraction, no index anywhere. And the board's
+size never entered it: eight neighbour offsets always fall in three rows and three
+columns. Size decides only *where* those columns land once the board wraps, which
+is why the rest of this chapter is rotations rather than arithmetic.
 
 ## What that saves
 
-The identity is half of it. What it buys is the reason this chapter exists.
+The identity is half of it. This is what it buys.
 
 A list in Bend is a chain, and `nth` walks it. The previous chapter's numbers show
 a per-cell cost that grew with the grid: the grid grew fourfold, and so did the
@@ -246,8 +200,8 @@ row may. It needs to be, because the next line uses `s` three times, in `rot_r(s
 `s` and `rot_l(s)`. Take the `+` off and the checker refuses the line with
 `expected : s` / `observed : s (consumed more than once)`.
 
-So `+` means two different things in these chapters, and where it sits is what
-tells them apart: **in front of a name being bound or declared it is the reuse
+So `+` means two different things in this code, and where it sits is what tells
+them apart: **in front of a name being bound or declared it is the reuse
 mark; between two numbers it is addition** — of cell counts in the formula, and of
 positions in `x-1`, `x+1` and `y*w + x`. The arithmetic in this chapter never
 mixes the two.
@@ -267,6 +221,8 @@ The same problem one level up. To produce row `y` you need rows `y-1`, `y` and
 def gen(+a: Rows) -> Rows:
   zip3(rows_rotm1(a), a, rows_rot1(a))
 ```
+
+`zip3` is what walks them:
 
 ```python
 {{#include ../life/life_row.bend:125:138}}
