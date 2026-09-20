@@ -3,7 +3,8 @@
 `gpu/mandelbrot` renders the Mandelbrot set at 4096² with histogram equalisation.
 Its `main.bend` is byte-identical to upstream's benchmark, and it is the mirror
 image of the previous chapter: the same balanced fork tree, but the work at the
-leaves is uniform, and that turns out to be the whole difference.
+leaves is uniform, and that turns out to be the whole difference. The code below
+is that file, quoted by line number.
 
 ## Why the leaves are uniform
 
@@ -12,32 +13,79 @@ recording when `z` escapes. The obvious implementation breaks out of the loop
 when it escapes — and that is a branch, which makes pixels take different
 amounts of time, which is the thing that kills the GPU.
 
-So it does not break out:
+So it does not break out. Upstream's own header says it in a line:
 
 > every pixel runs `ITERS` iterations with **no branches** (once escaped, `sel`
 > freezes `z` rather than jumping out), so the instruction stream is identical
 > for every pixel
 
-`sel` is a select — a conditional *value*, not a conditional *jump*. Every pixel
-takes the same path through the same instructions; only the data differs. The
-escape count is still correct, because a frozen `z` stops changing and the
-remaining iterations are wasted work that costs nothing to a machine built to
-run many lanes in lockstep.
+The loop that does that is `mit` — one iteration per `match` step, ending when
+the counter runs out rather than when the point escapes:
 
-That is the exact inverse of n-queens. There, the search tree could not be made
-uniform. Here, it can be made uniform by *spending more arithmetic* — and on a
-GPU, arithmetic is the thing that is nearly free.
+```python
+{{#include ../gpu/mandelbrot/main.bend:49:62}}
+```
+
+Follow `e2`: once the escape test `|z|² > 1024` has fired, `esc` stays set
+forever, because it is `or`-ed into itself on the next iteration. And `e2` never
+appears in a `case`, so nothing branches on it. It only decides *values*:
+
+```python
+{{#include ../gpu/mandelbrot/main.bend:33:41}}
+```
+
+`sel` is a select — a conditional *value*, not a conditional *jump*. `sr` and
+`si` are the new or the old `z`, chosen without a jump, and a frozen `z` stops
+changing. Every pixel takes the same path through the same instructions; only
+the data differs.
+
+The escape count is still correct, because the iterations after the escape are
+wasted work — and wasted work costs nothing to a machine built to run many lanes
+in lockstep. That is the exact inverse of n-queens. There, the search tree could
+not be made uniform. Here, it can be made uniform by *spending more arithmetic*.
 
 ## The two passes
 
-The render is not one fork. It is two, plus something in between:
+The render is not one fork. It is two, plus something in between, and each pass
+has a type of its own:
+
+```python
+{{#include ../gpu/mandelbrot/main.bend:20:24}}
+```
+
+`Hs` is one histogram — eight scalar buckets, one per eighth of the iteration
+budget:
+
+```python
+{{#include ../gpu/mandelbrot/main.bend:70:73}}
+```
 
 1. **Histogram.** Fork 2^18 blocks of 64 pixels; each block sorts its escape
-   counts into 8 buckets and the buckets are merged pairwise up the fork tree.
+   counts into those 8 buckets and the buckets are merged pairwise up the fork
+   tree:
+
+```python
+{{#include ../gpu/mandelbrot/main.bend:99:105}}
+```
+
+`hfold` is the same depth-`d` fork as `batch` in the previous chapter, and
+`hzip` is its `smerge`: one bucket set added to another, pairwise, all the way
+up.
+
 2. **The CDF.** A serial pass turning the root histogram into an equalisation
-   lookup table. Small, sequential, unavoidable.
+   lookup table. Small, sequential, unavoidable — and worth reading, because it is
+   the one piece of this program with no fork in it at all:
+
+```python
+{{#include ../gpu/mandelbrot/main.bend:107:119}}
+```
+
 3. **Recolour.** Fork again, one leaf per pixel this time, running each pixel
-   back through the lookup table and summing by position.
+   back through the lookup table and summing by position:
+
+```python
+{{#include ../gpu/mandelbrot/main.bend:131:138}}
+```
 
 The checksum mixes the lookup table and the recoloured result, so it is sensitive
 to both passes. That matters — it means a GPU build that silently skipped the
@@ -95,6 +143,12 @@ The source records two configurations:
 |---|---|---|---|
 | small | `2n` | `7n` | `887240761` |
 | big | `18n` | `51n` | `3101455856` |
+
+Both are one call apart:
+
+```python
+{{#include ../gpu/mandelbrot/main.bend:159:161}}
+```
 
 The two binaries in this directory are the big one. The small one is useful for
 checking a rebuild — it finishes quickly and still verifies.

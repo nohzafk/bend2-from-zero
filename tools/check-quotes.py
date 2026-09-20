@@ -119,6 +119,8 @@ DECLARED_TRANSCRIPTS = {
 RANGE_PINS = {
     "gpu/queens/main.bend":
         "9ba530618a3449470b294a01a7d8670b67ba959d9bd09b67bb748917ade0676f",
+    "gpu/mandelbrot/main.bend":
+        "400b94705df43c5f6506ecba640db11ae91b24f74d58e39a5e5f7f56dcbabcfa",
 }
 
 
