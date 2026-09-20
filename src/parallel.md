@@ -68,40 +68,27 @@ it is the only way to tell it from a machine that is simply fast.
 Scaling saturates at 8. This machine is 10 performance cores and 4 efficiency
 cores, so past 8 there is nothing left to give except scheduling overhead.
 
-## `!` is not the parallel switch
+## Where the numbers come from
 
-This is the mistake to avoid, and it cost this book's author a wrong conclusion
-early on:
+Every number in this chapter, and in the rest of this book, was measured on a
+**compiled** binary:
 
-```python
-pow2(26n)      # parallel, on the CPU
-pow2!(26n)     # parallel, on the GPU
+```sh
+bend pow2_26.bend -o pow2_26     # compile
+./pow2_26 --threads 1            # then time the binary, not the interpreter
+./pow2_26 --threads 8
 ```
 
-**Both are parallel.** `!` does not turn parallelism on. Under native
-compilation, a parallel let forks onto multiple cores with no mark at all; `!`
-means something else entirely — hand this call to the GPU. That is the next
-chapter.
+`bend pow2_26.bend` interprets instead, and the interpreter is sequential: no
+call forks, and the wall clock is identical at every thread count. [Getting set
+up](setup.md) has the two backends in full; what this chapter needs from them is
+one line — **a performance number means nothing unless it came from a compiled
+binary.**
 
-## ❌ The measurement trap
-
-The first attempt at these numbers was run under `bend pow2_26.bend`, without
-compiling, and `real` did not move at all as threads went up.
-
-That is not a bug. From the guide: **the JavaScript target ignores all of it and
-runs sequentially.** `bend file.bend` interprets; `bend file.bend -o file`
-compiles natively, and only the compiled binary has more than one core.
-
-| | interpreted | native |
-|---|---|---|
-| parallel lets | **sequential, always** | real multi-core |
-| `!` | ignored | handed to the GPU |
-| speed | an order of magnitude slower | fast |
-| use it for | results, type errors | **all performance measurement** |
-
-There is no way to see this from the numbers alone — a sequential run looks
-exactly like a parallel run that does not scale. It is worth internalising now,
-because every number in the rest of this book comes from a compiled binary.
+That is worth a section of its own because the difference is invisible in the
+output. A sequential run looks exactly like a parallel run that does not scale:
+the right answer, `user` about equal to `real`, and no speedup at any thread
+count.
 
 ## The files
 
@@ -110,11 +97,5 @@ because every number in the rest of this book comes from a compiled binary.
 | [`parallel/pow2_26.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/parallel/pow2_26.bend) | 2^26, the table above |
 | [`parallel/pow2.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/parallel/pow2.bend) | 2^22 |
 
-```sh
-bend pow2_26.bend -o pow2_26
-./pow2_26 --threads 1
-./pow2_26 --threads 8
-```
-
-Next: [the GPU, and the `!` mark](gpu.md) — where the numbers get strange, and a
-fixed cost turns out to decide who wins.
+Next: [the GPU, and the `!` mark](gpu.md) — where `!` turns out to mean the GPU
+rather than more cores, and a fixed cost turns out to decide who wins.
