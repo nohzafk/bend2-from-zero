@@ -31,14 +31,16 @@ What it runs, cheapest first:
      is "nothing", which is itself worth knowing.
 
 Shell transcripts are checked the same way, one command at a time: the command
-is run from the directory its file lives in, and the quoted lines must match the
-command's **stdout** exactly -- same lines, same order, nothing extra. stdout and
-not both streams, because these blocks quote what the program printed: Bend's own
-verdict ("All terms check, ...") goes to stderr whenever the file has a `main`,
-and the chapters that care about it quote it as a block of its own. A command
-that nothing can reproduce is listed in DECLARED_TRANSCRIPTS with the reason, and
-a transcript that is neither reproducible nor declared is a **failure**, so a
-new quoted result cannot slip into the book unchecked.
+is run from the directory its file lives in, and the quoted lines must appear,
+in order and with nothing between them, in the command's output -- stdout first,
+then stderr. Both streams, because a transcript is what the reader sees in a
+terminal: a quoted compiler verdict goes to stderr, and so does Bend's own "All
+terms check, ..." line. Quoting a prefix or a subset is fine (the chapters quote
+the line they are talking about); quoting lines that were never printed, or
+printing them in the wrong order, is not. A command that nothing can reproduce
+is listed in DECLARED_TRANSCRIPTS with the reason, and a transcript that is
+neither reproducible nor declared is a **failure**, so a new quoted result
+cannot slip into the book unchecked.
 
     python3 tools/check-quotes.py            # from the repo root
     python3 tools/check-quotes.py --wide     # search the whole book
@@ -86,22 +88,11 @@ DECLARED = {
 # entry). The key is visible text on purpose: an entry whose command is gone
 # from the book is reported as stale.
 DECLARED_TRANSCRIPTS = {
-    ("src/do-blocks.md", "$ bend add_strs.bend"):
-        "there is no add_strs.bend in this repo -- the chapter shows the source "
-        "inline (lines 99-103) and quotes two runs of it, so no file can produce "
-        "the output",
-    ("src/do-blocks.md", '$ bend add_strs.bend # with add_strs("nope", "2")'):
-        "the same file, run after editing the call to add_strs(\"nope\", \"2\"); "
-        "the unedited file would print Some{42}",
     ("src/basics-strings.md", "$ bend esc_bad.bend | xxd"):
         "the quoted bytes are xxd's rendering of the program's output, not bend's; "
         "the byte claim itself is checked as manifest entry basics/esc_bad",
     ("src/effects.md", "$ echo $? # 7"):
         "a shell builtin reporting the previous command's exit status, not output",
-    ("src/laws-1.md", "$ bend two_plus_two.bend"):
-        "the quote is the file as it stands before the proof def is added, which "
-        "is the state the chapter is describing; the probe ships with the proof, "
-        "so it prints All terms check. instead",
     ("src/effects-2.md", "$ bend clock.bend"):
         "the output is a live uptime reading",
     ("src/effects-2.md", "$ bend clock.bend -o clock && ./clock"):
@@ -226,11 +217,11 @@ def run(probe: pathlib.Path, bend: str, root: pathlib.Path, timeout: int):
 
 
 def run_transcript(probe: pathlib.Path, bend: str, timeout: int):
-    """The stdout lines a `bend <file>` run prints, or None if it timed out.
+    """The lines a `bend <file>` run prints, or None if it timed out.
 
     Run from the file's own directory with the bare file name, which is how the
-    book's transcripts are written. stderr is not compared: see the module
-    docstring.
+    book's transcripts are written. stdout first, then stderr, so the order is
+    the same on every run; both streams count (see the module docstring).
     """
     env = dict(os.environ, BEND_NO_TELEMETRY="1")
     try:
@@ -238,7 +229,8 @@ def run_transcript(probe: pathlib.Path, bend: str, timeout: int):
                            timeout=timeout, env=env, cwd=str(probe.parent))
     except subprocess.TimeoutExpired:
         return None
-    return [l.rstrip() for l in (r.stdout or "").split("\n") if l.strip()]
+    both = (r.stdout or "") + (r.stderr or "")
+    return [l.rstrip() for l in both.split("\n") if l.strip()]
 
 
 def contains(haystack, needle):
@@ -370,7 +362,7 @@ def main() -> int:
                     problems.append(f"{where}: `bend {probe.name}` exceeded "
                                     f"{args.timeout}s\n")
                     continue
-                if got != expected:
+                if not contains(got, expected):
                     failed += 1
                     problems.append(
                         f"{where}: `bend {probe.name}` prints something else "
