@@ -74,6 +74,25 @@ s           1    1    2    1    2    1
 `s[2] = prev[2] + cur[2] + next[2] = 0 + 1 + 1 = 2`. No entry can exceed 3, because
 three cells go into it.
 
+That `s` belongs to **one** output row. Call it `s_y` if that helps — the chapter
+writes plain `s` because only one is ever in play at a time, but there is a
+different `s` for every row, and the inputs change with the row, so every entry
+changes with it. The example above was rows 0, 1 and 2 standing as `prev`, `cur`
+and `next`, with `y = 1`. Add a fourth row and build `y = 2` too:
+
+```
+   row 0   0 1 0 0 1 0       y=1:  s = 1 1 2 1 2 1      rows 0+1+2
+   row 1   1 0 1 1 0 0       y=2:  s = 2 1 2 2 1 2      rows 1+2+3
+   row 2   0 0 1 0 1 1
+   row 3   1 1 0 1 0 1
+```
+
+Different rows in, different numbers out, and both `s` rows are correct — each is
+the three-row window of its own row. That is why the two phases are done **for one
+fixed `y`**: build `s` for that row, then walk it. Advancing `y` rebuilds `s` from
+the next three rows, which is what [the row rotation](#rows-themselves-rotate) is
+for.
+
 `colsum` is that line written as the walk it has to be:
 
 ```python
@@ -87,8 +106,9 @@ computed; the position is wherever the walk has got to.
 
 ### Along a row: three entries of `s`
 
-Now the other direction. `s[x-1]`, `s[x]` and `s[x+1]` are three **columns**, in the
-same row of `s`. And each entry of `s` already holds one whole column of the block:
+The other direction — and the same output row, and the same `s` that was just
+built. `s[x-1]`, `s[x]` and `s[x+1]` are three **columns**, in the same row of `s`,
+and each entry already holds one whole column of the block:
 
 ```
    s[x-1]  =  prev[x-1] + cur[x-1] + next[x-1]     the block's left column
