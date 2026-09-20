@@ -179,6 +179,11 @@ $ bend t10_template.bend
 42
 ```
 
+Next to that, on stderr, the checker reports `All terms check, with 1 unsafe
+annotation.` — a template instance counts as one, and the number is how many
+such annotations the run loaded. [The gate chapter](laws-3.md) is where that
+count gets taken apart.
+
 The `~` on the parameter means **template**, and the `~` at the call site is what
 makes the argument one. `twice` is inlined at compile time, and each distinct
 argument compiles its own copy of the function — so `f` can be called as many

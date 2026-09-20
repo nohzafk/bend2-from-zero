@@ -104,10 +104,11 @@ law two_plus_two:
   {Nat.add(2n, 2n) == 4n : Nat}
 ```
 
-Put that in a file and run it. The compiler says precisely what is missing:
+Put the claim on its own in a file and run it. The compiler says precisely
+what is missing:
 
 ```
-$ bend two_plus_two.bend
+$ bend two_plus_two_open.bend
 Error: 1 TODO found.
 The code is incomplete, and not a valid proof yet.
 ```
@@ -139,11 +140,15 @@ Error:
 
 (This rejection and the `{==}` refusal further down are kept as runnable
 files under `laws/` — the errors are indexed in
-[the appendix](appendix-probes.md).)
+[the appendix](appendix-probes.md).) The open claim is a file too:
+[`laws/two_plus_two_open.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/laws/two_plus_two_open.bend),
+which is `two_plus_two.bend` before the proof line is added.
 
-Run the file again, and the open claim is closed:
+Put the two lines in one file — as `laws/two_plus_two.bend` is — and the open
+claim is closed:
 
 ```
+$ bend two_plus_two.bend
 All terms check.
 ```
 

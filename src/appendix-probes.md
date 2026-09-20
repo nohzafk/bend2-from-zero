@@ -30,6 +30,7 @@ cd basics && bend hello_bad.bend
 | [`arrays/exp_arr2.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/exp_arr2.bend) | destructures an array read: `(a2, v) = a[5]` | `a match cannot scrutinize a computed value: give it its own def` |
 | [`arrays/a_fail.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/a_fail.bend) | binds the write first, then destructures the binder | `a match cannot scrutinize a local binder: give it its own def` |
 | [`arrays/d_write.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/d_write.bend) | treats a write as a pair, like a read | `expected : Sigma<&1, &1, Array<U32>, _ => U32>` / `observed : Array<U32>` |
+| [`laws/two_plus_two_open.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/laws/two_plus_two_open.bend) | states the law and stops — the proof line is not written yet | `Error: 1 TODO found.` / `The code is incomplete, and not a valid proof yet.` |
 | [`laws/fill_rettype_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/laws/fill_rettype_bad.bend) | gives a law's fill its own return type | `expected : ':'` / `observed : '-'` |
 | [`laws/add_zero_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/laws/add_zero_bad.bend) | proves `x + 0 == x` with `{==}` alone | `expected : Nat.add(x, 0n)` / `observed : x` |
 

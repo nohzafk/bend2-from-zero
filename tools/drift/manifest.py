@@ -125,6 +125,19 @@ CHECKS = [
       source="source",
       note="a type with no parameters, and one field marked + because the body"
            " uses it twice"),
+    C("basics/add_strs", "probes-ok", "basics", "add_strs.bend", "run",
+      expect_out=["Some(42)"], book="Some(42)",
+      source="source",
+      note="a do-block in Maybe, quoted in src/do-blocks.md.  The checker also"
+           " prints 'All terms check, with 1 unsafe annotation.' on stderr (the"
+           " call site builds a template instance), which the chapter names but"
+           " does not quote as a transcript"),
+    C("basics/add_strs_bad", "probes-ok", "basics", "add_strs_bad.bend", "run",
+      expect_out=["None"], book="None",
+      source="source",
+      note="the same def called with a string that is not a number: U32.read"
+           " answers None, Maybe.bind skips the rest of the block -- the"
+           " chapter's 'fail fast' in one line of match"),
     C("basics/exp_chain", "probes-ok", "basics", "exp_chain.bend", "run",
       expect_out=["2"], book="2",
       source="source",
@@ -306,6 +319,13 @@ CHECKS = [
 
     # -------------------------------------------------------------- laws
     # The laws part's smallest examples (src/laws-1.md).
+    C("laws/two_plus_two_open", "probes-bad", "laws", "two_plus_two_open.bend",
+      "run",
+      expect_err=["TODO found", "not a valid proof yet"], expect_rc="nonzero",
+      timeout_s=60, source="source",
+      book="Error: 1 TODO found. / The code is incomplete, and not a valid proof yet.",
+      note="the claim with no proof in the file -- what 'open claim' means"
+           " mechanically, and what laws/two_plus_two.bend closes"),
     C("laws/two_plus_two", "probes-ok", "laws", "two_plus_two.bend", "run",
       expect_out=["All terms check."], timeout_s=60, source="measured",
       note="a law with no variables; {==} closes it because both sides"

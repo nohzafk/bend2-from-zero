@@ -96,27 +96,25 @@ That last rule is not decoration either; `Maybe` uses it. This def, which
 reads two strings as numbers and short-circuits on the first failure:
 
 ```python
-def add_strs(a: String, b: String) -> Maybe<&2, U32>:
-  do Maybe<&2, U32>:
-    x : U32 <- U32.read(a)
-    y : U32 <- U32.read(b)
-    return (x + y : U32)
+{{#include ../basics/add_strs.bend}}
 ```
 
 runs as `Maybe.bind(&2, U32, U32, U32.read(a), x => ...)` — the quantity
 `&2` rides along into both calls because the header carries it. The
-successful and failing runs, measured:
+successful and failing runs, measured — the second is
+[`basics/add_strs_bad.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/basics/add_strs_bad.bend),
+the same def called with a string that is not a number:
 
 ```
 $ bend add_strs.bend
-Some{42}
-$ bend add_strs.bend            # with add_strs("nope", "2")
-None{}
+Some(42)
+$ bend add_strs_bad.bend
+None
 ```
 
-The `None{}` came from `Maybe.bind`'s own definition — `case None{}:
-None{}` skips the continuation entirely, which is the whole of "fail fast"
-in one line of `match`.
+The empty result came from `Maybe.bind`'s own definition — its
+`case None{}: None{}` skips the continuation entirely, which is the whole
+of "fail fast" in one line of `match`.
 
 ## What the header is *not*
 
