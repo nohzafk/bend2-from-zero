@@ -93,6 +93,24 @@ CHECKS = [
       expect_err=["Sigma<&1, &1, Array<U32>", "observed : Array<U32>"], expect_rc="nonzero",
       book="expected : Sigma<&1, &1, Array<U32>, _ => U32> / observed : Array<U32>"),
 
+    C("basics/type_is_missing", "probes-bad", "basics", "type_is_missing.bend", "run",
+      expect_err=["expected : 'is'", "observed : ':'"], expect_rc="nonzero",
+      book="expected : 'is' / observed : ':'"),
+    C("basics/type_field_affine", "probes-bad", "basics", "type_field_affine.bend", "run",
+      expect_err=["consumed more than once"], expect_rc="nonzero",
+      book="expected : r / observed : r (consumed more than once)"),
+    C("basics/type_quantity_field", "probes-bad", "basics", "type_quantity_field.bend", "run",
+      expect_err=["expected : Kind(a)", "observed : Quant"], expect_rc="nonzero",
+      book="expected : Kind(a) / observed : Quant",
+      note="a field typed with the header's quantity parameter instead of the"
+           " element type; the book quotes the compiler's `a : Quant` context line"),
+    C("basics/do_list_bind", "probes-bad", "basics", "do_list_bind.bend", "run",
+      expect_err=["expected : a defined name", "observed : List.bind"],
+      expect_rc="nonzero",
+      book="expected : a defined name / observed : List.bind",
+      note="a do-block with a bind, in a family that has no .bind -- the error"
+           " names the missing def, not the brackets"),
+
     # Files that compile and run.  Book: the topic READMEs + chapters.
     C("basics/hello", "probes-ok", "basics", "hello.bend", "run",
       expect_out=["hello, bend 2"], book="hello, bend 2"),
@@ -102,6 +120,17 @@ CHECKS = [
       expect_out=["1n"], book="1n (9 mod 4)"),
     C("basics/exp_list", "probes-ok", "basics", "exp_list.bend", "run",
       expect_out=["2"], book="2"),
+    C("basics/exp_type", "probes-ok", "basics", "exp_type.bend", "run",
+      expect_out=["25"], book="25",
+      source="source",
+      note="a type with no parameters, and one field marked + because the body"
+           " uses it twice"),
+    C("basics/exp_chain", "probes-ok", "basics", "exp_chain.bend", "run",
+      expect_out=["2"], book="2",
+      source="source",
+      note="the smallest parameterised type that checks: a quantity parameter"
+           " plus an element type.  The same declaration with `head: a` is"
+           " basics/type_quantity_field.bend."),
     C("basics/pat_bad", "probes-ok", "basics", "pat_bad.bend", "run",
       expect_out=["1"], book="prints 1 -- it does not (deceptive on purpose)",
       note="WARNING-probe: compiles and lies by design.  f(2n) should be 2, prints 1."),

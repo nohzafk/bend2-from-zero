@@ -49,7 +49,8 @@ jobs:
         run: python3 tools/book-links.py
 
       # The other promise the book makes, and the one nothing else enforces:
-      # that every compiler error in it is pasted from a real run. Line numbers
+      # that every compiler error in it is pasted from a real run, and that every
+      # `$ bend x.bend` block is what that command really printed. Line numbers
       # rot silently -- add a comment line to a probe and the quote points at the
       # wrong line while every other check still passes.
       #
@@ -57,7 +58,7 @@ jobs:
       # mdbook is, and for the same reason: bump it deliberately, together with
       # the book, so a failure means the text drifted rather than that upstream
       # shipped a release overnight.
-      - name: Check the book's quoted errors
+      - name: Check the book's quoted output
         env:
           BEND_VER: "2.0.16"
           BEND_SHA_LINUX_X64: "496ff13a312221c3dc0dde4077368ced42c0f3eadcb61c2d43de5caddf0e50b4"

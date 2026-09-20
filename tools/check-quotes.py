@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""Check every quoted compiler error against a real run.
+"""Check every quoted compiler error and every quoted program output against a
+real run.
 
-The book promises that each quoted error is pasted verbatim from a real run.
-Nothing else enforces that: `run_drift.py` compares substrings, and the line
-numbers a quote carries are part of no expectation there. So a probe file can
-gain a comment line, the quote can keep the old line number, and every check
-still passes while the book points at the wrong line.
+The book promises that each quoted error is pasted verbatim from a real run, and
+that each `$ bend x.bend` block is what the command really printed. Nothing else
+enforces that: `run_drift.py` compares substrings, and the line numbers a quote
+carries are part of no expectation there. So a probe file can gain a comment
+line, the quote can keep the old line number, and every check still passes while
+the book points at the wrong line.
 
-How it decides what a quote came from: it does not guess. It runs files and asks
-which of them actually produce those lines. A quote that no real run produces is
-the failure.
+How it decides what an error quote came from: it does not guess. It runs files
+and asks which of them actually produce those lines. A quote that no real run
+produces is the failure.
 
 That matters because the naive approach -- "the file in the `{{#include}}`
 above the quote" -- is wrong exactly where it is most needed: the two error
@@ -27,6 +29,16 @@ What it runs, cheapest first:
      run mode, so scanning everything costs two full timeouts before it can say
      anything. Step 2 covers the real cases, so this is for when step 2's answer
      is "nothing", which is itself worth knowing.
+
+Shell transcripts are checked the same way, one command at a time: the command
+is run from the directory its file lives in, and the quoted lines must match the
+command's **stdout** exactly -- same lines, same order, nothing extra. stdout and
+not both streams, because these blocks quote what the program printed: Bend's own
+verdict ("All terms check, ...") goes to stderr whenever the file has a `main`,
+and the chapters that care about it quote it as a block of its own. A command
+that nothing can reproduce is listed in DECLARED_TRANSCRIPTS with the reason, and
+a transcript that is neither reproducible nor declared is a **failure**, so a
+new quoted result cannot slip into the book unchecked.
 
     python3 tools/check-quotes.py            # from the repo root
     python3 tools/check-quotes.py --wide     # search the whole book
@@ -49,6 +61,13 @@ MARKER = re.compile(r"^\s*(\d+)>?\|")
 FENCE = re.compile(r"^```")
 BLOB = re.compile(r"blob/main/([A-Za-z0-9_./-]+\.bend)")
 BARE = re.compile(r"\b([A-Za-z0-9_]+/[A-Za-z0-9_]+\.bend)\b")
+CMD = re.compile(r"^\$\s+(\S.*?)\s*$")
+TRAILING_COMMENT = re.compile(r"\s+#.*$")
+RUNNABLE = re.compile(r"^bend\s+(\S+\.bend)\s*$")
+
+# Directories a probe can never live in: the git metadata, the mdBook output
+# (which holds copies of the probes), and the vendored upstream clone.
+SKIP_DIRS = {".git", "book", "__pycache__", "node_modules", "bend"}
 
 # Quotes that cannot come from a file, with the reason. Keep this short and
 # specific: every entry is a quote nothing verifies any more.
@@ -59,6 +78,37 @@ DECLARED = {
     "src/basics-strings.md": "the \\e example is an inline snippet in the chapter; "
                              "no file in this repo produces it. The chapter's real "
                              "escape probe is basics/esc_bad.bend, which is verified",
+}
+
+# Transcript commands no run in this repo can reproduce, with the reason. Keyed
+# by chapter and by the command line as the book shows it, with runs of
+# whitespace collapsed to one space (so re-spacing a comment does not move the
+# entry). The key is visible text on purpose: an entry whose command is gone
+# from the book is reported as stale.
+DECLARED_TRANSCRIPTS = {
+    ("src/do-blocks.md", "$ bend add_strs.bend"):
+        "there is no add_strs.bend in this repo -- the chapter shows the source "
+        "inline (lines 99-103) and quotes two runs of it, so no file can produce "
+        "the output",
+    ("src/do-blocks.md", '$ bend add_strs.bend # with add_strs("nope", "2")'):
+        "the same file, run after editing the call to add_strs(\"nope\", \"2\"); "
+        "the unedited file would print Some{42}",
+    ("src/basics-strings.md", "$ bend esc_bad.bend | xxd"):
+        "the quoted bytes are xxd's rendering of the program's output, not bend's; "
+        "the byte claim itself is checked as manifest entry basics/esc_bad",
+    ("src/effects.md", "$ echo $? # 7"):
+        "a shell builtin reporting the previous command's exit status, not output",
+    ("src/laws-1.md", "$ bend two_plus_two.bend"):
+        "the quote is the file as it stands before the proof def is added, which "
+        "is the state the chapter is describing; the probe ships with the proof, "
+        "so it prints All terms check. instead",
+    ("src/effects-2.md", "$ bend clock.bend"):
+        "the output is a live uptime reading",
+    ("src/effects-2.md", "$ bend clock.bend -o clock && ./clock"):
+        "compiles and runs a native binary, and the output is a live uptime reading",
+    ("src/laws-3.md", "$ bend PROOF.bend # with the import line removed"):
+        "PROOF.bend belongs to the gate project the chapter builds, not to this "
+        "repo, and the quote comes from a copy with the import line removed",
 }
 
 
@@ -91,6 +141,23 @@ def quotes_in(chapter: pathlib.Path):
         if markers:
             yield line_no, last_include, markers
             last_include = None  # a quote only follows its include directly
+
+
+def transcripts_in(chapter: pathlib.Path):
+    """Yield (line_no, [(command, expected_lines)]) for each block with commands.
+
+    A command is a line starting with `$`; the lines after it, up to the next
+    command or the end of the block, are what the book says it printed.
+    """
+    for line_no, body in fenced_blocks(chapter):
+        cmds = []
+        for line in body:
+            if CMD.match(line):
+                cmds.append((line.rstrip(), []))
+            elif cmds:
+                cmds[-1][1].append(line.rstrip())
+        if cmds:
+            yield line_no, [(c, [x for x in exp if x.strip()]) for c, exp in cmds]
 
 
 def referenced_by(text: str):
@@ -134,6 +201,19 @@ def existing(root: pathlib.Path, rels):
     return out
 
 
+def find_bend_file(root: pathlib.Path, name: str, chapter_files):
+    """The repo file a transcript names, preferring one this chapter references."""
+    for p in chapter_files:
+        if p.name == name:
+            return p
+    hits = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
+        if name in filenames:
+            hits.append(pathlib.Path(dirpath) / name)
+    return hits[0] if hits else None
+
+
 def run(probe: pathlib.Path, bend: str, root: pathlib.Path, timeout: int):
     """The marker lines a run of this file produces, or None if it timed out."""
     env = dict(os.environ, BEND_NO_TELEMETRY="1")
@@ -143,6 +223,22 @@ def run(probe: pathlib.Path, bend: str, root: pathlib.Path, timeout: int):
     except subprocess.TimeoutExpired:
         return None
     return [l.rstrip() for l in (r.stdout + r.stderr).split("\n") if MARKER.match(l)]
+
+
+def run_transcript(probe: pathlib.Path, bend: str, timeout: int):
+    """The stdout lines a `bend <file>` run prints, or None if it timed out.
+
+    Run from the file's own directory with the bare file name, which is how the
+    book's transcripts are written. stderr is not compared: see the module
+    docstring.
+    """
+    env = dict(os.environ, BEND_NO_TELEMETRY="1")
+    try:
+        r = subprocess.run([bend, probe.name], capture_output=True, text=True,
+                           timeout=timeout, env=env, cwd=str(probe.parent))
+    except subprocess.TimeoutExpired:
+        return None
+    return [l.rstrip() for l in (r.stdout or "").split("\n") if l.strip()]
 
 
 def contains(haystack, needle):
@@ -183,59 +279,112 @@ def main() -> int:
         return cache[probe]
 
     wide = None
-    checked = declared = failed = 0
+    checked = declared = 0
+    t_checked = t_declared = 0
+    failed = 0
     problems = []
+    seen_transcripts = set()
 
     for chapter in sorted(src.glob("*.md")):
         rel = str(chapter.relative_to(root))
+        chapter_files = existing(root, referenced_by(chapter.read_text(encoding="utf-8")))
+
+        # ---- the quoted compiler errors
         if rel in DECLARED:
             for line_no, _, _markers in quotes_in(chapter):
                 declared += 1
                 print(f"  decl  {rel}:{line_no}  ({DECLARED[rel]})")
-            continue
+        else:
+            for line_no, inc, markers in quotes_in(chapter):
+                where = f"{rel}:{line_no}"
 
-        chapter_files = existing(root, referenced_by(chapter.read_text(encoding="utf-8")))
+                # step 1: the include directly above the quote
+                if inc and (root / inc).exists():
+                    probe = root / inc
+                    if contains(output_of(probe), markers):
+                        checked += 1
+                        print(f"  ok    {where}  {inc}")
+                        continue
 
-        for line_no, inc, markers in quotes_in(chapter):
-            where = f"{rel}:{line_no}"
-
-            # step 1: the include directly above the quote
-            if inc and (root / inc).exists():
-                probe = root / inc
-                if contains(output_of(probe), markers):
+                # step 2: this chapter's files, plus the probes that error at all
+                pool = chapter_files + [p for p in declared_files if p not in chapter_files]
+                hits = [p for p in pool if contains(output_of(p), markers)]
+                if hits:
                     checked += 1
-                    print(f"  ok    {where}  {inc}")
+                    names = ", ".join(str(h.relative_to(root)) for h in hits)
+                    print(f"  ok    {where}  {names}")
                     continue
 
-            # step 2: this chapter's files, plus the probes that error at all
-            pool = chapter_files + [p for p in declared_files if p not in chapter_files]
-            hits = [p for p in pool if contains(output_of(p), markers)]
-            if hits:
-                checked += 1
-                names = ", ".join(str(h.relative_to(root)) for h in hits)
-                print(f"  ok    {where}  {names}")
-                continue
+                # step 3: everything, only on request
+                if args.wide:
+                    if wide is None:
+                        all_rels = set()
+                        for md in src.glob("*.md"):
+                            all_rels.update(referenced_by(md.read_text(encoding="utf-8")))
+                        wide = existing(root, sorted(all_rels))
+                        print(f"  (widening to all {len(wide)} referenced files)")
+                    hits = [p for p in wide if contains(output_of(p), markers)]
+                if hits:
+                    checked += 1
+                    names = ", ".join(str(h.relative_to(root)) for h in hits)
+                    print(f"  ok    {where}  {names}  (not referenced by this chapter)")
+                else:
+                    failed += 1
+                    hint = "" if args.wide else "  (re-run with --wide to search the whole book)"
+                    problems.append(
+                        f"{where}: no file this chapter references produces this quote{hint}\n"
+                        + "".join(f"        {m}\n" for m in markers)
+                    )
 
-            # step 3: everything, only on request
-            if args.wide:
-                if wide is None:
-                    all_rels = set()
-                    for md in src.glob("*.md"):
-                        all_rels.update(referenced_by(md.read_text(encoding="utf-8")))
-                    wide = existing(root, sorted(all_rels))
-                    print(f"  (widening to all {len(wide)} referenced files)")
-                hits = [p for p in wide if contains(output_of(p), markers)]
-            if hits:
-                checked += 1
-                names = ", ".join(str(h.relative_to(root)) for h in hits)
-                print(f"  ok    {where}  {names}  (not referenced by this chapter)")
-            else:
-                failed += 1
-                hint = "" if args.wide else "  (re-run with --wide to search the whole book)"
-                problems.append(
-                    f"{where}: no file this chapter references produces this quote{hint}\n"
-                    + "".join(f"        {m}\n" for m in markers)
-                )
+        # ---- the shell transcripts
+        for line_no, cmds in transcripts_in(chapter):
+            for raw, expected in cmds:
+                where = f"{rel}:{line_no}"
+                key = (rel, " ".join(raw.split()))
+
+                if key in DECLARED_TRANSCRIPTS:
+                    t_declared += 1
+                    seen_transcripts.add(key)
+                    print(f"  decl  {where}  {raw}")
+                    print(f"        {DECLARED_TRANSCRIPTS[key]}")
+                    continue
+
+                body = TRAILING_COMMENT.sub("", raw).strip()
+                body = body[1:].strip() if body.startswith("$") else body
+                m = RUNNABLE.match(body)
+                probe = find_bend_file(root, m.group(1), chapter_files) if m else None
+                if probe is None:
+                    failed += 1
+                    why = ("is not a bare `bend FILE` command" if not m
+                           else f"names {m.group(1)}, which is nowhere in the repo")
+                    problems.append(
+                        f"{where}: `{body}` {why} -- nothing here can check it.\n"
+                        f"        Run something that produces it, or add it to "
+                        f"DECLARED_TRANSCRIPTS with the reason.\n"
+                    )
+                    continue
+
+                got = run_transcript(probe, args.bend, args.timeout)
+                if got is None:
+                    failed += 1
+                    problems.append(f"{where}: `bend {probe.name}` exceeded "
+                                    f"{args.timeout}s\n")
+                    continue
+                if got != expected:
+                    failed += 1
+                    problems.append(
+                        f"{where}: `bend {probe.name}` prints something else "
+                        f"({probe.relative_to(root)})\n"
+                        f"        quoted: {' | '.join(expected)}\n"
+                        f"        now:    {' | '.join(got)}\n"
+                    )
+                    continue
+
+                t_checked += 1
+                print(f"  ok    {where}  $ bend {probe.relative_to(root)}")
+
+    for key in sorted(set(DECLARED_TRANSCRIPTS) - seen_transcripts):
+        print(f"note: declared transcript is no longer in the book: {key[0]}  {key[1]}")
 
     print()
     for p in problems:
@@ -244,7 +393,9 @@ def main() -> int:
         print(f"note: {len(timed_out)} file(s) exceeded {args.timeout}s and were treated as "
               f"producing nothing: {', '.join(sorted(str(p.relative_to(root)) for p in timed_out))}")
         print()
-    print(f"{checked} quote(s) verified, {declared} declared, {failed} failing")
+    print(f"{checked} quote(s) verified, {declared} declared")
+    print(f"{t_checked} transcript(s) verified, {t_declared} declared")
+    print(f"{failed} failing")
     return 1 if failed else 0
 
 
