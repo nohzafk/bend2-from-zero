@@ -67,6 +67,17 @@ position**, into a scratch row `s`:
 s[x] = prev[x] + cur[x] + next[x]
 ```
 
+The `+` there is **ordinary addition of `Nat`s**. It is worth saying plainly,
+because a row of numbers over another row of numbers invites a different reading:
+there is no operation in this book — or in Bend — that adds two lists. What
+happens is that the three *numbers* at column `x` are added, and then the same is
+done at column `x+1`, and so on. One column at a time, `w` times. `s` is not
+`prev + cur + next` as a single expression; there is no such expression.
+
+(The same character will show up again in the code below meaning something else
+entirely — the reuse mark from the affinity chapters. That one is labelled when
+it arrives.)
+
 Every name in that line, with what kind of thing it is:
 
 | name | what it is | type |
@@ -91,7 +102,8 @@ columns are enough to see every step of the arithmetic.
 prev        0    1    0    0    1    0
 cur         1    0    1    1    0    0
 next        0    0    1    0    1    1
-         ──────────────────────────────
+            │    │    │    │    │    │      each column added on its own:
+            ▼    ▼    ▼    ▼    ▼    ▼      0+1+0, 1+0+0, 0+1+1, ...
 s           1    1    2    1    2    1
 ```
 
@@ -226,6 +238,19 @@ def newrow(+p: List<&2, Nat>, +c: List<&2, Nat>, +n: List<&2, Nat>) -> List<&2, 
   +s = colsum(p, c, n, Nil{})
   rowstep(rot_r(s), s, rot_l(s), c, Nil{})
 ```
+
+**The `+` marks in that listing are not additions.** They are the affinity
+chapter's *reuse* mark, and they say something about how often a value is used —
+`+p` means the caller's row may be used more than once, and `+s` means the scratch
+row may. It needs to be, because the next line uses `s` three times, in `rot_r(s)`,
+`s` and `rot_l(s)`. Take the `+` off and the checker refuses the line with
+`expected : s` / `observed : s (consumed more than once)`.
+
+So `+` means two different things in these chapters, and where it sits is what
+tells them apart: **in front of a name being bound or declared it is the reuse
+mark; between two numbers it is addition** — of cell counts in the formula, and of
+positions in `x-1`, `x+1` and `y*w + x`. The arithmetic in this chapter never
+mixes the two.
 
 `rot_r(s)` is `s` shifted so that position `x` holds `s[x-1]`, and `rot_l(s)` is `s`
 shifted so that it holds `s[x+1]`. `rowstep` then walks the four lists — `s[x-1]`,
