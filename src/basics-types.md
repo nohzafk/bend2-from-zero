@@ -137,56 +137,34 @@ type: `head: a` asks the checker to treat a count of uses as data. The
 element type therefore needs a parameter of its own, `A` — and `Kind(a)` is
 what states which kind of type `A` is allowed to be.
 
-## Two brackets, and the question each one answers
+## Why `IO(Unit)` and `List<Nat>`
 
-Two lines in that error carry brackets, spelled differently: `A : Kind(a)` in
-the context, and `Cell{head: a, tail: Chain<a, A>}` below it. The name in
-front is what decides which spelling a name takes. **`Kind` is a `def`.
-`Chain` is a `type`.**
+Two spellings of the same idea sit one line apart in the declaration that
+failed above: `A : Kind(a)` in the error's context, `Chain<a, A>` in its last
+line. Angle brackets belong to declared datatypes and to nothing else:
+everything else that takes a parameter — a `def` like `IO`, a builtin kind
+like `Kind` — is applied with parentheses.
 
-**A `def` takes round brackets, because applying it is a call.** `Kind` is a
-function from a quantity to a kind, and `Kind(a)` applies it to `a`. `IO` is
-declared the same way — `bend base` shows `def IO(A):` — so `IO(Unit)` is
-`IO` applied to `Unit`, and the result is the type of an action producing
-`Unit`. `Chan(U32)`, `Pair(U32, Bool)` read the same way: find the `def`,
-count the arguments.
+So `IO(Unit)` is a call whose result is a type (`bend base` shows
+`def IO(A):`), and `List<Nat>` is a datatype fixed at its parameter, with no
+call and nothing computed. A name declared with `type` — in `Base` or in your
+own file — takes `<>`; anything else that takes parameters takes `()`.
 
-**A `type` takes angle brackets, and there is nothing to apply.** `Chain` is
-a datatype, not a function. `Chain<a, A>` is one concrete type out of the
-family the declaration names, with the parameters the declaration left open
-fixed — there is no call, and nothing is computed. `List<Nat>`,
-`Maybe<U32>` are the same shape.
-
-Getting the pairing wrong has a message of its own for each direction:
-
-```python
-List(Nat)     # expected : a family instance (write List<..>)
-              # parentheses on a datatype: nothing to apply
-IO<Unit>      # a declared datatype (unknown: IO)
-              # angle brackets on a name that is not a datatype: IO is a function
-```
-
-Both say the same thing: look at how the name was declared.
-
-One pair of words in every program sits next to each other with both
-spellings, and both are correct:
+The one place that looks violated is every `main`:
 
 ```python
 def main() -> IO(Unit):     # a call: IO is a def, applied with ()
   do IO<Unit>:              # the header's own grammar: always <>
 ```
 
-The first is the call described above. The second is not a call and not an
-instantiation: the `do` header names the family whose `.bind` and `.pure` the
-block desugars to, and it always takes `<>`. Write `do IO(Unit):` or `do IO:`
-and the checker answers `expected : '<'` — the header takes the brackets of a
-datatype even though `IO` is a `def`. For now the rule is just those two
-lines — `IO(Unit)` in a type, `do IO<Unit>` on a block — and the header gets
-a chapter to itself later: [Inside a `do` block](do-blocks.md).
+The `do` header is neither a call nor an instantiation; it has a grammar of
+its own and always takes `<>`. It gets a chapter later:
+[Inside a `do` block](do-blocks.md).
 
 ## The element type is its own parameter
 
-Which makes the corrected header readable, one piece at a time:
+With the quantity and both brackets in hand, the corrected header reads one
+piece at a time:
 
 ```python
 type Chain<a, -A: Kind(a)> is Kind(a):
