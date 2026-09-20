@@ -71,7 +71,9 @@ def rows_rot1(+a: Rows) -> Rows:
 def rows_rotm1(+a: Rows) -> Rows:
   rows_rev(rows_rot1(rows_rev(a, RNil{})), RNil{})
 
-# ---------- pass 1: three rows summed column by column ----------
+# ---------- pass 1: the three-row window, summed position by position ----------
+# One entry of s per column position; each entry holds 3 cells (one from each
+# of the three rows), never a whole board column of h cells.
 def colsum(
   +p: List<&2, Nat>, +c: List<&2, Nat>, +n: List<&2, Nat>, +acc: List<&2, Nat>
 ) -> List<&2, Nat>:

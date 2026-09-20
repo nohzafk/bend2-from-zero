@@ -13,19 +13,40 @@ A cell's eight neighbours are the 3×3 block around it, minus the centre. So the
 block is what has to be computed, and there are nine cells in it.
 
 Take the three rows involved — the one above, the one at, the one below — and add
-them together **column by column**, producing one new row `s` of the same width:
+them together position by position, producing one new row `s` of the same width as
+a row:
 
 ```
 s[j] = prev[j] + cur[j] + next[j]
 ```
 
-`s` is a row, not a column of the board. `s[j]` is the sum of the three cells
-stacked vertically in column `j`, and of nothing else. That is the sense in which
-the columns are summed: three cells at a time, three rows deep.
+**`s[j]` holds three cells, not a whole board column.** This is the part that
+reads wrong at first, so it is worth being blunt about: on a 17×17 board the
+board's own columns are 17 cells tall, and *none of those are summed anywhere*.
+The rows of the board are 17 cells wide, and `s` has 17 entries — one per
+position along a row — but each entry is the sum of the three cells at that
+position in the three-row window.
+
+Why three rows and no more? Because neighbours are within one row. The
+neighbours of a cell in row `y` live in rows `y-1`, `y` and `y+1` and in no
+others, so the other rows of the board cannot contribute:
+
+```
+row y-2  ────────────────  not a neighbour of anything in row y
+row y-1  ┐
+row y    ├─  the three-row window  →  s = prev + cur + next
+row y+1  ┘
+row y+2  ────────────────  not a neighbour of anything in row y
+```
+
+That is why the board's height never appears in what follows. It is not that the
+formula is clever enough to avoid `h`; it is that `h` was never in the question.
+A cell has eight neighbours whether the board is 17 rows tall or 17,000.
 
 Now look at what a 3×3 block is made of. Every cell around `(x, y)` sits in one of
-three columns — `x-1`, `x` or `x+1` — and `s[j]` already holds all of column `j`.
-So the three entries add up to the whole block:
+three columns — `x-1`, `x` or `x+1` — and `s[j]` already holds all of **the
+window's** column `j`, which is three cells: one from each of the three rows. So
+the three entries add up to the whole block:
 
 ```
 s[x-1] + s[x] + s[x+1]    =     all nine cells of the 3×3 block
@@ -54,12 +75,13 @@ blocks by hand and you get the same: column 1 contributes `1+0+1 = 2`, column 2
 contributes `0+1+1 = 2`, column 3 contributes `0+0+1 = 1`, nine cells totalling
 5 — and the centre, `cur[2] = 1`, is not a neighbour, so 4.
 
-**Nothing in that formula mentions the board size.** A cell has exactly eight
-neighbour offsets, and they always land in three columns and three rows, whatever
-`w` and `h` are. The size decides only *where* those columns fall once the board
-wraps — which is why this chapter's remaining work is rotations, not arithmetic.
-Even a board narrower than three changes nothing: the three columns then coincide
-and the equation counts the same cells on both sides.
+**So: does the board size matter?** Not to the formula, and not to the eight. The
+eight comes from the definition of a neighbour — the 3×3 block minus the centre —
+and every cell has exactly those eight offsets in the three-row window, whatever
+`w` and `h` are. Size enters only *where* the window's three columns fall once the
+board wraps, which is why this chapter's remaining work is rotations, not
+arithmetic. Even a board narrower than three changes nothing: the three columns
+then coincide and the equation counts the same cells on both sides.
 
 And the whole thing is a **walk**: four lists moving together, one position at a
 time. No index is ever computed, so no list is ever traversed twice.
