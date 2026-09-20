@@ -115,7 +115,7 @@ the book in the way.
 
 | | |
 |---|---|
-| Bend | 2.0.16 |
+| Bend | 2.0.20 |
 | Machine | Apple M3 Max, 10 performance cores + 4 efficiency cores, macOS |
 | Verified on | this machine only — the numbers are one machine's numbers |
 

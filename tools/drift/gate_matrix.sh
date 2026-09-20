@@ -7,12 +7,12 @@
 #
 #   <case> rc=<exit code> out=<stdout first line> err=<stderr first line>
 #
-# Known findings this matrix pins (2026-09-19, Bend 2.0.16):
+# Known findings this matrix pins (verified with Bend 2.0.20):
 #   t2  a FALSE law 'proven' by an @unsafe non-terminating recursion passes
 #       with rc=0; the only signal is the degraded stdout message.
 #   t5  an emptied law set passes: nothing to prove, nothing rejected.
-#   t6  the unsafe count is book-wide: an unrelated @unsafe def degrades the
-#       message even when every proof is legitimate.
+#   t6  the unsafe count covers the loaded import graph: an unrelated @unsafe
+#       def degrades the message even when every proof is legitimate.
 # Any change in these lines is a change in the gate's semantics — that is
 # what a drift report should show.
 #

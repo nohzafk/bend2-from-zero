@@ -72,9 +72,9 @@ CHECKS = [
     C("affinity/t6_closureplus", "probes-bad", "affinity", "t6_closureplus.bend", "run",
       expect_err=["expected : Data", "observed : Type"], expect_rc="nonzero",
       book="expected : Data / observed : Type (same error as the array)"),
-    C("affinity/t11_templatemiss", "probes-bad", "affinity", "t11_templatemiss.bend", "run",
-      expect_err=["consumed more than once"], expect_rc="nonzero",
-      book="expected : -f / observed : f (consumed more than once)"),
+    C("affinity/t11_template_implicit", "probes-ok", "affinity", "t11_template_implicit.bend", "run",
+      expect_out=["42"],
+      book="42 -- the call-site ~ is optional; the compiler specializes either way"),
     C("affinity/t3_arr", "probes-bad", "affinity", "t3_arr.bend", "run",
       expect_err=["cannot scrutinize a local binder"], expect_rc="nonzero",
       book="fails on purpose (error not quoted in the affinity README)",
@@ -160,14 +160,11 @@ CHECKS = [
     C("affinity/t8_listplus", "probes-ok", "affinity", "t8_listplus.bend", "run",
       expect_out=["6n"], book="6n"),
     C("affinity/t10_template", "probes-ok", "affinity", "t10_template.bend", "run",
-      expect_out=["42"], expect_err=["All terms check, with 1 unsafe annotation."],
+      expect_out=["42"], expect_err_exact_empty=True,
       book="42",
       source="source",
-      note="A def that is a template instance counts as unsafe (intended,"
-           " per the CHANGELOG), so a file with a template prints 'All terms"
-           " check, with N unsafe annotations.' on stderr 'until the checker"
-           " verifies template expansion itself'.  The template does NOT skip"
-           " any check; this is a disclosure, not a soundness hole."),
+      note="2.0.20: a template instance no longer appears in the checker's"
+           " unsafe disclosure, so stderr is empty here."),
     C("arrays/b_ok", "probes-ok", "arrays", "b_ok.bend", "run",
       expect_out=["43"], book="43"),
     C("arrays/c_base", "probes-ok", "arrays", "c_base.bend", "run",
@@ -311,11 +308,11 @@ CHECKS = [
     C("gate/matrix", "gate", "tools/drift", "gate_matrix.sh", "script",
       expect_out=[
         "t1_ok rc=0 out=All terms check.",
-        "t2_unsafe rc=0 out=All terms check, with 1 unsafe annotation.",
+        "t2_unsafe rc=0 out=All terms check, but 1 def relies on unsafe or foreign code:",
         "t3_todo rc=1 out= err=Error: 1 TODO found.",
         "t4_noimport rc=1 out= err=bend: PROOF.bend must import ./LAWS.bend (see bend --help)",
         "t5_vacuous rc=0 out=All terms check.",
-        "t6_nearby_unsafe rc=0 out=All terms check, with 1 unsafe annotation.",
+        "t6_nearby_unsafe rc=0 out=All terms check, but 1 def relies on unsafe or foreign code:",
         "t7_straydef rc=1 out= err=Error:",
       ],
       timeout_s=300, source="measured",

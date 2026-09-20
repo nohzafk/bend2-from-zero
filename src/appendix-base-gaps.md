@@ -12,15 +12,15 @@ not.
 ~/.bend/bend2/base.bend
 ```
 
-Measured, for Bend 2.0.16:
+Measured, for Bend 2.0.20:
 
 | | |
 |---|---|
-| lines | 2,850 |
-| `def` | 378 |
+| lines | 2,908 |
+| `def` | 382 |
 | `type` | 22 |
-| `law` | 72 |
-| namespaces | 28 |
+| `law` | 75 |
+| namespaces | 30 |
 | **lemmas** | **0** |
 
 The 22 types break down as **13 `is Data`**, **3 `is Type`** and **6 `is Kind`** —

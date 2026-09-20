@@ -56,7 +56,9 @@ Error:
 - expected : r
 - observed : r (consumed more than once)
 Location: area
-14>|     case Circle{r}:  r * r
+13 |   match x:
+14>|     case Circle{r}:  (r * r : Nat)
+15 |     case Square{s}:  (s * s : Nat)
 ```
 
 The fix is not at the call site and not in `area`: the field must be marked

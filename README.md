@@ -8,7 +8,7 @@ deliberately wrong** — written to make the compiler talk. That second kind usu
 teaches more than reading the docs does, so they are kept, and every README says
 "this one is ❌, and here is the error it gives".
 
-- Environment: Bend 2.0.16, macOS 27, Apple M3 Max (10 performance cores + 4 efficiency)
+- Environment: Bend 2.0.20, macOS 27, Apple M3 Max (10 performance cores + 4 efficiency)
 - `bend/` is a clone of the upstream repo. **It is not our code** — reference only,
   do not edit anything inside it.
 
@@ -48,7 +48,7 @@ build.
 
 ```sh
 curl -fsSL https://bend-lang.com/install.sh | sh
-bend --version                                       # this repo was written against 2.0.16
+bend --help | head -1                                # this repo was written against 2.0.20
 ```
 
 **Where it lands.** The installer writes to `${BEND_HOME:-$HOME/.bend}`; `BEND_HOME`

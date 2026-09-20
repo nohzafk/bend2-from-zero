@@ -9,11 +9,11 @@ curl -fsSL https://bend-lang.com/install.sh | sh
 Then, in a **new shell**:
 
 ```sh
-bend --version
+bend --help | head -1
 ```
 
 ```
-bend 2.0.16
+Bend 2.0.20: check, run, build and publish Bend programs.
 ```
 
 That is the version this book was written against.

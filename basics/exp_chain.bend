@@ -13,7 +13,7 @@ type Chain<a, -A: Kind(a)> is Kind(a):
 def len(a, -A: Kind(a), xs: Chain<a, A>) -> Nat:
   match xs:
     case End{}:      0n
-    case Cell{h, t}: 1n + len(a, A, t)
+    case Cell{h, t}: (1n + len(a, A, t) : Nat)
 
 def main() -> IO(Unit):
   do IO<Unit>:

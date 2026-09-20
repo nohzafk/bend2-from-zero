@@ -7,7 +7,7 @@ Usage (on the Mac, from the repo root or anywhere):
     python3 tools/drift/run_drift.py                 # everything
     python3 tools/drift/run_drift.py --only bench    # one group
     python3 tools/drift/run_drift.py --quick         # 1 run per bench check
-    python3 tools/drift/run_drift.py --bend ~/.bend/bin/bend --label 2.0.16
+    python3 tools/drift/run_drift.py --bend ~/.bend/bin/bend --label 2.0.20
 
 Writes drift-<label>.json (machine-readable, full outputs) and
 drift-<label>.md (human report) into tools/drift/reports/.
@@ -370,8 +370,8 @@ def main():
 
     env = dict(os.environ, BEND_NO_TELEMETRY="1")
     env["BEND"] = str(bend)
-    ver_out = sh([str(bend), "--version"], repo, env, 30)
-    m = re.search(r"bend (\S+)", ver_out["out"] + ver_out["err"])
+    ver_out = sh([str(bend), "--help"], repo, env, 30)
+    m = re.search(r"Bend (\S+):", ver_out["out"] + ver_out["err"])
     version = m.group(1) if m else "unknown"
 
     # A partial run answers a narrower question than the full one, so it writes

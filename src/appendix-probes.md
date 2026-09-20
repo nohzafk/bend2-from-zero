@@ -25,7 +25,6 @@ cd basics && bend hello_bad.bend
 | [`affinity/t4_arrplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t4_arrplus.bend) | puts `+` on an `Array`, which is `Type` | `expected : Data` / `observed : Type` |
 | [`affinity/t5_closure.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t5_closure.bend) | calls a closure twice | `expected : f` / `observed : f (consumed more than once)` |
 | [`affinity/t6_closureplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t6_closureplus.bend) | puts `+` on a closure | `expected : Data` / `observed : Type` |
-| [`affinity/t11_templatemiss.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_templatemiss.bend) | omits `~` at the *call site* of a `~f` parameter | `expected : -f` / `observed : f (consumed more than once)` |
 | [`arrays/exp_arr.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/exp_arr.bend) | annotates an array read in place: `a[5] : U32` | `expected : a term` / `observed : ':'` |
 | [`arrays/exp_arr2.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/exp_arr2.bend) | destructures an array read: `(a2, v) = a[5]` | `a match cannot scrutinize a computed value: give it its own def` |
 | [`arrays/a_fail.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/arrays/a_fail.bend) | binds the write first, then destructures the binder | `a match cannot scrutinize a local binder: give it its own def` |
@@ -41,9 +40,6 @@ message is *less* helpful than Bend's usual standard:
   never mentions angle brackets, so it reads as though `Base` failed to import.
   The rule the message does not state: **`IO(Unit)` in a signature, `do IO<Unit>:`
   in a do block.**
-- **`t11_templatemiss.bend`** says `consumed more than once`, which reads as
-  "closures cannot be called twice". The actual complaint is that `~` is missing
-  at the call site. The corrected form is `twice(~(x => (x + 1 : U32)), 40)`.
 
 ## ⚠️ compiles, runs, and lies
 

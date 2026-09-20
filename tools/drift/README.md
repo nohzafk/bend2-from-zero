@@ -1,6 +1,6 @@
 # drift — re-run every claim in this repo
 
-The book is written against **Bend 2.0.16**, and Bend moves fast. This directory
+The book is written against **Bend 2.0.20**, and Bend moves fast. This directory
 answers "what still holds?": it runs every probe and measurement the book makes
 a claim about, with the bend on this machine, and writes a report with a `book`
 column — what the text claims — next to what the binary actually does.
@@ -23,7 +23,7 @@ python3 tools/check-quotes.py --bend /path/to/bend
 python3 tools/drift/run_drift.py                 # everything (~5 min)
 python3 tools/drift/run_drift.py --only probes-bad,probes-ok,proofs
 python3 tools/drift/run_drift.py --only bench --quick
-python3 tools/drift/run_drift.py --label 2.0.17  # name the report yourself
+python3 tools/drift/run_drift.py --label 2.0.20  # name the report yourself
 ```
 
 The `.json` keeps every run's raw stdout/stderr/rc/timing (first runs
@@ -31,7 +31,7 @@ included); the `.md` is the human report: verdict per check, the book-vs-now
 column, and the full output of anything failing.
 
 A partial run — `--only`, `--skip` or `--quick` — writes its own name
-(`drift-2.0.16-only-probes-ok.md`), so a diagnostic sweep cannot replace the
+(`drift-2.0.20-only-probes-ok.md`), so a diagnostic sweep cannot replace the
 full report with a narrower one.
 
 Discipline, from the book's own appendix — the harness encodes it so no one

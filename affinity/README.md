@@ -22,7 +22,7 @@ The tables in `notes.md` reference these; all of them have been run.
 | `t5_closure.bend` | call a closure twice | ❌ `consumed more than once` |
 | `t6_closureplus.bend` | put `+` on a closure | ❌ `expected : Data, observed : Type` — **the same error as the array** |
 | `t10_template.bend` | a `~f` template parameter, called twice | ✅ `42` — the real answer to the closure problem |
-| `t11_templatemiss.bend` | the same, but the call site omits `~` | ❌ `consumed more than once` |
+| `t11_template_implicit.bend` | the same call without `~` at the call site | ✅ prints `42`; the mark is optional |
 | `t3_arr.bend` | read from an array | ❌ see below |
 
 ## Two levels
@@ -88,7 +88,7 @@ cd affinity
 bend t1_drop.bend               # ✅
 bend affine_bad.bend            # ❌ fails on purpose
 bend t10_template.bend          # ✅
-bend t11_templatemiss.bend      # ❌ fails on purpose
+bend t11_template_implicit.bend # ✅ same result without the optional call-site ~
 ```
 
 Book: chapters 8–9.

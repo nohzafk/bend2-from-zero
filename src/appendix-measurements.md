@@ -11,7 +11,7 @@ of which machine, what command, and what the number did when it was re-run.
 | cores | 14 logical — **10 performance, 4 efficiency** |
 | memory | 36 GB, unified |
 | OS | macOS 27.0 |
-| Bend | 2.0.16 |
+| Bend | 2.0.20 |
 
 `hw.perflevel0.logicalcpu` reports 10. That is why `--threads 8` and `--threads 10`
 are where the parallel curves flatten and `--threads 14` is slower: past ten the

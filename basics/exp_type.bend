@@ -9,8 +9,8 @@ type Shape is Data:
 
 def area(x: Shape) -> Nat:
   match x:
-    case Circle{r}:  r * r
-    case Square{s}:  s * s
+    case Circle{r}:  (r * r : Nat)
+    case Square{s}:  (s * s : Nat)
 
 def main() -> IO(Unit):
   do IO<Unit>:

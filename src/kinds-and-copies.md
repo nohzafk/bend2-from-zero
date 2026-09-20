@@ -179,32 +179,16 @@ $ bend t10_template.bend
 42
 ```
 
-Next to that, on stderr, the checker reports `All terms check, with 1 unsafe
-annotation.` — a template instance counts as one, and the number is how many
-such annotations the run loaded. [The gate chapter](laws-3.md) is where that
-count gets taken apart.
+The checker adds nothing on stderr: a template instance is not disclosed as
+unsafe. [The gate chapter](laws-3.md) is where the unsafe disclosure gets
+taken apart.
 
-The `~` on the parameter means **template**, and the `~` at the call site is what
-makes the argument one. `twice` is inlined at compile time, and each distinct
+The `~` on the parameter means **template**. At the call site the mark is
+optional: the compiler specializes the argument with or without it. `twice` is
+inlined at compile time, and each distinct
 argument compiles its own copy of the function — so `f` can be called as many
 times as the body likes, because at runtime there is no closure there at all. Not
 a function pointer, not a reference-counted box. Inlined, and free.
-
-> **The error you will actually hit** is not about templates at all. Leave the `~`
-> off the call site and the argument becomes an ordinary affine value, which
-> cannot be used twice — and Bend says so, without mentioning the `~` it is
-> missing:
->
-> ```
-> Error:
-> - expected : -f
-> - observed : f (consumed more than once)
-> Location: twice~0
-> ```
->
-> Kept as [`affinity/t11_templatemiss.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_templatemiss.bend).
-> `Location: twice~0` is the only hint that this is a specialized copy — and it
-> is not much of a hint unless you already know what `~` is.
 
 > Bend's type system refuses to let you copy a closure. The answer the language
 > arrived at is not "write more code" — it is **"inline the function"**, which is
@@ -224,7 +208,7 @@ like a wall turns out to be the reason the thing is fast.
 | [`affinity/t8_listplus.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t8_listplus.bend) | ✅ | `+` on a list |
 | [`affinity/t9_listonly.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t9_listonly.bend) | ❌ | the same list, without `+` |
 | [`affinity/t10_template.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t10_template.bend) | ✅ | `~f`, called twice |
-| [`affinity/t11_templatemiss.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_templatemiss.bend) | ❌ | the same call without `~` |
+| [`affinity/t11_template_implicit.bend`](https://github.com/nohzafk/bend2-from-zero/blob/main/affinity/t11_template_implicit.bend) | ✅ | the same call without `~` — the mark is optional |
 
 Next: arrays — where the two kinds collide, and a read hands you
 back more than you asked for.

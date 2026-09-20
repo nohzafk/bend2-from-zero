@@ -39,7 +39,8 @@ proven to terminate. It also moves the def outside the proof's guarantees —
 prints:
 
 ```
-All terms check, with 1 unsafe annotation.
+All terms check, but 1 def relies on unsafe or foreign code:
+- LAWS.false_law
 ```
 
 and exits 0. This is not a bug and not a secret — it is the first entry in
@@ -50,13 +51,15 @@ upstream's `WONTFIX.txt`, under DESIGN:
 > 0. `@unsafe` is a choice the author made in the source; read the note, not
 > the exit code.
 
+(Upstream's note still shows the older wording; the message 2.0.20 prints is
+the one quoted above.)
+
 Two measured details about the note. First, the count covers everything the run
 loads: one `@unsafe` def anywhere in the import graph — even one no proof
-touches — degrades the message. Second, the count covers more than `@unsafe`:
-a file containing a `~` template instance prints it too, "until the checker
-verifies template expansion itself" (the changelog's words). A template
-skips no check; that line is a disclosure, not a hole. But it means the message
-is something to read, not a bit to parse.
+touches — degrades the message. Second, the count is over **defs**, and the
+message names them: the run above lists `- LAWS.false_law` under the verdict. A
+`~` template instance does not appear in it — the disclosure is about what
+relies on unsafe or foreign code. The message is still something to read, not a bit to parse.
 
 ### The vanishing spec
 
@@ -106,8 +109,8 @@ fixture above:
 | `grep -qx "All terms check."` | no match | correct |
 
 The exit code is fooled because the design says so. The substring grep is
-fooled because `All terms check, with 1 unsafe annotation.` contains
-`All terms check`. Only the exact-line match notices the difference.
+fooled because `All terms check, but 1 def relies on unsafe or foreign code:`
+contains `All terms check`. Only the exact-line match notices the difference.
 
 ## The recipe
 
