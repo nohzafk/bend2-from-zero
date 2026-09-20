@@ -42,6 +42,13 @@ is listed in DECLARED_TRANSCRIPTS with the reason, and a transcript that is
 neither reproducible nor declared is a **failure**, so a new quoted result
 cannot slip into the book unchecked.
 
+Code from a long real file is quoted by line number -- `{{#include
+../gpu/queens/main.bend:89:100}}` -- so a chapter can show the part it is
+discussing without copying it. Ranges are checked to be in bounds and non-empty,
+and the file they come from is pinned by digest: a range only means anything
+against a known revision, and if the file moves under it the check says so
+instead of silently showing other code.
+
     python3 tools/check-quotes.py            # from the repo root
     python3 tools/check-quotes.py --wide     # search the whole book
 
@@ -51,6 +58,7 @@ book-links.py in the Pages workflow.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
 import pathlib
 import re
@@ -58,7 +66,8 @@ import shutil
 import subprocess
 import sys
 
-INCLUDE = re.compile(r"^\{\{#include\s+(\S+?)\s*\}\}$")
+INCLUDE = re.compile(r"^\{\{#include\s+(\S+?)(?::(\d+):(\d+))?\s*\}\}$")
+INCLUDE_ANY = re.compile(r"\{\{#include\s+([^\s:}]+)(?::(\d+):(\d+))?\s*\}\}")
 MARKER = re.compile(r"^\s*(\d+)>?\|")
 FENCE = re.compile(r"^```")
 BLOB = re.compile(r"blob/main/([A-Za-z0-9_./-]+\.bend)")
@@ -101,6 +110,76 @@ DECLARED_TRANSCRIPTS = {
         "PROOF.bend belongs to the gate project the chapter builds, not to this "
         "repo, and the quote comes from a copy with the import line removed",
 }
+
+# A line-range include is a promise about one revision of a file: "lines 89-100
+# are the case I am describing". If the file changes, that promise has to be
+# re-checked by whoever changed it, so the check fails here instead of quietly
+# showing different code. Re-read the ranges in src/, then update the digest.
+# bend and mdBook are pinned the same way, for the same reason.
+RANGE_PINS = {
+    "gpu/queens/main.bend":
+        "9ba530618a3449470b294a01a7d8670b67ba959d9bd09b67bb748917ade0676f",
+}
+
+
+def check_ranges(root: pathlib.Path, chapters):
+    """Every line-range include: in bounds, non-empty, and pinned.
+
+    This is how a chapter quotes part of a long real file without copying it, so
+    the fragment cannot drift from the source. The digest pins are the other
+    half: a range is only meaningful against a known revision.
+    """
+    problems = []
+    used = set()
+    for chapter in chapters:
+        rel_chapter = str(chapter.relative_to(root))
+        text = chapter.read_text(encoding="utf-8")
+        for m in INCLUDE_ANY.finditer(text):
+            if not m.group(2):
+                continue
+            relpath = m.group(1).replace("../", "")
+            a, b = int(m.group(2)), int(m.group(3))
+            where = f"{rel_chapter} -> {relpath}:{a}-{b}"
+            path = root / relpath
+            if not path.exists():
+                problems.append(f"{where}: no such file")
+                continue
+            used.add(relpath)
+            lines = path.read_text(encoding="utf-8").split("\n")
+            if a < 1 or b < a:
+                problems.append(f"{where}: not a range (start {a}, end {b})")
+                continue
+            if b > len(lines):
+                problems.append(
+                    f"{where}: past the end of the file ({len(lines)} lines)")
+                continue
+            if not "\n".join(lines[a - 1:b]).strip():
+                problems.append(f"{where}: the range is blank")
+                continue
+            print(f"  ok    {where}  ({b - a + 1} lines)")
+    return problems, used
+
+
+def check_range_pins(root: pathlib.Path, used):
+    """The files quoted by line number must still be the revision the ranges were
+    written against -- otherwise the numbers point at other code, silently."""
+    problems = []
+    for relpath in sorted(used):
+        got = hashlib.sha256((root / relpath).read_bytes()).hexdigest()
+        pinned = RANGE_PINS.get(relpath)
+        if pinned is None:
+            problems.append(
+                f"{relpath}: quoted by line number but not pinned -- add to RANGE_PINS:\n"
+                f'        "{relpath}": "{got}",\n')
+        elif got != pinned:
+            problems.append(
+                f"{relpath}: changed since its ranges were written "
+                f"(sha256 {got[:16]}..., pinned {pinned[:16]}...)\n"
+                f"        Re-read every range include that quotes it, then update "
+                f"RANGE_PINS.\n")
+        else:
+            print(f"  ok    {relpath} is the pinned revision ({got[:12]}...)")
+    return problems
 
 
 def fenced_blocks(path: pathlib.Path):
@@ -154,7 +233,7 @@ def transcripts_in(chapter: pathlib.Path):
 def referenced_by(text: str):
     """Every .bend path a chapter mentions, in a stable order."""
     found = set()
-    for m in re.finditer(r"\{\{#include\s+(\S+?)\s*\}\}", text):
+    for m in INCLUDE_ANY.finditer(text):
         found.add(m.group(1).replace("../", ""))
     for rx in (BLOB, BARE):
         for m in rx.finditer(text):
@@ -277,7 +356,17 @@ def main() -> int:
     problems = []
     seen_transcripts = set()
 
-    for chapter in sorted(src.glob("*.md")):
+    chapters = sorted(src.glob("*.md"))
+
+    # ---- the code quoted by line number, and the revision it came from
+    range_problems, range_files = check_ranges(root, chapters)
+    problems.extend(range_problems)
+    failed += len(range_problems)
+    pin_problems = check_range_pins(root, range_files)
+    problems.extend(pin_problems)
+    failed += len(pin_problems)
+
+    for chapter in chapters:
         rel = str(chapter.relative_to(root))
         chapter_files = existing(root, referenced_by(chapter.read_text(encoding="utf-8")))
 
