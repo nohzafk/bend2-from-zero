@@ -1,10 +1,10 @@
-# Drift report — bend 2.0.20 (2.0.20)
+# Drift report — bend 2.0.24 (2.0.24)
 
-- date: 2026-09-20 13:01 UTC
+- date: 2026-09-21 11:49 UTC
 - machine: Apple M3 Max, 14 cores (10 performance), macOS 27.0
-- bend binary: `/Users/randall/.bend/bin/bend` sha256 `4f5465102e2bbac3…`
-- repo: `/Users/randall/projects/bend2-from-zero` at `b5be1b9` (clean)
-- load average at start/end: 2.57/2.31/2.21 / 2.32/2.34/2.23
+- bend binary: `/Users/randall/.bend/bin/bend` sha256 `41758ba41f20842a…`
+- repo: `/Users/randall/projects/bend2-from-zero` at `0f57e5d` (clean)
+- load average at start/end: 1.87/2.11/2.12 / 3.12/2.55/2.30
 - caffeinate running: yes
 
 Verdict is against **manifest.py** (the recorded claim); the `book` column is what the book quotes, for context.
@@ -94,7 +94,7 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | check | book | now | verdict |
 |---|---|---|---|
 | fx/io/deadlock |  | `bend: deadlock: every computation waits on a channel` | OK |
-| fx/io/sleep_par |  | `total ms=709` | OK |
+| fx/io/sleep_par |  | `total ms=710` | OK |
 | fx/io/join_reuse_bad |  | `Error:` | OK |
 | fx/io/join_twice |  | `first join=41` | OK |
 | fx/io/match_in_do_bad |  | `Error:` | OK |
@@ -107,10 +107,10 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 | fx/io/chan_fifo |  | `four sends done` | OK |
 | fx/io/spawn |  | `main done` | OK |
 | fx/io/args |  | `argc=3` | OK |
-| fx/custom/clock |  | `ms since boot: 66` | OK |
+| fx/custom/clock |  | `ms since boot: 56` | OK |
 | fx/custom/shout_repeat |  | `HELLO, BEND` | OK |
 | fx/custom/utf8 |  | `héllo·世界héllo·世界` | OK |
-| fx/custom/delay |  | `t0=71 d_builtin=307 d_custom=303` | OK |
+| fx/custom/delay |  | `t0=58 d_builtin=308 d_custom=304` | OK |
 | fx/custom/busy |  | `tick 300` | OK |
 | fx/custom/misnamed_host |  | `All terms check, but 2 defs rely on unsafe or foreign code:` | OK |
 | fx/custom/missing_registration |  | `bend: an alien request` | OK |
@@ -127,26 +127,26 @@ Verdict is against **manifest.py** (the recorded claim); the `book` column is wh
 
 | check | book | now | verdict |
 |---|---|---|---|
-| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.20s (runs after first: 0.20 / 0.21); first run 0.55s (cold)  | OK |
-| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.10s (runs after first: 0.10 / 0.11) | OK |
+| parallel/pow2_26 @1t | 0.22-0.23 s | settled 0.20s (runs after first: 0.20 / 0.20); first run 0.55s (cold)  | OK |
+| parallel/pow2_26 @2t | 0.12-0.13 s | settled 0.11s (runs after first: 0.11 / 0.11) | OK |
 | parallel/pow2_26 @4t | 0.07 s | settled 0.06s (runs after first: 0.06 / 0.06) | OK |
-| parallel/pow2_26 @8t | 0.04 s | settled 0.03s (runs after first: 0.04 / 0.03) | OK |
+| parallel/pow2_26 @8t | 0.04 s | settled 0.03s (runs after first: 0.03 / 0.03) | OK |
 | parallel/pow2_26 @14t | 0.04-0.05 s | settled 0.03s (runs after first: 0.03 / 0.03) | OK |
 | gpu/gpu_floor | 0.08-0.09 s | settled 0.07s (runs after first: 0.07 / 0.07) | OK |
-| gpu/pow2_gpu | 0.09-0.10 s | settled 0.08s (runs after first: 0.08 / 0.08) | OK |
+| gpu/pow2_gpu | 0.09-0.10 s | settled 0.07s (runs after first: 0.08 / 0.07) | OK |
 | gpu/gpu_twice | 0.09 s | settled 0.08s (runs after first: 0.09 / 0.08) | OK |
-| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.00s (runs after first: 5.00 / 5.00) | OK |
+| gpu/mandelbrot cpu @1t | 5.10-5.12 s | settled 5.00s (runs after first: 5.05 / 5.00) | OK |
 | gpu/mandelbrot cpu @10t | 0.72 s | settled 0.71s (runs after first: 0.71 / 0.71) | OK |
-| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.09s (runs after first: 0.10 / 0.09) | OK |
-| gpu/queens cpu @1t | 6.02-6.19 s | settled 5.91s (runs after first: 5.91 / 5.91) | OK |
-| gpu/queens cpu @10t | 0.85 s | settled 0.86s (runs after first: 0.86 / 0.86) | OK |
-| gpu/queens gpu | 1.34-1.41 s | settled 1.66s (runs after first: 1.66 / 1.78) | OK |
-| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.38s (runs after first: 0.38); first run 0.59s (cold)  | OK |
-| life/life_par @1t | 1t: 1,735 / 1,958 / 1,936 ms | settled 13.63s (runs after first: 13.63) | OK |
-| life/life_par @10t | 10t: 676 / 628 / 986 ms | settled 10.50s (runs after first: 10.50) | OK |
-| life/life_rowpar @1t | 1t: walk 272-295 / 1,439-1,443 ms; 4-leaf tree 369 / 1,945-1,948 ms | settled 8.91s (runs after first: 8.91) | OK |
-| life/life_rowpar @4t | 4t: 4-leaf tree 210 / 1,127-1,157 ms (1.4x over the walk) | settled 5.90s (runs after first: 5.90) | OK |
-| life/life_rowpar @10t | 10t: 258-328 / 1,088-1,428 ms (no reliable gain over 4t) | settled 6.68s (runs after first: 6.68) | OK |
+| gpu/mandelbrot gpu | 0.10-0.12 s | settled 0.09s (runs after first: 0.09 / 0.09) | OK |
+| gpu/queens cpu @1t | 6.02-6.19 s | settled 6.03s (runs after first: 6.07 / 6.03) | OK |
+| gpu/queens cpu @10t | 0.85 s | settled 0.83s (runs after first: 0.83 / 0.83) | OK |
+| gpu/queens gpu | 1.34-1.41 s | settled 1.21s (runs after first: 1.23 / 1.21) | OK |
+| life/life_row @1t | 4 / 17 / 70 / 308 ms (64 generations, ns/cell flat) | settled 0.40s (runs after first: 0.40); first run 0.61s (cold)  | OK |
+| life/life_par @1t | 1t: 1,735 / 1,958 / 1,936 ms | settled 14.28s (runs after first: 14.28) | OK |
+| life/life_par @10t | 10t: 676 / 628 / 986 ms | settled 12.83s (runs after first: 12.83) | OK |
+| life/life_rowpar @1t | 1t: walk 272-295 / 1,439-1,443 ms; 4-leaf tree 369 / 1,945-1,948 ms | settled 9.65s (runs after first: 9.65) | OK |
+| life/life_rowpar @4t | 4t: 4-leaf tree 210 / 1,127-1,157 ms (1.4x over the walk) | settled 6.50s (runs after first: 6.50) | OK |
+| life/life_rowpar @10t | 10t: 258-328 / 1,088-1,428 ms (no reliable gain over 4t) | settled 6.82s (runs after first: 6.82) | OK |
 
 ## bench raw stdout (last run of each)
 
@@ -185,88 +185,88 @@ row-window Life, 64 generations -- O(n)?
 
   32x32  live=5  ms=4
 
-  64x64  live=5  ms=16
+  64x64  live=5  ms=17
 
-128x128  live=5  ms=67
+128x128  live=5  ms=69
 
-256x256  live=5  ms=287
+256x256  live=5  ms=303
 
 
 64x64, 16 generations -- head to head with the naive version
 
-  64x64  live=5  ms=5
+  64x64  live=5  ms=4
 -- life/life_par @1t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=1732
+blk=1  (4096 tasks)  live=5  ms=1772
 
-blk=16 ( 256 tasks)  live=5  ms=1936
+blk=16 ( 256 tasks)  live=5  ms=2029
 
-blk=64 (  64 tasks)  live=5  ms=1891
+blk=64 (  64 tasks)  live=5  ms=2010
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=474
+  32x32 16gen  live=5  ms=504
 
-  64x64 16gen  live=5  ms=7591
+  64x64 16gen  live=5  ms=7961
 -- life/life_par @10t --
 64x64, 4 generations
 
-blk=1  (4096 tasks)  live=5  ms=663
+blk=1  (4096 tasks)  live=5  ms=1318
 
-blk=16 ( 256 tasks)  live=5  ms=651
+blk=16 ( 256 tasks)  live=5  ms=1602
 
-blk=64 (  64 tasks)  live=5  ms=958
+blk=64 (  64 tasks)  live=5  ms=1609
 
 
 naive, no fork (d=0, blk=w*h)
 
-  32x32 16gen  live=5  ms=505
+  32x32 16gen  live=5  ms=506
 
-  64x64 16gen  live=5  ms=7721
+  64x64 16gen  live=5  ms=7787
 -- life/life_rowpar @1t --
+row-window Life, forked over rows -- the clock wraps evolve only
+
+256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=293
+
+256x256 d=2 blk=64  (4 leaves)  live=5  ms=398
+
+512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1546
+
+512x512 d=2 blk=128 (4 leaves)  live=5  ms=2104
+
+512x512 d=3 blk=64  (8 leaves)  live=5  ms=2591
+
+512x512 d=4 blk=32  (16 leaves)  live=5  ms=2691
+-- life/life_rowpar @4t --
+row-window Life, forked over rows -- the clock wraps evolve only
+
+256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=293
+
+256x256 d=2 blk=64  (4 leaves)  live=5  ms=222
+
+512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1578
+
+512x512 d=2 blk=128 (4 leaves)  live=5  ms=1259
+
+512x512 d=3 blk=64  (8 leaves)  live=5  ms=1484
+
+512x512 d=4 blk=32  (16 leaves)  live=5  ms=1627
+-- life/life_rowpar @10t --
 row-window Life, forked over rows -- the clock wraps evolve only
 
 256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=292
 
-256x256 d=2 blk=64  (4 leaves)  live=5  ms=386
+256x256 d=2 blk=64  (4 leaves)  live=5  ms=291
 
-512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1485
+512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1605
 
-512x512 d=2 blk=128 (4 leaves)  live=5  ms=1967
+512x512 d=2 blk=128 (4 leaves)  live=5  ms=1354
 
-512x512 d=3 blk=64  (8 leaves)  live=5  ms=2270
+512x512 d=3 blk=64  (8 leaves)  live=5  ms=1447
 
-512x512 d=4 blk=32  (16 leaves)  live=5  ms=2478
--- life/life_rowpar @4t --
-row-window Life, forked over rows -- the clock wraps evolve only
-
-256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312
-
-256x256 d=2 blk=64  (4 leaves)  live=5  ms=209
-
-512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1614
-
-512x512 d=2 blk=128 (4 leaves)  live=5  ms=1126
-
-512x512 d=3 blk=64  (8 leaves)  live=5  ms=1274
-
-512x512 d=4 blk=32  (16 leaves)  live=5  ms=1328
--- life/life_rowpar @10t --
-row-window Life, forked over rows -- the clock wraps evolve only
-
-256x256 d=0 blk=256 (the walk, 1 leaf)  live=5  ms=312
-
-256x256 d=2 blk=64  (4 leaves)  live=5  ms=319
-
-512x512 d=0 blk=512 (the walk, 1 leaf)  live=5  ms=1635
-
-512x512 d=2 blk=128 (4 leaves)  live=5  ms=1582
-
-512x512 d=3 blk=64  (8 leaves)  live=5  ms=1426
-
-512x512 d=4 blk=32  (16 leaves)  live=5  ms=1365
+512x512 d=4 blk=32  (16 leaves)  live=5  ms=1796
 ```
 
 ## Annotations
