@@ -81,7 +81,7 @@ will have a fair idea of what that would or would not buy you on a real problem.
 
 ## Where the language is not finished
 
-Two things to know before you invest time, both true as of Bend 2.0.20:
+Two things to know before you invest time, both true as of Bend 2.0.24:
 
 - The compiler is, in the project's own description, largely AI-written and not
   fully audited. The Lean formalization of Bend's theory lags the actual

@@ -51,7 +51,7 @@ upstream's `WONTFIX.txt`, under DESIGN:
 > 0. `@unsafe` is a choice the author made in the source; read the note, not
 > the exit code.
 
-(Upstream's note still shows the older wording; the message 2.0.20 prints is
+(Upstream's note still shows the older wording; the message 2.0.24 prints is
 the one quoted above.)
 
 Two measured details about the note. First, the count covers everything the run

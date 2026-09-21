@@ -12,7 +12,7 @@ a measurement needs a fixed input.
 
 Taken from upstream commit `e80e6922b632436ba1f2051441dd41a2a5e7c0a6`
 ("Bend 2.0.16: term_key is the identity of a term"). Both files are still
-byte-identical in v2.0.20, the version this book was written against.
+byte-identical in v2.0.24, the version this book was written against.
 
 **The guide is deliberately not here.** The book quotes `bend guide`, but a copy
 in this repository would be stale within days, on a language that ships several

@@ -62,6 +62,11 @@ Error:
 The ascription is not even parsed here. A pair is not a `U32` and saying so does
 not make it one.
 
+The binding above carries `: Array<U32>` for a reason worth knowing, since you
+will hit it: an array is `Type`, and in a `do` block a bare `a = [..]` is read as
+a pattern, which the checker refuses. Write the type on the binder and it is a
+binding again.
+
 **Try to destructure it where it is written.** `(a2, v) = a[5]`:
 
 ```

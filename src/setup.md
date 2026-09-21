@@ -13,7 +13,7 @@ bend --help | head -1
 ```
 
 ```
-Bend 2.0.20: check, run, build and publish Bend programs.
+Bend 2.0.24: check, run, build and publish Bend programs.
 ```
 
 That is the version this book was written against.

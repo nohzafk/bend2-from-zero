@@ -7,7 +7,7 @@ Usage (on the Mac, from the repo root or anywhere):
     python3 tools/drift/run_drift.py                 # everything
     python3 tools/drift/run_drift.py --only bench    # one group
     python3 tools/drift/run_drift.py --quick         # 1 run per bench check
-    python3 tools/drift/run_drift.py --bend ~/.bend/bin/bend --label 2.0.20
+    python3 tools/drift/run_drift.py --bend ~/.bend/bin/bend --label 2.0.24
 
 Writes drift-<label>.json (machine-readable, full outputs) and
 drift-<label>.md (human report) into tools/drift/reports/.

@@ -7,7 +7,7 @@
 #
 #   <case> rc=<exit code> out=<stdout first line> err=<stderr first line>
 #
-# Known findings this matrix pins (verified with Bend 2.0.20):
+# Known findings this matrix pins (verified with Bend 2.0.24):
 #   t2  a FALSE law 'proven' by an @unsafe non-terminating recursion passes
 #       with rc=0; the only signal is the degraded stdout message.
 #   t5  an emptied law set passes: nothing to prove, nothing rejected.
